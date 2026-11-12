@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services & Pricing | Fawwaz Izeddin</title>
+    <meta name="description" content="Explore expert language training, corporate coaching, translations, and transparent package pricing.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], serif: ['Playfair Display', 'serif'] } } } }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.6s ease, color 0.6s ease; overflow-x: hidden; }
+        body.theme-grey { background-color: #121418; color: #e5e7eb; }
+        body.theme-grey .portfolio-card { background-color: #1a1d24; border: 1px solid rgba(229, 231, 235, 0.12); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        body.theme-grey .portfolio-card:hover { border-color: #9ca3af; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(156, 163, 175, 0.1); }
+        body.theme-grey .accent-bg { background-color: #9ca3af; color: #111827; }
+        body.theme-grey .accent-text { color: #d1d5db; }
+        body.theme-grey .header-bg { background-color: rgba(18, 20, 24, 0.92); border-bottom: 1px solid rgba(229, 231, 235, 0.1); }
+        body.theme-grey .bg-watermark { color: rgba(229, 231, 235, 0.035); }
+
+        body.theme-olive { background-color: #131714; color: #f3f4f3; }
+        body.theme-olive .portfolio-card { background-color: #1c221e; border: 1px solid rgba(132, 169, 140, 0.2); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        body.theme-olive .portfolio-card:hover { border-color: #84a98c; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(132, 169, 140, 0.15); }
+        body.theme-olive .accent-bg { background-color: #84a98c; color: #131714; font-weight: 700; }
+        body.theme-olive .accent-text { color: #a3b18a; }
+        body.theme-olive .header-bg { background-color: rgba(19, 23, 20, 0.92); border-bottom: 1px solid rgba(132, 169, 140, 0.15); }
+        body.theme-olive .bg-watermark { color: rgba(132, 169, 140, 0.04); }
+
+        body.theme-navy { background-color: #0b0f19; color: #f3f4f6; }
+        body.theme-navy .portfolio-card { background-color: #111827; border: 1px solid rgba(212, 175, 55, 0.25); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        body.theme-navy .portfolio-card:hover { border-color: #d4af37; transform: translateY(-5px); box-shadow: 0 25px 50px rgba(212, 175, 55, 0.15); }
+        body.theme-navy .accent-bg { background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%); color: #0b0f19; font-weight: 700; }
+        body.theme-navy .accent-text { color: #d4af37; }
+        body.theme-navy .header-bg { background-color: rgba(11, 15, 25, 0.92); border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+        body.theme-navy .bg-watermark { color: rgba(212, 175, 55, 0.035); }
+
+        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+        .reveal-up { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-up.active { opacity: 1; transform: translateY(0); }
+        @media (max-width: 768px) { body { padding-bottom: 70px; } }
+    </style>
+</head>
+<body class="theme-grey selection:bg-amber-500 selection:text-black">
+    <header class="sticky top-0 z-40 header-bg backdrop-blur-xl transition-all duration-500 py-3">
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 flex flex-col md:flex-row items-center justify-between gap-3">
+            <a href="/" class="cursor-pointer group text-center md:text-left">
+                <span class="font-serif text-2xl font-bold tracking-wide block">Fawwaz Izeddin</span>
+                <span class="text-xs uppercase tracking-[0.2em] font-semibold accent-text block">Linguist & Language Specialist</span>
+            </a>
+            <nav class="hidden lg:flex items-center space-x-7 text-xs font-semibold tracking-widest uppercase opacity-85">
+                <a href="/" class="hover:opacity-100 transition-colors py-1">Home</a>
+                <a href="/about" class="hover:opacity-100 transition-colors py-1">About</a>
+                <a href="/services" class="opacity-100 transition-colors py-1">Services & Pricing</a>
+                <a href="/ielts-preparation" class="hover:opacity-100 transition-colors py-1">IELTS Preparation</a>
+                <a href="/contact" class="hover:opacity-100 transition-colors py-1">Contact</a>
+            </nav>
+            <div class="hidden md:flex items-center space-x-4">
+                <div class="flex items-center bg-black/40 border border-current/20 p-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                    <button onclick="switchStyle('grey')" id="btn-theme-grey" class="px-3 py-1 rounded-full transition accent-bg">Slate Grey</button>
+                    <button onclick="switchStyle('olive')" id="btn-theme-olive" class="px-3 py-1 rounded-full transition opacity-60 hover:opacity-100">Olive</button>
+                    <button onclick="switchStyle('navy')" id="btn-theme-navy" class="px-3 py-1 rounded-full transition opacity-60 hover:opacity-100">Navy & Gold</button>
+                </div>
+                <a href="/contact" class="px-5 py-2 accent-bg text-xs uppercase tracking-widest font-bold transition shadow-lg rounded-full">Enquire</a>
+            </div>
+            <div class="flex items-center space-x-3 md:hidden absolute right-6 top-5">
+                <button id="menu-btn" class="text-xl p-2" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full border-b py-6 px-8 space-y-4 shadow-2xl header-bg">
+            <div class="grid grid-cols-3 gap-2 pb-3 border-b border-current/15 text-center text-[10px] font-bold uppercase">
+                <button onclick="switchStyle('grey'); toggleMobileMenu();" class="py-1.5 bg-zinc-800 text-white rounded">Grey</button>
+                <button onclick="switchStyle('olive'); toggleMobileMenu();" class="py-1.5 bg-emerald-900 text-white rounded">Olive</button>
+                <button onclick="switchStyle('navy'); toggleMobileMenu();" class="py-1.5 accent-bg rounded">Navy</button>
+            </div>
+            <a href="/" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">Home</a>
+            <a href="/about" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">About</a>
+            <a href="/services" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">Services & Pricing</a>
+            <a href="/ielts-preparation" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">IELTS Preparation</a>
+            <a href="/contact" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">Contact</a>
+        </div>
+    </header>
+
+    <section class="py-24 max-w-7xl mx-auto px-6 sm:px-12">
+        <div class="max-w-3xl mx-auto text-center space-y-4 mb-16 reveal-up">
+            <span class="text-xs uppercase tracking-[0.3em] accent-text font-bold">Comprehensive Capabilities</span>
+            <h1 class="font-serif text-3xl sm:text-5xl font-bold">Services & Specialisations</h1>
+            <p class="opacity-80 font-light text-sm sm:text-base">Tailored language solutions designed for scholars, international candidates, and global businesses.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+            <div class="portfolio-card p-8 space-y-5 rounded-2xl reveal-up">
+                <div class="w-12 h-12 rounded-xl accent-bg flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-book-open"></i></div>
+                <h3 class="font-serif text-2xl font-bold">General & Academic English</h3>
+                <p class="text-xs sm:text-sm opacity-80 font-light leading-relaxed">Personalised instruction focusing on spoken fluency, complex grammatical structures, academic vocabulary, and pronunciation polish.</p>
+                <ul class="text-xs opacity-75 space-y-2 border-t border-current/15 pt-4">
+                    <li><i class="fa-solid fa-check text-xs accent-text mr-2"></i>Targeted Phonics & Accent Tuning</li>
+                    <li><i class="fa-solid fa-check text-xs accent-text mr-2"></i>Academic Essay Architecture</li>
+                </ul>
+            </div>
+            <div class="portfolio-card p-8 space-y-5 rounded-2xl reveal-up" style="transition-delay: 100ms;">
+                <div class="w-12 h-12 rounded-xl accent-bg flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-award"></i></div>
+                <h3 class="font-serif text-2xl font-bold">IELTS Band 7+ Masterclass</h3>
+                <p class="text-xs sm:text-sm opacity-80 font-light leading-relaxed">Comprehensive preparation for Academic and General IELTS exams. In-depth writing correction and realistic mock speaking sessions.</p>
+                <ul class="text-xs opacity-75 space-y-2 border-t border-current/15 pt-4">
+                    <li><i class="fa-solid fa-check text-xs accent-text mr-2"></i>Task 1 Data & Task 2 Essay Templates</li>
+                    <li><i class="fa-solid fa-check text-xs accent-text mr-2"></i>Examiner Scoring Rubric Alignment</li>
+                </ul>
+            </div>
+            <div class="portfolio-card p-8 space-y-5 rounded-2xl reveal-up" style="transition-delay: 200ms;">
+                <div class="w-12 h-12 rounded-xl accent-bg flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-building"></i></div>
+                <h3 class="font-serif text-2xl font-bold">Corporate English & Executive Coaching</h3>
+                <p class="text-xs sm:text-sm opacity-80 font-light leading-relaxed">Communication coaching for managers and executives. Master international negotiations, boardroom presentations, and formal reporting.</p>
+                <ul class="text-xs opacity-75 space-y-2 border-t border-current/15 pt-4">
+                    <li><i class="fa-solid fa-check text-xs accent-text mr-2"></i>STAR Interview Framework</li>
+                    <li><i class="fa-solid fa-check text-xs accent-text mr-2"></i>Diplomatic & Persuasive Phrasing</li>
+                </ul>
+            </div>
+            <div class="portfolio-card p-8 space-y-5 rounded-2xl reveal-up" style="transition-delay: 300ms;">
+                <div class="w-12 h-12 rounded-xl accent-bg flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-language"></i></div>
+                <h3 class="font-serif text-2xl font-bold">Translations & Localisation</h3>
+                <p class="text-xs sm:text-sm opacity-80 font-light leading-relaxed">Accurate academic, business, and legal translations with deep cultural and stylistic adaptation for international audiences.</p>
+                <ul class="text-xs opacity-75 space-y-2 border-t border-current/15 pt-4">
+                    <li><i class="fa-solid fa-check text-xs accent-text mr-2"></i>Contextual & Nuanced Localisation</li>
+                    <li><i class="fa-solid fa-check text-xs accent-text mr-2"></i>Academic Manuscript Editing</li>
+                </ul>
+            </div>
+            <div class="portfolio-card p-8 space-y-5 rounded-2xl reveal-up" style="transition-delay: 400ms;">
+                <div class="w-12 h-12 rounded-xl accent-bg flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-headset"></i></div>
+                <h3 class="font-serif text-2xl font-bold">Interpretation Service</h3>
+                <p class="text-xs sm:text-sm opacity-80 font-light leading-relaxed">Consecutive and liaison interpretation for business meetings, consultations, conferences, and interviews.</p>
+                <ul class="text-xs opacity-75 space-y-2 border-t border-current/15 pt-4">
+                    <li><i class="fa-solid fa-check text-xs accent-text mr-2"></i>Real-time & On-demand Delivery</li>
+                    <li><i class="fa-solid fa-check text-xs accent-text mr-2"></i>Confidential & Professional Service</li>
+                </ul>
+            </div>
+            <div class="portfolio-card p-8 space-y-5 rounded-2xl reveal-up" style="transition-delay: 500ms;">
+                <div class="w-12 h-12 rounded-xl accent-bg flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-robot"></i></div>
+                <h3 class="font-serif text-2xl font-bold">Voice-over AI & Data Annotation</h3>
+                <p class="text-xs sm:text-sm opacity-80 font-light leading-relaxed">High-quality voice talent for AI training, phonetics annotation, linguistic data auditing, and speech synthesis projects.</p>
+                <ul class="text-xs opacity-75 space-y-2 border-t border-current/15 pt-4">
+                    <li><i class="fa-solid fa-check text-xs accent-text mr-2"></i>Clear AmE/BrE Phonetics</li>
+                    <li><i class="fa-solid fa-check text-xs accent-text mr-2"></i>Linguistic Data Labeling & Audit</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="relative py-12 overflow-hidden border-t border-current/15 pt-20">
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden select-none">
+                <span class="bg-watermark font-serif text-[11vw] font-bold italic tracking-wider opacity-25 whitespace-nowrap transform -rotate-2 leading-none">“To have another language is to possess a second soul.”</span>
+            </div>
+            <div class="relative z-10">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-8 mb-16 reveal-up">
+                    <div class="text-center md:text-left space-y-2">
+                        <span class="text-xs uppercase tracking-[0.3em] accent-text font-bold">Transparent Rates</span>
+                        <h2 class="font-serif text-3xl sm:text-5xl font-bold">Package Investment</h2>
+                    </div>
+                    <div class="flex flex-col items-center md:items-end space-y-2">
+                        <div class="flex items-center space-x-2 border border-current/25 p-1.5 rounded-full">
+                            <button onclick="setCurrency('EUR')" id="curr-btn-EUR" class="px-4 py-1.5 text-xs uppercase tracking-widest font-bold transition accent-bg rounded-full">€ EUR</button>
+                            <button onclick="setCurrency('GBP')" id="curr-btn-GBP" class="px-4 py-1.5 text-xs uppercase tracking-widest font-bold transition opacity-60 hover:opacity-100 rounded-full">£ GBP</button>
+                            <button onclick="setCurrency('USD')" id="curr-btn-USD" class="px-4 py-1.5 text-xs uppercase tracking-widest font-bold transition opacity-60 hover:opacity-100 rounded-full">$ USD</button>
+                            <button onclick="setCurrency('TRY')" id="curr-btn-TRY" class="px-4 py-1.5 text-xs uppercase tracking-widest font-bold transition opacity-60 hover:opacity-100 rounded-full">₺ TRY</button>
+                        </div>
+                        <span class="text-[10px] uppercase tracking-wider opacity-60"><i class="fa-solid fa-lock text-[9px] mr-1"></i> Rates reviewed quarterly (Q4 2026)</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="portfolio-card p-8 flex flex-col justify-between rounded-2xl reveal-up">
+                        <div class="space-y-5">
+                            <span class="text-xs uppercase tracking-widest accent-text font-bold">General & Academic</span>
+                            <h3 class="font-serif text-2xl font-bold">8h General Package</h3>
+                            <p class="text-xs sm:text-sm opacity-80 font-light">Interactive spoken fluency, vocabulary expansion, and accent polishing.</p>
+                            <ul class="space-y-2.5 text-xs opacity-80 pt-4 border-t border-current/15">
+                                <li><i class="fa-solid fa-check accent-text mr-2"></i>8 Hours Personalised Instruction</li>
+                                <li><i class="fa-solid fa-check accent-text mr-2"></i>Diagnostic Assessment</li>
+                            </ul>
+                        </div>
+                        <div class="pt-8 mt-8 border-t border-current/15 space-y-5">
+                            <div>
+                                <span class="text-3xl font-serif accent-text font-bold price-tag" data-eur="110" data-gbp="95" data-usd="120" data-try="6000">€110</span>
+                                <span class="text-[10px] uppercase tracking-widest opacity-60 block"> / 8 hours total</span>
+                            </div>
+                            <a href="/contact" class="block w-full py-3 accent-bg text-xs uppercase tracking-widest font-bold transition rounded-xl text-center shadow-md">Enrol Package</a>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card p-8 flex flex-col justify-between rounded-2xl reveal-up" style="transition-delay: 150ms;">
+                        <div class="space-y-5">
+                            <span class="text-xs uppercase tracking-widest accent-text font-bold">Flagship Masterclass</span>
+                            <h3 class="font-serif text-2xl font-bold">8h IELTS Band 7+</h3>
+                            <p class="text-xs sm:text-sm opacity-80 font-light">Targeted preparation for Academic or General IELTS with guaranteed scaffolding.</p>
+                            <ul class="space-y-2.5 text-xs opacity-80 pt-4 border-t border-current/15">
+                                <li><i class="fa-solid fa-check accent-text mr-2"></i>8 Hours Intensive Masterclass</li>
+                                <li><i class="fa-solid fa-check accent-text mr-2"></i>Writing Task 1 & 2 Correction</li>
+                            </ul>
+                        </div>
+                        <div class="pt-8 mt-8 border-t border-current/15 space-y-5">
+                            <div>
+                                <span class="text-3xl font-serif accent-text font-bold price-tag" data-eur="140" data-gbp="120" data-usd="150" data-try="7500">€140</span>
+                                <span class="text-[10px] uppercase tracking-widest opacity-60 block"> / 8 hours total</span>
+                            </div>
+                            <a href="/contact" class="block w-full py-3 border border-current accent-text text-xs uppercase tracking-widest font-bold transition hover:bg-current hover:text-black rounded-xl text-center shadow-md">Enrol Package</a>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card p-8 flex flex-col justify-between rounded-2xl reveal-up" style="transition-delay: 300ms;">
+                        <div class="space-y-5">
+                            <span class="text-xs uppercase tracking-widest accent-text font-bold">Executive Coaching</span>
+                            <h3 class="font-serif text-2xl font-bold">8h Corporate English</h3>
+                            <p class="text-xs sm:text-sm opacity-80 font-light">High-level executive communication, boardroom presentation, and negotiations.</p>
+                            <ul class="space-y-2.5 text-xs opacity-80 pt-4 border-t border-current/15">
+                                <li><i class="fa-solid fa-check accent-text mr-2"></i>8 Hours Executive Coaching</li>
+                                <li><i class="fa-solid fa-check accent-text mr-2"></i>STAR Interview Preparation</li>
+                            </ul>
+                        </div>
+                        <div class="pt-8 mt-8 border-t border-current/15 space-y-5">
+                            <div>
+                                <span class="text-3xl font-serif accent-text font-bold price-tag" data-eur="200" data-gbp="170" data-usd="220" data-try="11000">€200</span>
+                                <span class="text-[10px] uppercase tracking-widest opacity-60 block"> / 8 hours total</span>
+                            </div>
+                            <a href="/contact" class="block w-full py-3 accent-bg text-xs uppercase tracking-widest font-bold transition rounded-xl text-center shadow-md">Enrol Package</a>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-card p-8 flex flex-col justify-between rounded-2xl reveal-up" style="transition-delay: 450ms;">
+                        <div class="space-y-5">
+                            <span class="text-xs uppercase tracking-widest accent-text font-bold">Tailored Solutions</span>
+                            <h3 class="font-serif text-2xl font-bold">Customised Package</h3>
+                            <p class="text-xs sm:text-sm opacity-80 font-light">Flexible hour allocations or multi-disciplinary service blending for unique client needs.</p>
+                            <ul class="space-y-2.5 text-xs opacity-80 pt-4 border-t border-current/15">
+                                <li><i class="fa-solid fa-check accent-text mr-2"></i>Flexible Lesson & Project Hours</li>
+                                <li><i class="fa-solid fa-check accent-text mr-2"></i>Priority Scheduling Support</li>
+                            </ul>
+                        </div>
+                        <div class="pt-8 mt-8 border-t border-current/15 space-y-5">
+                            <div>
+                                <span class="text-xl font-serif accent-text font-bold">Project Based</span>
+                                <span class="text-[10px] uppercase tracking-widest opacity-60 block">Custom Quotation</span>
+                            </div>
+                            <a href="/contact" class="block w-full py-3 border border-current accent-text text-xs uppercase tracking-widest font-bold transition hover:bg-current hover:text-black rounded-xl text-center shadow-md">Request Quote</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="border-t border-current/15 py-12 max-w-7xl mx-auto px-6 sm:px-12 opacity-90">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6 pb-8 border-b border-current/15">
+            <div>
+                <span class="font-serif text-xl font-bold tracking-wider block">FAWWAZ IZEDDIN</span>
+                <span class="text-[10px] uppercase tracking-widest accent-text font-semibold block mt-0.5">Linguist & Language Specialist</span>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 text-xs uppercase tracking-widest font-semibold">
+                <a href="/" class="hover:opacity-100 transition">Home</a>
+                <a href="/about" class="hover:opacity-100 transition">About</a>
+                <a href="/services" class="hover:opacity-100 transition">Services</a>
+                <a href="/ielts-preparation" class="hover:opacity-100 transition">IELTS</a>
+                <a href="/contact" class="hover:opacity-100 transition">Contact</a>
+            </div>
+        </div>
+        <div class="pt-6 flex justify-between items-center text-[10px] uppercase tracking-widest opacity-60">
+            <p>&copy; 2026 Fawwaz Izeddin. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function switchStyle(styleName) {
+            document.body.className = `theme-${styleName} selection:bg-amber-500 selection:text-black`;
+            localStorage.setItem('fawwaz_theme', styleName);
+        }
+        const savedStyle = localStorage.getItem('fawwaz_theme') || 'grey';
+        switchStyle(savedStyle);
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (menuBtn) { menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden')); }
+        function toggleMobileMenu() { if (mobileMenu) mobileMenu.classList.add('hidden'); }
+        
+        function setCurrency(curr) {
+            const symbols = { EUR: '€', GBP: '£', USD: '$', TRY: '₺' };
+            ['EUR', 'GBP', 'USD', 'TRY'].forEach(b => {
+                const btn = document.getElementById(`curr-btn-${b}`);
+                if (btn) {
+                    if (b === curr) { btn.className = "px-4 py-1.5 text-xs uppercase tracking-widest font-bold transition accent-bg rounded-full"; }
+                    else { btn.className = "px-4 py-1.5 text-xs uppercase tracking-widest font-bold transition opacity-60 hover:opacity-100 rounded-full"; }
+                }
+            });
+            document.querySelectorAll('.price-tag').forEach(tag => {
+                const val = tag.getAttribute(`data-${curr.toLowerCase()}`);
+                if (val) {
+                    let formatted = val;
+                    if (curr === 'TRY') { formatted = Number(val).toLocaleString(); }
+                    tag.innerText = `${symbols[curr]}${formatted}`;
+                }
+            });
+        }
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); obs.unobserve(entry.target); } });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal-up').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

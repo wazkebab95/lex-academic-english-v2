@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Fawwaz Izeddin | Language Consultancy & Inquiries</title>
+    <meta name="description" content="Get in touch with Fawwaz Izeddin for language coaching, translation, and academic consultancy.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], serif: ['Playfair Display', 'serif'] } } } }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.6s ease, color 0.6s ease; overflow-x: hidden; }
+        body.theme-grey { background-color: #121418; color: #e5e7eb; }
+        body.theme-grey .portfolio-card { background-color: #1a1d24; border: 1px solid rgba(229, 231, 235, 0.12); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        body.theme-grey .portfolio-card:hover { border-color: #9ca3af; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(156, 163, 175, 0.1); }
+        body.theme-grey .accent-bg { background-color: #9ca3af; color: #111827; }
+        body.theme-grey .accent-text { color: #d1d5db; }
+        body.theme-grey .header-bg { background-color: rgba(18, 20, 24, 0.92); border-bottom: 1px solid rgba(229, 231, 235, 0.1); }
+
+        body.theme-olive { background-color: #131714; color: #f3f4f3; }
+        body.theme-olive .portfolio-card { background-color: #1c221e; border: 1px solid rgba(132, 169, 140, 0.2); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        body.theme-olive .portfolio-card:hover { border-color: #84a98c; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(132, 169, 140, 0.15); }
+        body.theme-olive .accent-bg { background-color: #84a98c; color: #131714; font-weight: 700; }
+        body.theme-olive .accent-text { color: #a3b18a; }
+        body.theme-olive .header-bg { background-color: rgba(19, 23, 20, 0.92); border-bottom: 1px solid rgba(132, 169, 140, 0.15); }
+
+        body.theme-navy { background-color: #0b0f19; color: #f3f4f6; }
+        body.theme-navy .portfolio-card { background-color: #111827; border: 1px solid rgba(212, 175, 55, 0.25); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        body.theme-navy .portfolio-card:hover { border-color: #d4af37; transform: translateY(-5px); box-shadow: 0 25px 50px rgba(212, 175, 55, 0.15); }
+        body.theme-navy .accent-bg { background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%); color: #0b0f19; font-weight: 700; }
+        body.theme-navy .accent-text { color: #d4af37; }
+        body.theme-navy .header-bg { background-color: rgba(11, 15, 25, 0.92); border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+
+        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+        .reveal-up { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-up.active { opacity: 1; transform: translateY(0); }
+        @media (max-width: 768px) { body { padding-bottom: 70px; } }
+    </style>
+</head>
+<body class="theme-grey selection:bg-amber-500 selection:text-black">
+    <header class="sticky top-0 z-40 header-bg backdrop-blur-xl transition-all duration-500 py-3">
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 flex flex-col md:flex-row items-center justify-between gap-3">
+            <a href="/" class="cursor-pointer group text-center md:text-left">
+                <span class="font-serif text-2xl font-bold tracking-wide block">Fawwaz Izeddin</span>
+                <span class="text-xs uppercase tracking-[0.2em] font-semibold accent-text block">Linguist & Language Specialist</span>
+            </a>
+            <nav class="hidden lg:flex items-center space-x-7 text-xs font-semibold tracking-widest uppercase opacity-85">
+                <a href="/" class="hover:opacity-100 transition-colors py-1">Home</a>
+                <a href="/about" class="hover:opacity-100 transition-colors py-1">About</a>
+                <a href="/services" class="hover:opacity-100 transition-colors py-1">Services & Pricing</a>
+                <a href="/ielts-preparation" class="hover:opacity-100 transition-colors py-1">IELTS Preparation</a>
+                <a href="/contact" class="opacity-100 transition-colors py-1">Contact</a>
+            </nav>
+            <div class="hidden md:flex items-center space-x-4">
+                <div class="flex items-center bg-black/40 border border-current/20 p-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                    <button onclick="switchStyle('grey')" id="btn-theme-grey" class="px-3 py-1 rounded-full transition accent-bg">Slate Grey</button>
+                    <button onclick="switchStyle('olive')" id="btn-theme-olive" class="px-3 py-1 rounded-full transition opacity-60 hover:opacity-100">Olive</button>
+                    <button onclick="switchStyle('navy')" id="btn-theme-navy" class="px-3 py-1 rounded-full transition opacity-60 hover:opacity-100">Navy & Gold</button>
+                </div>
+                <a href="/contact" class="px-5 py-2 accent-bg text-xs uppercase tracking-widest font-bold transition shadow-lg rounded-full">Enquire</a>
+            </div>
+            <div class="flex items-center space-x-3 md:hidden absolute right-6 top-5">
+                <button id="menu-btn" class="text-xl p-2" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full border-b py-6 px-8 space-y-4 shadow-2xl header-bg">
+            <div class="grid grid-cols-3 gap-2 pb-3 border-b border-current/15 text-center text-[10px] font-bold uppercase">
+                <button onclick="switchStyle('grey'); toggleMobileMenu();" class="py-1.5 bg-zinc-800 text-white rounded">Grey</button>
+                <button onclick="switchStyle('olive'); toggleMobileMenu();" class="py-1.5 bg-emerald-900 text-white rounded">Olive</button>
+                <button onclick="switchStyle('navy'); toggleMobileMenu();" class="py-1.5 accent-bg rounded">Navy</button>
+            </div>
+            <a href="/" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">Home</a>
+            <a href="/about" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">About</a>
+            <a href="/services" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">Services & Pricing</a>
+            <a href="/ielts-preparation" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">IELTS Preparation</a>
+            <a href="/contact" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">Contact</a>
+        </div>
+    </header>
+
+    <section class="py-24 max-w-7xl mx-auto px-6 sm:px-12">
+        <div class="max-w-3xl mx-auto text-center space-y-4 mb-16 reveal-up">
+            <span class="text-xs uppercase tracking-[0.3em] accent-text font-bold">Direct Communication</span>
+            <h1 class="font-serif text-3xl sm:text-5xl font-bold">Get in Touch with Fawwaz</h1>
+            <p class="opacity-80 font-light text-sm sm:text-base">Ready to start your language journey or request specialized language services?</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-5 space-y-6 reveal-up">
+                <div class="portfolio-card p-6 rounded-2xl space-y-3">
+                    <div class="w-10 h-10 rounded-xl accent-bg flex items-center justify-center text-base"><i class="fa-solid fa-envelope"></i></div>
+                    <h3 class="font-serif text-xl font-bold">Direct Email</h3>
+                    <p class="text-xs opacity-70">Response guaranteed within 12 hours</p>
+                    <a href="mailto:fawwaz@academicenglish.co.uk" class="block text-xs font-semibold accent-text hover:underline">fawwaz@academicenglish.co.uk</a>
+                </div>
+                <div class="portfolio-card p-6 rounded-2xl space-y-3" style="transition-delay: 100ms;">
+                    <div class="w-10 h-10 rounded-xl accent-bg flex items-center justify-center text-base"><i class="fa-brands fa-whatsapp"></i></div>
+                    <h3 class="font-serif text-xl font-bold">WhatsApp & Direct Message</h3>
+                    <p class="text-xs opacity-70">Instant scheduling & quick inquiries</p>
+                    <p class="text-xs font-semibold accent-text">WhatsApp available upon request</p>
+                </div>
+                <div class="portfolio-card p-6 rounded-2xl space-y-3" style="transition-delay: 200ms;">
+                    <div class="w-10 h-10 rounded-xl accent-bg flex items-center justify-center text-base"><i class="fa-solid fa-clock"></i></div>
+                    <h3 class="font-serif text-xl font-bold">Consultation Hours</h3>
+                    <p class="text-xs opacity-70">Flexible scheduling across time zones</p>
+                    <p class="text-xs font-medium opacity-90">Mon - Fri: 09:00 - 18:00 (GMT+3) | Sat - Sun: 09:00 - 14:00 (GMT+3)</p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7 reveal-up" style="transition-delay: 150ms;">
+                <div class="portfolio-card p-8 sm:p-10 rounded-3xl relative">
+                    <form action="https://api.web3forms.com/submit" method="POST" id="contact-form" class="space-y-5">
+                        <input type="hidden" name="access_key" value="c767a630-1074-44af-9528-a1bca028caf1">
+                        <input type="hidden" name="subject" value="New Inquiry from lexacademicenglish.co.uk">
+                        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] uppercase tracking-[0.2em] font-bold">Full Name</label>
+                            <input type="text" name="name" required placeholder="Dr. Elena Rostova" class="w-full px-4 py-3 bg-transparent border border-current/25 text-xs focus:outline-none focus:border-current transition rounded-xl">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="block text-[10px] uppercase tracking-[0.2em] font-bold">Email Address</label>
+                                <input type="email" name="email" required placeholder="elena@university.com" class="w-full px-4 py-3 bg-transparent border border-current/25 text-xs focus:outline-none focus:border-current transition rounded-xl">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="block text-[10px] uppercase tracking-[0.2em] font-bold">Programme / Service Interest</label>
+                                <select name="service" class="w-full px-4 py-3 bg-transparent border border-current/25 text-xs focus:outline-none focus:border-current transition rounded-xl">
+                                    <option class="bg-zinc-900 text-white" value="General & Academic English">General & Academic English</option>
+                                    <option class="bg-zinc-900 text-white" value="IELTS Band 7+ Masterclass">IELTS Band 7+ Masterclass</option>
+                                    <option class="bg-zinc-900 text-white" value="Corporate English Coaching">Corporate English Coaching</option>
+                                    <option class="bg-zinc-900 text-white" value="Translations & Localisation">Translations & Localisation</option>
+                                    <option class="bg-zinc-900 text-white" value="Interpretation Service">Interpretation Service</option>
+                                    <option class="bg-zinc-900 text-white" value="Voice-over AI & Data Annotation">Voice-over AI & Data Annotation</option>
+                                    <option class="bg-zinc-900 text-white" value="Customised 1-on-1 Programme">Customised 1-on-1 Programme</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] uppercase tracking-[0.2em] font-bold">Your Inquiry / Project Background</label>
+                            <textarea name="message" rows="4" required placeholder="Please describe your target goals, language requirements, or project details..." class="w-full px-4 py-3 bg-transparent border border-current/25 text-xs focus:outline-none focus:border-current transition rounded-xl"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-4 accent-bg text-xs uppercase tracking-[0.2em] font-bold transition shadow-xl rounded-xl">Send Inquiry to Fawwaz</button>
+                        
+                        <div class="space-y-1.5 pt-2">
+                            <label for="captcha-input" class="block text-[10px] uppercase tracking-[0.2em] font-bold">Security Check: Type the Code Below</label>
+                            <div class="flex items-center gap-3">
+                                <canvas id="captcha-canvas" width="150" height="48" class="border border-current/25 rounded-xl select-none" aria-label="Security code image"></canvas>
+                                <button type="button" id="captcha-refresh" class="w-10 h-10 rounded-xl border border-current/25 opacity-70 hover:opacity-100 transition" aria-label="Show a new code"><i class="fa-solid fa-rotate-right"></i></button>
+                            </div>
+                            <input type="text" id="captcha-input" required autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="5" placeholder="Enter the 5-character code" class="w-full px-4 py-3 bg-transparent border border-current/25 text-xs focus:outline-none focus:border-current transition rounded-xl">
+                            <p id="captcha-error" class="hidden text-[11px] text-red-400">That code didn't match. Please try the new code.</p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="border-t border-current/15 py-12 max-w-7xl mx-auto px-6 sm:px-12 opacity-90">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6 pb-8 border-b border-current/15">
+            <div>
+                <span class="font-serif text-xl font-bold tracking-wider block">FAWWAZ IZEDDIN</span>
+                <span class="text-[10px] uppercase tracking-widest accent-text font-semibold block mt-0.5">Linguist & Language Specialist</span>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 text-xs uppercase tracking-widest font-semibold">
+                <a href="/" class="hover:opacity-100 transition">Home</a>
+                <a href="/about" class="hover:opacity-100 transition">About</a>
+                <a href="/services" class="hover:opacity-100 transition">Services</a>
+                <a href="/ielts-preparation" class="hover:opacity-100 transition">IELTS</a>
+                <a href="/contact" class="hover:opacity-100 transition">Contact</a>
+            </div>
+        </div>
+        <div class="pt-6 flex justify-between items-center text-[10px] uppercase tracking-widest opacity-60">
+            <p>&copy; 2026 Fawwaz Izeddin. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function switchStyle(styleName) {
+            document.body.className = `theme-${styleName} selection:bg-amber-500 selection:text-black`;
+            localStorage.setItem('fawwaz_theme', styleName);
+        }
+        const savedStyle = localStorage.getItem('fawwaz_theme') || 'grey';
+        switchStyle(savedStyle);
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (menuBtn) { menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden')); }
+        function toggleMobileMenu() { if (mobileMenu) mobileMenu.classList.add('hidden'); }
+
+        (function () {
+            const form = document.getElementById('contact-form');
+            const canvas = document.getElementById('captcha-canvas');
+            const input = document.getElementById('captcha-input');
+            const error = document.getElementById('captcha-error');
+            const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+            let code = '';
+            function randomInt(max) { return crypto.getRandomValues(new Uint32Array(1))[0] % max; }
+            function drawCaptcha() {
+                code = Array.from({ length: 5 }, () => chars[randomInt(chars.length)]).join('');
+                const ctx = canvas.getContext('2d');
+                const color = getComputedStyle(canvas).color;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = color; ctx.globalAlpha = 0.35;
+                for (let i = 0; i < 5; i++) {
+                    ctx.beginPath(); ctx.moveTo(randomInt(canvas.width), randomInt(canvas.height));
+                    ctx.lineTo(randomInt(canvas.width), randomInt(canvas.height)); ctx.stroke();
+                }
+                ctx.globalAlpha = 1; ctx.fillStyle = color; ctx.font = 'bold 24px "Plus Jakarta Sans", sans-serif';
+                ctx.textBaseline = 'middle';
+                [...code].forEach((ch, i) => {
+                    ctx.save();
+                    ctx.translate(18 + i * 26, canvas.height / 2 + (randomInt(9) - 4));
+                    ctx.rotate((randomInt(41) - 20) * Math.PI / 180);
+                    ctx.fillText(ch, -8, 0);
+                    ctx.restore();
+                });
+                input.value = '';
+            }
+            document.getElementById('captcha-refresh').addEventListener('click', drawCaptcha);
+            form.addEventListener('submit', (e) => {
+                if (input.value.trim().toUpperCase() !== code) {
+                    e.preventDefault();
+                    error.classList.remove('hidden');
+                    drawCaptcha();
+                    input.focus();
+                } else { error.classList.add('hidden'); }
+            });
+            drawCaptcha();
+        })();
+
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); obs.unobserve(entry.target); } });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal-up').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
