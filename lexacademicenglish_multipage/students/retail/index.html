@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b2d">
+  <title>Retail Business English | Lex Practice</title>
+  <meta name="description" content="A personalised Retail Business English practice space by Lex Academic English.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{color-scheme:dark;--navy:#101b2d;--panel:#17263b;--gold:#d9b875;--muted:#9aabc0}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#213753 0%,var(--navy) 48%);color:#edf2f8;font-family:"DM Sans",sans-serif;min-height:100vh}
+    h1,h2,h3,.serif{font-family:"Playfair Display",serif}.panel{background:rgba(23,38,59,.88);border:1px solid rgba(217,184,117,.16);box-shadow:0 18px 50px rgba(0,0,0,.16)}
+    .gold{color:var(--gold)}.muted{color:var(--muted)}.module{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);transition:.2s}
+    .module:hover,.module.active{border-color:var(--gold);background:rgba(217,184,117,.09);transform:translateY(-1px)}
+    .choice{display:block;width:100%;text-align:left;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:13px 15px;margin-top:9px;background:rgba(255,255,255,.035);transition:.15s}
+    .choice:hover{border-color:var(--gold)}.choice.selected{border-color:var(--gold);background:rgba(217,184,117,.12)}
+    .choice.correct{border-color:#42bd8b;background:rgba(66,189,139,.1)}.choice.wrong{border-color:#e18b83;background:rgba(225,139,131,.1)}
+    .btn{border-radius:999px;padding:11px 18px;font-weight:700;transition:.2s}.btn-primary{background:var(--gold);color:#172033}.btn-primary:hover{filter:brightness(1.08)}.btn-ghost{border:1px solid rgba(255,255,255,.18);color:#edf2f8}
+    .progress{height:7px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}.progress>span{display:block;height:100%;background:var(--gold);transition:width .25s}
+    textarea{width:100%;min-height:170px;background:#101b2d;border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:14px;color:#edf2f8;resize:vertical}
+    textarea:focus,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+    .tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+    @media(max-width:640px){.shell{padding-left:16px;padding-right:16px}.hero-title{font-size:2.4rem}}
+  </style>
+</head>
+<body>
+  <div class="shell max-w-6xl mx-auto px-6 py-7 md:py-10">
+    <header class="flex items-center justify-between gap-4 border-b border-white/10 pb-5">
+      <a href="/students/" class="flex items-center gap-3 no-underline text-white" aria-label="Lex Student Hub">
+        <div class="w-11 h-11 rounded-xl grid place-items-center border border-amber-200/30 gold font-bold text-lg">L</div>
+        <div><div class="font-bold tracking-[.18em] text-sm">LEX ACADEMIC ENGLISH</div><div class="muted text-xs tracking-wider">STUDENT LEARNING SPACE</div></div>
+      </a>
+      <div class="hidden sm:block text-right"><div class="tag">Professional English</div><div class="text-sm muted">Retail Business Programme</div></div>
+    </header>
+
+    <main class="grid lg:grid-cols-[285px_1fr] gap-6 mt-8">
+      <aside class="space-y-4">
+        <section class="panel rounded-2xl p-5">
+          <div class="tag">Your programme</div>
+          <h1 class="text-2xl mt-2">Retail Business English</h1>
+          <p class="muted text-sm leading-relaxed mt-2">Practise the language of retail operations, sales performance and professional communication.</p>
+          <div class="mt-5 flex items-center justify-between text-xs"><span class="muted">Overall progress</span><strong id="progress-label">0 / 5 modules</strong></div>
+          <div class="progress mt-2"><span id="overall-progress" style="width:0%"></span></div>
+        </section>
+        <nav id="module-nav" class="grid grid-cols-1 gap-2" aria-label="Learning modules">
+          <button class="module active rounded-xl p-4 text-left" data-module="vocabulary"><span class="tag">01 · Core skills</span><span class="block font-semibold mt-1">Retail vocabulary</span><span class="muted text-xs">Terms and definitions</span></button>
+          <button class="module rounded-xl p-4 text-left" data-module="grammar"><span class="tag">02 · Accuracy</span><span class="block font-semibold mt-1">Business grammar</span><span class="muted text-xs">Grammar in context</span></button>
+          <button class="module rounded-xl p-4 text-left" data-module="communication"><span class="tag">03 · Fluency</span><span class="block font-semibold mt-1">Professional communication</span><span class="muted text-xs">Workplace scenarios</span></button>
+          <button class="module rounded-xl p-4 text-left" data-module="case"><span class="tag">04 · Application</span><span class="block font-semibold mt-1">Retail case study</span><span class="muted text-xs">Analyse and recommend</span></button>
+          <button class="module rounded-xl p-4 text-left" data-module="assessment"><span class="tag">05 · Review</span><span class="block font-semibold mt-1">Final assessment</span><span class="muted text-xs">Mixed skills check</span></button>
+        </nav>
+        <p class="text-xs muted leading-relaxed px-1">Progress is currently saved only in this browser on this device. It is not yet sent to your teacher.</p>
+      </aside>
+
+      <section class="panel rounded-2xl p-5 sm:p-8 min-h-[620px]" aria-live="polite">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div><div class="tag" id="module-kicker">MODULE 01</div><h2 class="text-3xl mt-1" id="module-title">Retail vocabulary</h2></div>
+          <span class="rounded-full border border-amber-200/20 px-3 py-1 text-xs gold" id="module-status">Not completed</span>
+        </div>
+        <p class="muted mt-3 leading-relaxed" id="module-intro">Build a practical vocabulary for everyday retail business discussions.</p>
+        <div id="activity" class="mt-7"></div>
+      </section>
+    </main>
+    <footer class="text-center text-xs muted py-8">LEX ACADEMIC ENGLISH <span class="gold">·</span> ABSORB · APPLY · DOMINATE</footer>
+  </div>
+
+<script>
+/* Student-specific settings can be configured here once the learner's level, role and goals are confirmed. */
+const STUDENT_PROFILE = { displayName: "Retail Business Student", level: "To be confirmed", role: "To be confirmed", priorities: ["Retail vocabulary","Business grammar","Professional communication"] };
+const modules = {
+ vocabulary:{title:"Retail vocabulary",intro:"Choose the term that best completes each retail business definition.",questions:[
+  {q:"The amount of goods a retailer has available for sale is called…",a:["Revenue","Inventory","Footfall","Margin"],c:1,e:"Inventory refers to the goods or materials a business holds for sale or use."},
+  {q:"The percentage of visitors who make a purchase is the…",a:["Conversion rate","Market share","Markup","Stock level"],c:0,e:"Conversion rate measures the proportion of visitors who complete a desired action, such as making a purchase."},
+  {q:"A product that is temporarily unavailable because all units have sold is…",a:["Overpriced","Out of stock","Marked down","Seasonal"],c:1,e:"Out of stock means the business has no units of that product currently available."},
+  {q:"The total income generated from sales before costs are deducted is…",a:["Net profit","Revenue","Overhead","Discount"],c:1,e:"Revenue is income from sales before expenses are deducted."},
+  {q:"A reduction from the original selling price is a…",a:["Forecast","Refund","Discount","Supplier"],c:2,e:"A discount is a reduction in the usual or original price."},
+  {q:"The percentage of revenue remaining after the cost of goods sold is deducted is the gross…",a:["Margin","Footfall","Turnover","Return"],c:0,e:"Gross margin expresses gross profit as a percentage of revenue."},
+  {q:"The number of people entering a shop during a period is its…",a:["Footfall","Inventory","Markup","Retention"],c:0,e:"Footfall is the count of visitors entering a retail location."},
+  {q:"A business that provides products to a retailer is a…",a:["Customer","Competitor","Supplier","Shareholder"],c:2,e:"A supplier provides goods or services to another business."},
+  {q:"The rate at which stock is sold and replaced is called stock…",a:["Retention","Turnover","Clearance","Allocation"],c:1,e:"Stock turnover indicates how frequently inventory is sold and replenished."},
+  {q:"Encouraging existing customers to continue buying from a business is customer…",a:["Retention","Acquisition cost","Shrinkage","Segmentation"],c:0,e:"Customer retention is the ability to keep customers over time."}
+ ]},
+ grammar:{title:"Business grammar",intro:"Apply accurate grammar to realistic retail reports and workplace communication.",questions:[
+  {q:"Our online sales _____ by 12% since January.",a:["increased","have increased","has increase","are increase"],c:1,e:"Use the present perfect for a change from the past up to the present. 'Sales' is plural: have increased."},
+  {q:"If we _____ the stock level more carefully, we could reduce waste.",a:["monitor","monitored","will monitor","monitoring"],c:1,e:"This is a second conditional: If + past simple, would/could + infinitive."},
+  {q:"The new store _____ by the regional manager next month.",a:["will open","will be opened","opens by","is opening by"],c:1,e:"The passive is appropriate because the focus is on the store, not the person doing the action."},
+  {q:"There are _____ customers visiting the shop at weekends than on weekdays.",a:["much","more","most","many"],c:1,e:"Use 'more' to compare countable plural nouns."},
+  {q:"We need to respond _____ to customer complaints.",a:["prompt","promptly","promptness","more prompt"],c:1,e:"An adverb ('promptly') modifies the verb 'respond'."},
+  {q:"The supplier said that the delivery _____ delayed.",a:["is","was","were","be"],c:1,e:"In reported speech, a past reporting verb commonly shifts 'is' to 'was'."},
+  {q:"Neither the manager nor the assistants _____ available this morning.",a:["is","are","was","be"],c:1,e:"With 'neither…nor', the verb commonly agrees with the nearer subject; 'assistants' is plural."},
+  {q:"We have worked with this supplier _____ 2022.",a:["for","since","during","from"],c:1,e:"Use 'since' with a starting point in time; use 'for' with a duration."}
+ ]},
+ communication:{title:"Professional communication",intro:"Choose the most effective and professional response in each workplace situation.",questions:[
+  {q:"A customer says an item was damaged when delivered. What is the best first response?",a:["That is not our fault.","You should contact the courier.","I'm sorry to hear that. Let me look into this for you.","We cannot help without a receipt."],c:2,e:"Acknowledge the customer's concern politely before explaining the next steps."},
+  {q:"You need to ask a supplier to confirm a delayed delivery. Which sentence is most appropriate?",a:["Tell me where the order is.","Could you please confirm the revised delivery date?","Why haven't you sent it?","Send it immediately."],c:1,e:"A clear, polite request supports a constructive supplier relationship."},
+  {q:"Your manager asks for a concise update on sales. You should…",a:["Give every detail from the week.","Summarise the key figures, trends and actions.","Avoid mentioning weaker results.","Talk about unrelated operational issues."],c:1,e:"A useful business update is concise, evidence-based and action-oriented."},
+  {q:"You disagree with a colleague's forecast. What is the most constructive approach?",a:["Your forecast is completely wrong.","I see your point. Could we compare it with last quarter's figures?","That makes no sense.","I refuse to discuss it."],c:1,e:"Acknowledge the other view and suggest reviewing evidence together."},
+  {q:"You do not know the answer to a customer's question. You should…",a:["Guess confidently.","Ignore the question.","Explain that you will check and follow up with accurate information.","Blame another department."],c:2,e:"It is more professional to be transparent and follow up with verified information."}
+ ]},
+ assessment:{title:"Final assessment",intro:"A short mixed-skills review covering vocabulary, grammar and professional judgement.",questions:[
+  {q:"Which KPI measures the percentage of visitors who purchase?",a:["Footfall","Conversion rate","Gross margin","Stock turnover"],c:1,e:"Conversion rate measures the proportion of visitors who buy."},
+  {q:"The store _____ its best monthly result this year.",a:["has achieved","have achieve","achieving","were achieve"],c:0,e:"'The store' is singular; the present perfect is 'has achieved'."},
+  {q:"A customer requests a refund. Your first step is to…",a:["Refuse immediately.","Listen, clarify the issue and check the returns policy.","Promise any outcome.","End the conversation."],c:1,e:"Listen and establish the facts before explaining the relevant policy."},
+  {q:"Revenue is £80,000 and cost of goods sold is £50,000. What is gross profit?",a:["£30,000","£50,000","£80,000","£130,000"],c:0,e:"Gross profit = revenue − cost of goods sold = £30,000."},
+  {q:"If demand _____ next quarter, we may need to increase our order.",a:["will rise","rises","rose","rising"],c:1,e:"In a first conditional, the if-clause uses present simple: If demand rises, we may need…"},
+  {q:"What does 'clearance sale' usually mean?",a:["A sale of new premises","A promotion to sell remaining stock, often at reduced prices","A supplier audit","A customer survey"],c:1,e:"Clearance sales help retailers sell remaining or discontinued stock."},
+  {q:"Which is the clearest report sentence?",a:["Sales were good and stuff happened.","Sales increased by 8% compared with the previous month.","We did lots more.","Sales are nice."],c:1,e:"A strong business report uses precise, measurable language."},
+  {q:"A product's selling price is £60 and its cost is £36. What is the gross margin?",a:["24%","36%","40%","60%"],c:2,e:"Gross profit is £24. Gross margin = 24 ÷ 60 × 100 = 40%."},
+  {q:"Which phrase is best for politely interrupting a meeting?",a:["Stop talking.","Can I just add something here?","You are wrong.","Listen to me."],c:1,e:"This is a polite, natural way to enter a discussion."},
+  {q:"The new returns procedure _____ across all branches next week.",a:["will implement","will be implemented","implemented by","is implement"],c:1,e:"Use the future passive: will be + past participle."}
+ ]}
+};
+const caseStudy = {title:"The Riverside Store: a retail performance challenge",brief:"Riverside is a medium-sized clothing retailer. Over the last three months, monthly revenue has fallen from £120,000 to £102,000. Store footfall has remained almost unchanged, but the conversion rate has dropped from 24% to 19%. At the same time, the business is holding high levels of last season's stock. Customer feedback mentions long queues at weekends and limited availability of popular sizes.",tasks:["Identify two likely business problems using evidence from the case.","Recommend three practical actions the store manager could take.","Write a short professional update to the regional manager (80–120 words)."],model:"Riverside's main challenges are a lower conversion rate and excess seasonal inventory. Revenue has fallen by 15%, while footfall has remained stable, suggesting that fewer visitors are completing purchases. The store should review weekend staffing to reduce queues, analyse sales data to replenish popular sizes, and introduce a targeted clearance promotion for last season's stock. The manager should monitor conversion rate, average transaction value and stock turnover over the next month to evaluate the impact."};
+const KEY="lex-retail-progress-v1";let state=loadState(),current="vocabulary",questionIndex=0,answers=[],revealed=false;
+function loadState(){try{return JSON.parse(localStorage.getItem(KEY))||{completed:{},scores:{},caseText:""}}catch{return{completed:{},scores:{},caseText:""}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));updateProgress()}
+function updateProgress(){const n=Object.keys(state.completed).filter(k=>state.completed[k]).length;document.getElementById("progress-label").textContent=n+" / 5 modules";document.getElementById("overall-progress").style.width=(n/5*100)+"%"}
+function setModule(id){current=id;questionIndex=0;answers=[];revealed=false;document.querySelectorAll("[data-module]").forEach(b=>b.classList.toggle("active",b.dataset.module===id));render()}
+document.querySelectorAll("[data-module]").forEach(b=>b.addEventListener("click",()=>setModule(b.dataset.module)));
+function render(){const isCase=current==="case",m=modules[current],num=["vocabulary","grammar","communication","case","assessment"].indexOf(current)+1;document.getElementById("module-kicker").textContent="MODULE 0"+num;document.getElementById("module-title").textContent=isCase?caseStudy.title:m.title;document.getElementById("module-intro").textContent=isCase?"Read the business scenario, analyse the evidence and write recommendations.":m.intro;document.getElementById("module-status").textContent=state.completed[current]?"Completed · "+(state.scores[current]??"Written task"):"Not completed";if(isCase)renderCase();else renderQuestion()}
+function renderQuestion(){const list=modules[current].questions,q=list[questionIndex],done=questionIndex>=list.length;const root=document.getElementById("activity");if(done){const score=answers.filter((v,i)=>v===list[i].c).length,percent=Math.round(score/list.length*100);state.completed[current]=true;state.scores[current]=percent;save();root.innerHTML='<div class="rounded-2xl bg-white/5 p-6 text-center"><div class="tag">Module complete</div><div class="text-5xl serif gold mt-3">'+percent+'%</div><h3 class="text-2xl mt-2">You scored '+score+' out of '+list.length+'</h3><p class="muted mt-2">Review the explanations and practise again whenever you need to.</p><button class="btn btn-primary mt-6" id="retry">Try again</button></div><div class="mt-5 flex flex-wrap gap-2 justify-between"><button class="btn btn-ghost" id="previous">Back to last question</button><button class="btn btn-ghost" id="next-module">Next module →</button></div>';document.getElementById("retry").onclick=()=>{questionIndex=0;answers=[];renderQuestion()};document.getElementById("previous").onclick=()=>{questionIndex=list.length-1;renderQuestion()};document.getElementById("next-module").onclick=()=>setModule(({vocabulary:"grammar",grammar:"communication",communication:"case",case:"assessment",assessment:"vocabulary"})[current]);return}
+ const selected=answers[questionIndex];root.innerHTML='<div class="flex items-center justify-between text-xs muted mb-2"><span>QUESTION '+(questionIndex+1)+' OF '+list.length+'</span><span>'+Math.round(questionIndex/list.length*100)+'% complete</span></div><div class="progress mb-6"><span style="width:'+((questionIndex)/list.length*100)+'%"></span></div><h3 class="text-xl sm:text-2xl leading-snug">'+q.q+'</h3><div id="choices" class="mt-4">'+q.a.map((a,i)=>'<button class="choice '+(selected===i?'selected':'')+'" data-choice="'+i+'">'+String.fromCharCode(65+i)+'. '+a+'</button>').join("")+'</div><div id="feedback" class="mt-4"></div><div class="flex justify-between gap-3 mt-6"><button class="btn btn-ghost" id="back" '+(questionIndex===0?'disabled':'')+'>← Back</button><button class="btn btn-primary" id="continue" '+(selected===undefined?'disabled':'')+'>'+(questionIndex===list.length-1?'Finish module':'Continue →')+'</button></div>';
+ document.querySelectorAll("[data-choice]").forEach(b=>b.onclick=()=>{if(answers[questionIndex]!==undefined)return;const i=Number(b.dataset.choice);answers[questionIndex]=i;document.querySelectorAll("[data-choice]").forEach(x=>{x.disabled=true;const v=Number(x.dataset.choice);if(v===q.c)x.classList.add("correct");else if(v===i)x.classList.add("wrong")});document.getElementById("feedback").innerHTML='<div class="rounded-xl p-4 '+(i===q.c?'bg-emerald-400/10 border border-emerald-300/30':'bg-rose-400/10 border border-rose-300/30')+'"><strong>'+(i===q.c?'Correct. Well done.':'Not quite. Keep learning.')+'</strong><p class="text-sm muted mt-1">'+q.e+'</p></div>';document.getElementById("continue").disabled=false});
+ document.getElementById("back").onclick=()=>{if(questionIndex>0){questionIndex--;renderQuestion()}};document.getElementById("continue").onclick=()=>{questionIndex++;renderQuestion()}
+}
+function renderCase(){const root=document.getElementById("activity");root.innerHTML='<div class="rounded-xl border border-amber-200/20 p-5 bg-amber-100/5"><div class="tag">Business scenario</div><p class="leading-relaxed mt-3">'+caseStudy.brief+'</p></div><div class="mt-6"><h3 class="text-xl">Your tasks</h3><ol class="list-decimal pl-5 mt-3 space-y-2 muted text-sm">'+caseStudy.tasks.map(t=>'<li>'+t+'</li>').join("")+'</ol></div><div class="mt-6"><label for="case-answer" class="block font-semibold mb-2">Your analysis and recommendations</label><textarea id="case-answer" placeholder="Write your analysis here. Support your recommendations with evidence from the case...">'+(state.caseText||"")+'</textarea><div class="flex flex-wrap gap-3 mt-3"><button class="btn btn-primary" id="save-case">Save my response</button><button class="btn btn-ghost" id="show-model">Show model response</button></div><div id="case-feedback" class="mt-4"></div><div id="model-response" class="hidden rounded-xl border border-amber-200/20 p-4 mt-4"><div class="tag">Example response · Compare and adapt</div><p class="text-sm leading-relaxed mt-2">'+caseStudy.model+'</p></div></div><div class="mt-6 border-t border-white/10 pt-5"><p class="muted text-xs">Self-review: have you used figures accurately, explained causes, proposed realistic actions and used a professional tone?</p><button class="btn btn-ghost mt-3" id="complete-case">Mark written task as completed</button></div>';
+ document.getElementById("save-case").onclick=()=>{state.caseText=document.getElementById("case-answer").value;save();document.getElementById("case-feedback").textContent="Your response has been saved in this browser."};document.getElementById("show-model").onclick=()=>document.getElementById("model-response").classList.toggle("hidden");document.getElementById("complete-case").onclick=()=>{state.caseText=document.getElementById("case-answer").value;state.completed.case=true;state.scores.case="Submitted for self-review";save();render()}}
+updateProgress();render();
+</script>
+</body>
+</html>
