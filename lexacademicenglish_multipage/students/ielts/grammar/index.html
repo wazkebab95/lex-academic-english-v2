@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>01 Grammar | IELTS Suite — Lex Academic English</title>
+  <link rel="stylesheet" href="../assets/ielts-editorial.css" />
+</head>
+<body>
+  <header class="lex-topbar">
+    <div class="lex-topbar-inner">
+      <a href="/students/ielts/" class="lex-brand">Lex Academic English</a>
+      <nav class="lex-nav">
+        <a href="/students/ielts/">Overview</a>
+        <a href="/students/ielts/grammar/" class="active">01 Grammar</a>
+        <a href="/students/ielts/vocabulary/">02 Vocabulary</a>
+        <a href="/students/ielts/sentences/">03 Sentences</a>
+        <a href="/students/ielts/writing/">04 Writing</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lex-container">
+    <p class="lex-eyebrow">Module 01 / Grammatical Range & Accuracy</p>
+    <h1 class="lex-title">Complex Clauses & Syntactic Control</h1>
+
+    <div id="assessment-view" class="assessment-layout" style="margin-top: 32px;">
+      <aside class="rail-panel">
+        <div class="field-group">
+          <label for="rail-name">Candidate Name</label>
+          <input type="text" id="rail-name" placeholder="Full Name" />
+        </div>
+        <div class="field-group">
+          <label for="rail-email">Candidate Email</label>
+          <input type="email" id="rail-email" placeholder="Email Address" />
+        </div>
+
+        <div class="timer-display">
+          <span class="label">Elapsed</span>
+          <span id="timer-clock">00:00</span>
+        </div>
+
+        <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-secondary); margin: 0 0 10px;">Question Matrix</p>
+        <div class="q-matrix" id="q-matrix"></div>
+
+        <button id="submit-btn" class="btn-primary">Submit & Email Results</button>
+        <p id="error-msg" style="font-size: 12px; color: var(--status-terracotta); margin: 10px 0 0;"></p>
+      </aside>
+
+      <div id="questions-container"></div>
+    </div>
+
+    <div id="results-view" style="display: none; margin-top: 32px;"></div>
+  </main>
+
+  <script src="../assets/ielts-engine.js"></script>
+  <script>
+    const QUESTIONS = [
+      {
+        id: 1,
+        focus: "Non-Defining Relative Clauses",
+        prompt: "Combine these two ideas into a single Band 8.0 academic sentence: 'Urban congestion has risen sharply. This has prompted municipal authorities to expand rail networks.'",
+        options: [
+          "Urban congestion has risen sharply that has prompted municipal authorities to expand rail networks.",
+          "Urban congestion, which has risen sharply, has prompted municipal authorities to expand rail networks.",
+          "Urban congestion which has risen sharply has prompted municipal authorities to expand rail networks."
+        ],
+        correct: 1,
+        note: "Non-defining relative clauses add supplementary information about a specific noun and must be enclosed by commas using 'which' (never 'that')."
+      },
+      {
+        id: 2,
+        focus: "Third Conditional (Unfulfilled Past)",
+        prompt: "Select the grammatically accurate Band 8.0 completion: 'If the municipal government ________ in renewable infrastructure a decade ago, current carbon emissions would have been substantially lower.'",
+        options: [
+          "invested",
+          "would have invested",
+          "had invested"
+        ],
+        correct: 2,
+        note: "Unfulfilled past conditions require the past perfect ('had invested') in the conditional clause paired with 'would have + past participle' in the result clause."
+      },
+      {
+        id: 3,
+        focus: "Participle Clauses for Cause & Effect",
+        prompt: "Which sentence uses a reduced participle clause accurately without creating a dangling modifier?",
+        options: [
+          "Having implemented strict congestion charges, private vehicle usage fell by 22% in central London.",
+          "Having implemented strict congestion charges, the city council recorded a 22% drop in private vehicle usage.",
+          "Implementing strict congestion charges, a 22% drop in private vehicle usage occurred."
+        ],
+        correct: 1,
+        note: "The subject of the main clause ('the city council') must be the agent performing the action in the opening participle clause ('Having implemented...')."
+      },
+      {
+        id: 4,
+        focus: "Impersonal Passive Reporting",
+        prompt: "Upgrade this informal claim for IELTS Task 2: 'Many economists think that automation will displace routine clerical jobs.'",
+        options: [
+          "It is widely contended among economists that automation will displace routine clerical roles.",
+          "It widely contends by economists that automation will displace routine clerical roles.",
+          "Economists are widely contended that automation will displace routine clerical roles."
+        ],
+        correct: 0,
+        note: "Impersonal passive structures ('It is widely contended that...') create objective academic distance while demonstrating passive voice control."
+      },
+      {
+        id: 5,
+        focus: "Inversion for Emphasis",
+        prompt: "Complete the inverted formal structure: 'Not only ________ renewable energy reduce long-term fiscal expenditure, but it also strengthens energy security.'",
+        options: [
+          "does",
+          "is",
+          "has"
+        ],
+        correct: 0,
+        note: "Negative adverbials ('Not only') at the start of a clause trigger subject-auxiliary inversion ('does renewable energy reduce')."
+      },
+      {
+        id: 6,
+        focus: "Concessive Clauses",
+        prompt: "Identify the error-free sentence expressing concession:",
+        options: [
+          "Despite urban housing prices escalated rapidly, demand remained resilient.",
+          "Although the rapid escalation of urban housing prices, demand remained resilient.",
+          "Notwithstanding the rapid escalation in urban housing prices, demand remained resilient."
+        ],
+        correct: 2,
+        note: "'Notwithstanding' and 'despite' function as prepositions and must be followed by a noun phrase ('the rapid escalation'), whereas 'although' requires a full finite clause."
+      }
+    ];
+
+    const answers = {};
+    const stopTimer = LexIelts.startTimer('timer-clock');
+
+    const saved = LexIelts.getCandidate();
+    document.getElementById('rail-name').value = saved.name;
+    document.getElementById('rail-email').value = saved.email;
+
+    const matrixEl = document.getElementById('q-matrix');
+    const containerEl = document.getElementById('questions-container');
+
+    QUESTIONS.forEach((q, idx) => {
+      const dot = document.createElement('button');
+      dot.className = 'q-dot';
+      dot.id = `dot-${q.id}`;
+      dot.textContent = String(q.id).padStart(2, '0');
+      dot.onclick = () => document.getElementById(`card-${q.id}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+      matrixEl.appendChild(dot);
+
+      const card = document.createElement('div');
+      card.className = 'question-card';
+      card.id = `card-${q.id}`;
+      card.innerHTML = `
+        <div class="q-header">
+          <span>QUESTION 0${q.id} OF 0${QUESTIONS.length}</span>
+          <span>${q.focus.toUpperCase()}</span>
+        </div>
+        <p class="q-prompt">${q.prompt}</p>
+        <div class="option-list">
+          ${q.options.map((opt, oIdx) => `
+            <label class="option-item" id="opt-${q.id}-${oIdx}">
+              <input type="radio" name="q-${q.id}" value="${oIdx}" />
+              <span>${opt}</span>
+            </label>
+          `).join('')}
+        </div>
+      `;
+      containerEl.appendChild(card);
+
+      card.querySelectorAll(`input[name="q-${q.id}"]`).forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          const val = Number(e.target.value);
+          answers[q.id] = val;
+          document.getElementById(`dot-${q.id}`).classList.add('answered');
+          q.options.forEach((_, i) => {
+            document.getElementById(`opt-${q.id}-${i}`).classList.toggle('selected', i === val);
+          });
+        });
+      });
+    });
+
+    document.getElementById('submit-btn').addEventListener('click', async () => {
+      const studentName = document.getElementById('rail-name').value.trim();
+      const studentEmail = document.getElementById('rail-email').value.trim();
+      const errEl = document.getElementById('error-msg');
+
+      if (!studentName || !studentEmail) {
+        errEl.textContent = 'Please enter both your name and email address before submitting.';
+        return;
+      }
+      if (Object.keys(answers).length < QUESTIONS.length) {
+        errEl.textContent = `Please complete all ${QUESTIONS.length} items (${Object.keys(answers).length}/${QUESTIONS.length} answered).`;
+        return;
+      }
+
+      errEl.textContent = '';
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Recording & Dispatching...';
+      LexIelts.saveCandidate(studentName, studentEmail);
+
+      const timeTaken = stopTimer();
+      let correctCount = 0;
+      let detailsHtml = '';
+      let detailsPlain = '';
+
+      QUESTIONS.forEach(q => {
+        const chosenIdx = answers[q.id];
+        const isRight = chosenIdx === q.correct;
+        if (isRight) correctCount++;
+
+        detailsHtml += `
+          <div style="margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #E2DFD7;">
+            <p style="margin: 0 0 4px;"><strong>Q${q.id} (${q.focus}):</strong> ${isRight ? '✓ Correct' : '✗ Incorrect'}</p>
+            <p style="margin: 0 0 4px; font-size: 13px;">Your selection: <em>${q.options[chosenIdx]}</em></p>
+            ${!isRight ? `<p style="margin: 0 0 4px; font-size: 13px; color: #2E5A44;">Band 8.0 Target: <strong>${q.options[q.correct]}</strong></p>` : ''}
+            <p style="margin: 0; font-size: 12px; color: #5C5B57;">${q.note}</p>
+          </div>
+        `;
+        detailsPlain += `Q${q.id}: ${isRight ? 'OK' : 'ERR'} | `;
+      });
+
+      const scoreStr = `${correctCount} / ${QUESTIONS.length}`;
+      const bandEst = LexIelts.estimateBand(correctCount, QUESTIONS.length);
+
+      try {
+        await LexIelts.submitAssessment({
+          studentName,
+          studentEmail,
+          category: '01 Grammar',
+          score: scoreStr,
+          bandEstimate: bandEst,
+          timeTaken,
+          detailsHtml,
+          detailsPlain
+        });
+      } catch (e) {
+        console.warn('Webhook warning:', e);
+      }
+
+      LexIelts.recordCompletion('grammar', `Completed · ${scoreStr} (${bandEst})`);
+
+      document.getElementById('assessment-view').style.display = 'none';
+      const resEl = document.getElementById('results-view');
+      resEl.style.display = 'block';
+      resEl.innerHTML = `
+        <div class="diagnostic-banner">
+          <strong>Assessment Recorded & Dispatched</strong><br />
+          Candidate: ${studentName}  ·  Score: <strong>${scoreStr} (${bandEst})</strong>  ·  Time: ${timeTaken}<br />
+          <span style="font-size: 13px;">A copy of this breakdown has been sent to <strong>${studentEmail}</strong> and registered in the instructor ledger.</span>
+        </div>
+        ${QUESTIONS.map(q => {
+          const isRight = answers[q.id] === q.correct;
+          return `
+            <div class="review-card ${isRight ? 'correct' : 'incorrect'}">
+              <div class="q-header">
+                <span>QUESTION 0${q.id} ·${q.focus.toUpperCase()}</span>
+                <span>${isRight ? '✓ ACCURATE' : '✗ REVISION NEEDED'}</span>
+              </div>
+              <p style="font-weight: 500; margin: 0 0 8px;">${q.prompt}</p>
+              <p style="margin: 0 0 6px; font-size: 14px;"><strong>Your Answer:</strong> ${q.options[answers[q.id]]}</p>${!isRight ? `<p style="margin: 0 0 6px; font-size: 14px; color: var(--status-sage);"><strong>Band 8.0 Target:</strong> ${q.options[q.correct]}</p>` : ''}
+              <div class="examiner-note"><strong>Examiner Note:</strong> ${q.note}</div>
+            </div>
+          `;
+        }).join('')}
+        <div style="margin-top: 28px; display: flex; gap: 16px;">
+          <a href="/students/ielts/vocabulary/" class="btn-primary" style="text-decoration: none; text-align: center; max-width: 260px;">Continue to 02 Vocabulary →</a>
+          <a href="/students/ielts/" class="btn-secondary" style="text-decoration: none;">Return to Overview</a>
+        </div>
+      `;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
