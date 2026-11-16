@@ -69,6 +69,10 @@ Do not connect a database or collect real student submissions until the data mod
 - [ ] Results & completion displays module status and the combined score for completed scored quizzes.
 - [ ] Case-study response can be saved locally, model response can be shown, and completion can be marked.
 - [ ] Case-study completion is not presented as an automatically assessed mark.
+- [ ] Browser storage unavailable or full: the learner sees a warning and the page does not crash.
+- [ ] Reload with valid saved progress: module completion and scores are restored.
+- [ ] Corrupt or unexpected local storage values are ignored rather than rendered as HTML.
+- [ ] Enter HTML-like text in the case-study response: it remains plain text in the textarea and does not execute.
 
 ### Privacy and access
 
