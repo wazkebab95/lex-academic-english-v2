@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>04 Writing | IELTS Suite — Lex Academic English</title>
+  <link rel="stylesheet" href="../assets/ielts-editorial.css" />
+</head>
+<body>
+  <header class="lex-topbar">
+    <div class="lex-topbar-inner">
+      <a href="/students/ielts/" class="lex-brand">Lex Academic English</a>
+      <nav class="lex-nav">
+        <a href="/students/ielts/">Overview</a>
+        <a href="/students/ielts/grammar/">01 Grammar</a>
+        <a href="/students/ielts/vocabulary/">02 Vocabulary</a>
+        <a href="/students/ielts/sentences/">03 Sentences</a>
+        <a href="/students/ielts/writing/" class="active">04 Writing</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lex-container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 28px;">
+      <div>
+        <p class="lex-eyebrow">Module 04 / Task Response & Academic Composition</p>
+        <h1 class="lex-title" style="margin-bottom: 0;">IELTS Writing Workspace</h1>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button id="tab-task2" class="btn-primary" style="width: auto;">Task 2: Discursive Essay (250+ words)</button>
+        <button id="tab-task1" class="btn-secondary">Task 1: Academic Report (150+ words)</button>
+      </div>
+    </div>
+
+    <div id="workspace-view" class="writing-grid">
+      <div class="question-card" style="margin-bottom: 0;">
+        <div class="q-header">
+          <span id="task-label">WRITING TASK 2 · 40 MINUTES RECOMMENDED</span>
+          <span id="timer-clock">00:00</span>
+        </div>
+        <p id="task-prompt" class="q-prompt" style="font-size: 20px;">
+          In many major cities, municipal authorities are restricting private car access in central districts to reduce congestion and carbon emissions. Do the advantages of such policies outweigh the disadvantages for residents and local businesses?
+        </p>
+        <p style="font-size: 13px; color: var(--ink-secondary); border-bottom: 1px solid var(--border-hairline); padding-bottom: 16px;">
+          Give reasons for your answer and include any relevant examples from your own knowledge or experience.
+        </p>
+
+        <h4 style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-navy); margin: 20px 0 10px;">
+          Pre-Submission Band 8+ Audit
+        </h4>
+        <label class="checklist-item"><input type="checkbox" /> <span>Clear thesis statement / overview paragraph established early</span></label>
+        <label class="checklist-item"><input type="checkbox" /> <span>Each body paragraph opens with a distinct, focused topic sentence</span></label>
+        <label class="checklist-item"><input type="checkbox" /> <span>Formal academic register maintained (no contractions or slang)</span></label>
+        <label class="checklist-item"><input type="checkbox" /> <span>Minimum word count threshold met</span></label>
+      </div>
+
+      <div>
+        <div class="question-card" style="padding: 20px; margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="field-group" style="margin-bottom: 0;">
+            <label for="w-name">Candidate Name</label>
+            <input type="text" id="w-name" placeholder="Full Name" />
+          </div>
+          <div class="field-group" style="margin-bottom: 0;">
+            <label for="w-email">Candidate Email</label>
+            <input type="email" id="w-email" placeholder="Email Address" />
+          </div>
+        </div>
+
+        <textarea id="essay-box" class="essay-textarea" placeholder="Begin composing your response here..."></textarea>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; flex-wrap: wrap; gap: 12px;">
+          <div style="font-family: var(--font-mono); font-size: 13px;">
+            Word Count: <strong id="word-count">0</strong> <span id="word-target" style="color: var(--ink-secondary);">/ 250 min</span>
+          </div>
+          <button id="submit-essay-btn" class="btn-primary" style="width: auto; padding: 13px 28px;">Submit Essay for Review →</button>
+        </div>
+        <p id="w-error" style="font-size: 12px; color: var(--status-terracotta); margin: 8px 0 0;"></p>
+      </div>
+    </div>
+
+    <div id="results-view" style="display: none;"></div>
+  </main>
+
+  <script src="../assets/ielts-engine.js"></script>
+  <script>
+    const TASKS = {
+      task2: {
+        label: 'WRITING TASK 2 · 40 MINUTES RECOMMENDED',
+        prompt: 'In many major cities, municipal authorities are restricting private car access in central districts to reduce congestion and carbon emissions. Do the advantages of such policies outweigh the disadvantages for residents and local businesses?',
+        minWords: 250,
+        title: '04 Writing (Task 2)'
+      },
+      task1: {
+        label: 'WRITING TASK 1 · 20 MINUTES RECOMMENDED',
+        prompt: 'Summarise the key trends in renewable energy generation across four European nations (Germany, Spain, Sweden, and the UK) between 2010 and 2024, where wind and solar capacity rose from under 18% to over 45% of total grid output while coal fell below 6%.',
+        minWords: 150,
+        title: '04 Writing (Task 1)'
+      }
+    };
+
+    let activeTask = 'task2';
+    const stopTimer = LexIelts.startTimer('timer-clock');
+
+    const saved = LexIelts.getCandidate();
+    document.getElementById('w-name').value = saved.name;
+    document.getElementById('w-email').value = saved.email;
+
+    const essayBox = document.getElementById('essay-box');
+    const wordCountEl = document.getElementById('word-count');
+    const wordTargetEl = document.getElementById('word-target');
+
+    function updateWordCount() {
+      const words = essayBox.value.trim().split(/\s+/).filter(Boolean).length;
+      wordCountEl.textContent = words;
+      const min = TASKS[activeTask].minWords;
+      wordCountEl.style.color = words >= min ? 'var(--status-sage)' : 'var(--ink-primary)';
+      return words;
+    }
+
+    essayBox.addEventListener('input', updateWordCount);
+
+    document.getElementById('tab-task2').addEventListener('click', () => {
+      activeTask = 'task2';
+      document.getElementById('tab-task2').className = 'btn-primary';
+      document.getElementById('tab-task2').style.width = 'auto';
+      document.getElementById('tab-task1').className = 'btn-secondary';
+      document.getElementById('task-label').textContent = TASKS.task2.label;
+      document.getElementById('task-prompt').textContent = TASKS.task2.prompt;
+      wordTargetEl.textContent = '/ 250 min';
+      updateWordCount();
+    });
+
+    document.getElementById('tab-task1').addEventListener('click', () => {
+      activeTask = 'task1';
+      document.getElementById('tab-task1').className = 'btn-primary';
+      document.getElementById('tab-task1').style.width = 'auto';
+      document.getElementById('tab-task2').className = 'btn-secondary';
+      document.getElementById('task-label').textContent = TASKS.task1.label;
+      document.getElementById('task-prompt').textContent = TASKS.task1.prompt;
+      wordTargetEl.textContent = '/ 150 min';
+      updateWordCount();
+    });
+
+    document.getElementById('submit-essay-btn').addEventListener('click', async () => {
+      const studentName = document.getElementById('w-name').value.trim();
+      const studentEmail = document.getElementById('w-email').value.trim();
+      const essayText = essayBox.value.trim();
+      const words = updateWordCount();
+      const errEl = document.getElementById('w-error');
+
+      if (!studentName || !studentEmail) {
+        errEl.textContent = 'Please enter both your name and email address before submitting.';
+        return;
+      }
+      if (words < 30) {
+        errEl.textContent = 'Please write your response before submitting.';
+        return;
+      }
+
+      errEl.textContent = '';
+      const btn = document.getElementById('submit-essay-btn');
+      btn.disabled = true;
+      btn.textContent = 'Dispatching Essay...';
+      LexIelts.saveCandidate(studentName, studentEmail);
+
+      const timeTaken = stopTimer();
+      const taskMeta = TASKS[activeTask];
+      const escapedEssay = essayText.replace(/</g, '<').replace(/>/g, '>').replace(/\n/g, '<br />');
+
+      const detailsHtml = `
+        <p style="margin: 0 0 8px;"><strong>Prompt:</strong> ${taskMeta.prompt}</p>
+        <p style="margin: 0 0 12px;"><strong>Word Count:</strong> ${words} words (Target: ${taskMeta.minWords}+)</p>
+        <div style="background: #FAF9F6; padding: 16px; border: 1px solid #E2DFD7; font-family: Georgia, serif; line-height: 1.7;">
+          ${escapedEssay}
+        </div>
+      `;
+
+      try {
+        await LexIelts.submitAssessment({
+          studentName,
+          studentEmail,
+          category: taskMeta.title,
+          score: `${words} words`,
+          bandEstimate: 'Pending Instructor Review',
+          timeTaken,
+          detailsHtml,
+          detailsPlain: `[${words} words] ${essayText}`
+        });
+      } catch (e) {
+        console.warn('Webhook warning:', e);
+      }
+
+      LexIelts.recordCompletion('writing', `Submitted · ${words} words`);
+
+      document.getElementById('workspace-view').style.display = 'none';
+      const resEl = document.getElementById('results-view');
+      resEl.style.display = 'block';
+      resEl.innerHTML = `
+        <div class="diagnostic-banner">
+          <strong>Essay Submitted & Logged</strong><br />
+          Candidate: ${studentName}  ·  Task: <strong>${taskMeta.title}</strong>  ·  Word Count: <strong>${words} words</strong>  ·  Time: ${timeTaken}<br />
+          <span style="font-size: 13px;">A timestamped copy of your script has been sent to <strong>${studentEmail}</strong> and delivered to your instructor for Band descriptor feedback.</span>
+        </div>
+        <div class="question-card">
+          <div class="q-header"><span>SUBMITTED SCRIPT</span><span>${words} WORDS</span></div>
+          <div style="font-family: var(--font-serif); font-size: 19px; line-height: 1.75; white-space: pre-wrap;">${essayText}</div>
+        </div>
+        <a href="/students/ielts/" class="btn-secondary" style="text-decoration: none;">Return to IELTS Overview</a>
+      `;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
