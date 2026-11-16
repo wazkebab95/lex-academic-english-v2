@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>02 Vocabulary | IELTS Suite — Lex Academic English</title>
+  <link rel="stylesheet" href="../assets/ielts-editorial.css" />
+</head>
+<body>
+  <header class="lex-topbar">
+    <div class="lex-topbar-inner">
+      <a href="/students/ielts/" class="lex-brand">Lex Academic English</a>
+      <nav class="lex-nav">
+        <a href="/students/ielts/">Overview</a>
+        <a href="/students/ielts/grammar/">01 Grammar</a>
+        <a href="/students/ielts/vocabulary/" class="active">02 Vocabulary</a>
+        <a href="/students/ielts/sentences/">03 Sentences</a>
+        <a href="/students/ielts/writing/">04 Writing</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lex-container">
+    <p class="lex-eyebrow">Module 02 / Lexical Resource</p>
+    <h1 class="lex-title">Academic Register, Collocations & Precision</h1>
+
+    <div id="assessment-view" class="assessment-layout" style="margin-top: 32px;">
+      <aside class="rail-panel">
+        <div class="field-group">
+          <label for="rail-name">Candidate Name</label>
+          <input type="text" id="rail-name" placeholder="Full Name" />
+        </div>
+        <div class="field-group">
+          <label for="rail-email">Candidate Email</label>
+          <input type="email" id="rail-email" placeholder="Email Address" />
+        </div>
+
+        <div class="timer-display">
+          <span class="label">Elapsed</span>
+          <span id="timer-clock">00:00</span>
+        </div>
+
+        <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-secondary); margin: 0 0 10px;">Question Matrix</p>
+        <div class="q-matrix" id="q-matrix"></div>
+
+        <button id="submit-btn" class="btn-primary">Submit & Email Results</button>
+        <p id="error-msg" style="font-size: 12px; color: var(--status-terracotta); margin: 10px 0 0;"></p>
+      </aside>
+
+      <div id="questions-container"></div>
+    </div>
+
+    <div id="results-view" style="display: none; margin-top: 32px;"></div>
+  </main>
+
+  <script src="../assets/ielts-engine.js"></script>
+  <script>
+    const QUESTIONS = [
+      {
+        id: 1,
+        focus: "Task 1 Data Commentary",
+        prompt: "Replace the informal phrase in brackets: 'Between 2015 and 2024, renewable energy adoption [went up very fast] across Northern Europe.'",
+        options: [
+          "escalated precipitously",
+          "surged dramatically",
+          "climbed kind of quickly"
+        ],
+        correct: 1,
+        note: "'Surged dramatically' is an idiomatic C1 collocation for rapid upward trends; 'escalated' typically carries negative connotations (e.g., costs or conflict)."
+      },
+      {
+        id: 2,
+        focus: "Academic Collocations (Environment)",
+        prompt: "Select the precise verb-noun collocation: 'Governments must implement stringent carbon taxes to ________ the detrimental effects of industrial emissions.'",
+        options: [
+          "mitigate",
+          "shrink",
+          "wipe out"
+        ],
+        correct: 0,
+        note: "'Mitigate the effects/impact' is a high-frequency Band 8+ academic collocation; 'wipe out' is overly colloquial for Task 2 essays."
+      },
+      {
+        id: 3,
+        focus: "Hedging & Cautious Language",
+        prompt: "Which sentence demonstrates appropriate academic hedging rather than sweeping overgeneralisation?",
+        options: [
+          "Social media completely destroys adolescent attention spans in every country.",
+          "Excessive screen exposure appears to correlate with diminished sustained attention among adolescents.",
+          "Screen time obviously ruins teenagers' ability to concentrate."
+        ],
+        correct: 1,
+        note: "IELTS Task 2 rewards cautious, hedged claims ('appears to correlate with') over absolute, unsupported assertions ('completely destroys')."
+      },
+      {
+        id: 4,
+        focus: "Urbanisation & Policy Lexis",
+        prompt: "Choose the most accurate term: 'Unregulated urban ________ has placed severe strain on peripheral transport infrastructure.'",
+        options: [
+          "sprawl",
+          "spread-out",
+          "bigness"
+        ],
+        correct: 0,
+        note: "'Urban sprawl' is the exact domain-specific compound noun for the uncontrolled outward expansion of cities."
+      },
+      {
+        id: 5,
+        focus: "Precise Adjectives (Public Health)",
+        prompt: "Upgrade the underlined word: 'A <u>lazy</u> lifestyle is a primary contributor to preventable cardiovascular conditions.'",
+        options: [
+          "sluggish",
+          "sedentary",
+          "inactive-type"
+        ],
+        correct: 1,
+        note: "'Sedentary lifestyle' is a fixed academic collocation required for Band 7.5+ Lexical Resource on health topics."
+      },
+      {
+        id: 6,
+        focus: "Formal Verbs of Causation",
+        prompt: "Select the best formal verb: 'Chronic underfunding has ________ existing inequalities within the public education sector.'",
+        options: [
+          "made worse",
+          "exacerbated",
+          "aggravated up"
+        ],
+        correct: 1,
+        note: "'Exacerbate' (to make a problem or negative situation worse) is a hallmark C1 verb in academic writing."
+      }
+    ];
+
+    const answers = {};
+    const stopTimer = LexIelts.startTimer('timer-clock');
+
+    const saved = LexIelts.getCandidate();
+    document.getElementById('rail-name').value = saved.name;
+    document.getElementById('rail-email').value = saved.email;
+
+    const matrixEl = document.getElementById('q-matrix');
+    const containerEl = document.getElementById('questions-container');
+
+    QUESTIONS.forEach((q) => {
+      const dot = document.createElement('button');
+      dot.className = 'q-dot';
+      dot.id = `dot-${q.id}`;
+      dot.textContent = String(q.id).padStart(2, '0');
+      dot.onclick = () => document.getElementById(`card-${q.id}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+      matrixEl.appendChild(dot);
+
+      const card = document.createElement('div');
+      card.className = 'question-card';
+      card.id = `card-${q.id}`;
+      card.innerHTML = `
+        <div class="q-header">
+          <span>QUESTION 0${q.id} OF 0${QUESTIONS.length}</span>
+          <span>${q.focus.toUpperCase()}</span>
+        </div>
+        <p class="q-prompt">${q.prompt}</p>
+        <div class="option-list">
+          ${q.options.map((opt, oIdx) => `
+            <label class="option-item" id="opt-${q.id}-${oIdx}">
+              <input type="radio" name="q-${q.id}" value="${oIdx}" />
+              <span>${opt}</span>
+            </label>
+          `).join('')}
+        </div>
+      `;
+      containerEl.appendChild(card);
+
+      card.querySelectorAll(`input[name="q-${q.id}"]`).forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          const val = Number(e.target.value);
+          answers[q.id] = val;
+          document.getElementById(`dot-${q.id}`).classList.add('answered');
+          q.options.forEach((_, i) => {
+            document.getElementById(`opt-${q.id}-${i}`).classList.toggle('selected', i === val);
+          });
+        });
+      });
+    });
+
+    document.getElementById('submit-btn').addEventListener('click', async () => {
+      const studentName = document.getElementById('rail-name').value.trim();
+      const studentEmail = document.getElementById('rail-email').value.trim();
+      const errEl = document.getElementById('error-msg');
+
+      if (!studentName || !studentEmail) {
+        errEl.textContent = 'Please enter both your name and email address before submitting.';
+        return;
+      }
+      if (Object.keys(answers).length < QUESTIONS.length) {
+        errEl.textContent = `Please complete all ${QUESTIONS.length} items (${Object.keys(answers).length}/${QUESTIONS.length} answered).`;
+        return;
+      }
+
+      errEl.textContent = '';
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Recording & Dispatching...';
+      LexIelts.saveCandidate(studentName, studentEmail);
+
+      const timeTaken = stopTimer();
+      let correctCount = 0;
+      let detailsHtml = '';
+      let detailsPlain = '';
+
+      QUESTIONS.forEach(q => {
+        const chosenIdx = answers[q.id];
+        const isRight = chosenIdx === q.correct;
+        if (isRight) correctCount++;
+
+        detailsHtml += `
+          <div style="margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #E2DFD7;">
+            <p style="margin: 0 0 4px;"><strong>Q${q.id} (${q.focus}):</strong> ${isRight ? '✓ Correct' : '✗ Incorrect'}</p>
+            <p style="margin: 0 0 4px; font-size: 13px;">Your selection: <em>${q.options[chosenIdx]}</em></p>
+            ${!isRight ? `<p style="margin: 0 0 4px; font-size: 13px; color: #2E5A44;">Band 8.0 Target: <strong>${q.options[q.correct]}</strong></p>` : ''}
+            <p style="margin: 0; font-size: 12px; color: #5C5B57;">${q.note}</p>
+          </div>
+        `;
+        detailsPlain += `Q${q.id}: ${isRight ? 'OK' : 'ERR'} | `;
+      });
+
+      const scoreStr = `${correctCount} / ${QUESTIONS.length}`;
+      const bandEst = LexIelts.estimateBand(correctCount, QUESTIONS.length);
+
+      try {
+        await LexIelts.submitAssessment({
+          studentName,
+          studentEmail,
+          category: '02 Vocabulary',
+          score: scoreStr,
+          bandEstimate: bandEst,
+          timeTaken,
+          detailsHtml,
+          detailsPlain
+        });
+      } catch (e) {
+        console.warn('Webhook warning:', e);
+      }
+
+      LexIelts.recordCompletion('vocabulary', `Completed · ${scoreStr} (${bandEst})`);
+
+      document.getElementById('assessment-view').style.display = 'none';
+      const resEl = document.getElementById('results-view');
+      resEl.style.display = 'block';
+      resEl.innerHTML = `
+        <div class="diagnostic-banner">
+          <strong>Assessment Recorded & Dispatched</strong><br />
+          Candidate: ${studentName}  ·  Score: <strong>${scoreStr} (${bandEst})</strong>  ·  Time: ${timeTaken}<br />
+          <span style="font-size: 13px;">A copy of this breakdown has been sent to <strong>${studentEmail}</strong> and registered in the instructor ledger.</span>
+        </div>
+        ${QUESTIONS.map(q => {
+          const isRight = answers[q.id] === q.correct;
+          return `
+            <div class="review-card ${isRight ? 'correct' : 'incorrect'}">
+              <div class="q-header">
+                <span>QUESTION 0${q.id} · ${q.focus.toUpperCase()}</span>
+                <span>${isRight ? '✓ ACCURATE' : '✗ REVISION NEEDED'}</span>
+              </div>
+              <p style="font-weight: 500; margin: 0 0 8px;">${q.prompt}</p>
+              <p style="margin: 0 0 6px; font-size: 14px;"><strong>Your Answer:</strong> ${q.options[answers[q.id]]}</p>
+              ${!isRight ? `<p style="margin: 0 0 6px; font-size: 14px; color: var(--status-sage);"><strong>Band 8.0 Target:</strong> ${q.options[q.correct]}</p>` : ''}
+              <div class="examiner-note"><strong>Examiner Note:</strong> ${q.note}</div>
+            </div>
+          `;
+        }).join('')}
+        <div style="margin-top: 28px; display: flex; gap: 16px;">
+          <a href="/students/ielts/sentences/" class="btn-primary" style="text-decoration: none; text-align: center; max-width: 260px;">Continue to 03 Sentences →</a>
+          <a href="/students/ielts/" class="btn-secondary" style="text-decoration: none;">Return to Overview</a>
+        </div>
+      `;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
