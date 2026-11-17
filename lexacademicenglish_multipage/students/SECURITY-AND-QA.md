@@ -20,6 +20,7 @@ The proposed `functions/api/submit-ielts.js` changes:
 - Validate required text fields, email addresses and field lengths.
 - Limit the plain-text details field to 20,000 characters.
 - Ignore client-supplied `detailsHtml`; escape plain text before rendering email HTML.
+- Prefix formula-leading text before forwarding it to the Google Sheets webhook.
 - Return generic errors to the browser and check the HTTP status of all three upstream services.
 
 These controls reduce malformed requests and HTML injection risk. **They do not authenticate the caller or prevent automated abuse by themselves.** The current `main` branch still has the earlier endpoint implementation until this branch is reviewed and merged.
@@ -114,6 +115,7 @@ Do not connect a database or collect real student submissions until the data mod
 - [ ] The Retail submission includes only Retail programme data, not unrelated localStorage entries.
 - [ ] The case-study response is omitted unless the learner explicitly opts in.
 - [ ] Client-supplied HTML is ignored and plain-text submissions are escaped in email output.
+- [ ] Spreadsheet-bound text beginning with formula characters is stored as text, not evaluated as a formula.
 - [ ] Oversized, malformed and invalid-email requests are rejected before upstream services are called.
 - [ ] Rate limiting is enabled for POST requests to the submission endpoint.
 
