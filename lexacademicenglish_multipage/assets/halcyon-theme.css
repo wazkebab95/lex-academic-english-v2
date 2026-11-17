@@ -1,0 +1,276 @@
+/* ==========================================================================
+   HALCYON ARCHITECTURAL & TRANSLUCENT GLASS THEME — FEX ACADEMIC ENGLISH
+   Lightweight (<3 KB), GPU-accelerated, mobile-safe
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --canvas: #FAF9F6;
+  --canvas-warm: #F2EFE9;
+  --ink: #1C1C1C;
+  --ink-muted: #5C5B57;
+  --navy: #13294B;
+  --navy-deep: #0D1D36;
+  --oak: #B89F7D;
+  --glass-bg: rgba(255, 255, 255, 0.56);
+  --glass-bg-strong: rgba(250, 249, 246, 0.84);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --hairline: rgba(28, 28, 28, 0.09);
+  --shadow-glass: 0 18px 42px -18px rgba(19, 41, 75, 0.14);
+  --ease-glide: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Native Cross-Document Page Crossfade */
+@supports (view-transition-name: none) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.32s;
+    animation-timing-function: var(--ease-glide);
+  }
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body.halcyon-body {
+  margin: 0;
+  background-color: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Subtle Architectural Ambient Light Mesh (Zero Images Required) */
+body.halcyon-body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(19, 41, 75, 0.055), transparent 44%),
+    radial-gradient(circle at 88% 12%, rgba(184, 159, 125, 0.11), transparent 46%),
+    radial-gradient(circle at 72% 82%, rgba(19, 41, 75, 0.045), transparent 50%);
+}
+
+/* Typography */
+.font-editorial { font-family: var(--font-serif); }
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+/* Almost-See-Through Frosted Glass Header */
+.halcyon-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 22px 24px;
+  transition: padding 0.4s var(--ease-glide),
+              background-color 0.4s ease,
+              border-color 0.4s ease,
+              backdrop-filter 0.4s ease;
+  border-bottom: 1px solid transparent;
+}
+
+/* Over-hero transparent white text mode (used on index.html top) */
+.halcyon-header.over-hero:not(.is-scrolled) {
+  color: #FFFFFF;
+}
+.halcyon-header.over-hero:not(.is-scrolled) .nav-portal-pill {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #FFFFFF;
+}
+
+/* Condensed Frosted Glass State */
+.halcyon-header.is-scrolled,
+.halcyon-header.solid-glass {
+  padding: 14px 24px;
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-bottom-color: var(--hairline);
+  color: var(--ink);
+  box-shadow: 0 10px 30px -15px rgba(19, 41, 75, 0.12);
+}
+
+/* Magnetic Editorial Navigation Links */
+.halcyon-nav-link {
+  position: relative;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+  padding-bottom: 4px;
+}
+.halcyon-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.38s var(--ease-glide);
+}
+.halcyon-nav-link:hover::after,
+.halcyon-nav-link.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Translucent Glass Panels & Cards */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-glass);
+  border-radius: 20px;
+  transition: transform 0.45s var(--ease-glide),
+              background-color 0.4s ease,
+              border-color 0.4s ease,
+              box-shadow 0.45s var(--ease-glide);
+}
+.glass-panel:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(19, 41, 75, 0.22);
+  box-shadow: 0 24px 48px -20px rgba(19, 41, 75, 0.18);
+}
+
+/* Editorial Buttons */
+.btn-navy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--navy);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 13px 26px;
+  border-radius: 999px;
+  text-decoration: none;
+  border: 1px solid var(--navy);
+  cursor: pointer;
+  transition: transform 0.3s var(--ease-glide), background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.btn-navy:hover {
+  background: var(--navy-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -10px rgba(19, 41, 75, 0.45);
+}
+
+.btn-glass {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 13px 26px;
+  border-radius: 999px;
+  text-decoration: none;
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: transform 0.3s var(--ease-glide), background-color 0.3s ease, border-color 0.3s ease;
+}
+.btn-glass:hover {
+  background: #FFFFFF;
+  border-color: var(--navy);
+  transform: translateY(-2px);
+}
+
+/* Smooth Gliding Scroll Reveal */
+.glide-reveal {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition: opacity 0.75s var(--ease-glide), transform 0.75s var(--ease-glide);
+  will-change: opacity, transform;
+}
+.glide-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Zero-JS Native Accordion */
+.halcyon-accordion details {
+  border-bottom: 1px solid var(--hairline);
+  padding: 18px 0;
+}
+.halcyon-accordion summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-serif);
+  font-size: 23px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.halcyon-accordion summary::-webkit-details-marker { display: none; }
+.halcyon-accordion summary .icon-plus {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  color: var(--navy);
+  transition: transform 0.35s var(--ease-glide);
+}
+.halcyon-accordion details[open] summary .icon-plus {
+  transform: rotate(45deg);
+}
+.halcyon-accordion details p {
+  margin: 12px 0 4px;
+  font-size: 14.5px;
+  color: var(--ink-muted);
+  max-width: 720px;
+}
+
+/* Frosted Mobile Drawer */
+#mobile-drawer {
+  background: rgba(250, 249, 246, 0.94);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  border-bottom: 1px solid var(--hairline);
+  color: var(--ink);
+}
+
+/* Clean Form Inputs */
+.halcyon-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  padding: 13px 16px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink);
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+.halcyon-input:focus {
+  outline: none;
+  border-color: var(--navy);
+  background: #FFFFFF;
+}
