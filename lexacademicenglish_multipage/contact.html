@@ -88,23 +88,23 @@
         </div>
       </div>
 
-      <!-- Enquiry Form Panel -->
+      <!-- Safari-Safe AJAX Enquiry Form Panel -->
       <div class="lg:col-span-7 glass-panel p-8 sm:p-10 glide-reveal">
-        <form id="contact-form" action="mailto:fawwaz@lexacademicenglish.co.uk" method="post" enctype="text/plain" class="space-y-5">
+        <form id="contact-form" action="javascript:void(0);" class="space-y-5">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <label class="block text-[11px] uppercase tracking-widest font-semibold mb-2">Full Name</label>
-              <input type="text" name="Name" required placeholder="Dr / Ms / Mr ..." class="halcyon-input" />
+              <input id="enquiry-name" type="text" name="Name" required placeholder="Dr / Ms / Mr ..." class="halcyon-input" />
             </div>
             <div>
               <label class="block text-[11px] uppercase tracking-widest font-semibold mb-2">Email Address</label>
-              <input type="email" name="Email" required placeholder="name@domain.com" class="halcyon-input" />
+              <input id="enquiry-email" type="email" name="Email" required placeholder="name@domain.com" class="halcyon-input" />
             </div>
           </div>
 
           <div>
             <label class="block text-[11px] uppercase tracking-widest font-semibold mb-2">Area of Enquiry</label>
-            <select name="Service" class="halcyon-input">
+            <select id="enquiry-service" name="Service" class="halcyon-input">
               <option>IELTS Academic / General Preparation (Band 7.0+)</option>
               <option>Medical & Scientific Presentation Coaching</option>
               <option>Corporate / Retail Business English</option>
@@ -114,14 +114,16 @@
 
           <div>
             <label class="block text-[11px] uppercase tracking-widest font-semibold mb-2">Project or Learning Objectives</label>
-            <textarea name="Message" rows="5" required placeholder="Outline your current English level, target timeline, or project scope..." class="halcyon-input"></textarea>
+            <textarea id="enquiry-message" name="Message" rows="5" required placeholder="Outline your current English level, target timeline, or project scope..." class="halcyon-input"></textarea>
           </div>
 
           <!-- Cloudflare Turnstile (Light Mode) -->
           <div class="cf-turnstile" data-sitekey="0x4AAAAAAGFi3wPHnLZDXQH5" data-theme="light"></div>
 
-          <button type="submit" class="btn-navy">Send Enquiry →</button>
+          <button id="contact-submit-btn" type="submit" class="btn-navy">Send Enquiry →</button>
         </form>
+
+        <div id="contact-status" class="hidden mt-6 p-5 rounded-2xl bg-white/85 border border-[#13294B]/20 text-sm leading-relaxed"></div>
       </div>
     </div>
   </main>
@@ -142,10 +144,73 @@
       </div>
     </div>
     <div class="max-w-7xl mx-auto px-6 sm:px-10 pb-8 text-[11px] uppercase tracking-widest text-[#5C5B57]">
-      © 2021-2026 Fawwaz Izeddin · Fex Academic English. All rights reserved.
+      © 2026 Fawwaz Izeddin · Fex Academic English. All rights reserved.
     </div>
   </footer>
 
   <script src="/assets/halcyon-motion.js" defer></script>
+  <script>
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+      contactForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const statusBox = document.getElementById('contact-status');
+        const submitBtn = document.getElementById('contact-submit-btn');
+        const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value;
+
+        if (!turnstileToken) {
+          statusBox.classList.remove('hidden');
+          statusBox.innerHTML = '<p class="text-[#13294B] font-semibold">Please complete the security verification check above before sending.</p>';
+          return;
+        }
+
+        const payload = {
+          name: document.getElementById('enquiry-name').value.trim(),
+          email: document.getElementById('enquiry-email').value.trim(),
+          service: document.getElementById('enquiry-service').value,
+          message: document.getElementById('enquiry-message').value.trim(),
+          _subject: 'New Consultation Enquiry — Fex Academic English',
+          _replyto: document.getElementById('enquiry-email').value.trim()
+        };
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending Enquiry...';
+
+        try {
+          const res = await fetch('https://formsubmit.co/ajax/fawwaz@lexacademicenglish.co.uk', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+
+          statusBox.classList.remove('hidden');
+          if (res.ok) {
+            contactForm.reset();
+            if (window.turnstile) window.turnstile.reset();
+            statusBox.innerHTML = `
+              <p class="text-xs uppercase tracking-widest text-emerald-700 font-bold mb-1">Enquiry Dispatched</p>
+              <p class="font-editorial text-2xl font-semibold mb-1">Thank you, ${payload.name}.</p>
+              <p class="text-[#5C5B57]">Your consultation request has been received. A response will be sent to <strong>${payload.email}</strong> within 24 hours.</p>
+            `;
+          } else {
+            throw new Error('Submission error');
+          }
+        } catch (err) {
+          statusBox.classList.remove('hidden');
+          statusBox.innerHTML = `
+            <p class="text-[#13294B] font-semibold mb-1">Unable to dispatch via browser relay.</p>
+            <p class="text-[#5C5B57]">Please email your enquiry directly to <strong>fawwaz@lexacademicenglish.co.uk</strong>.</p>
+          `;
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send Enquiry →';
+        }
+      });
+    }
+  </script>
 </body>
 </html>
