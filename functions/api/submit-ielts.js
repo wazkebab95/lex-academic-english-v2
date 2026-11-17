@@ -1,6 +1,13 @@
 const MAX_BODY_BYTES = 64 * 1024;
 const MAX_DETAILS_CHARS = 20000;
 
+class SubmissionError extends Error {
+  constructor(message, status = 400) {
+    super(message);
+    this.status = status;
+  }
+}
+
 function jsonResponse(payload, status = 200) {
   return new Response(JSON.stringify(payload), {
     status,
@@ -14,16 +21,16 @@ function jsonResponse(payload, status = 200) {
 async function readJsonBody(request) {
   const contentType = request.headers.get("content-type") || "";
   if (!contentType.toLowerCase().includes("application/json")) {
-    throw new Error("Unsupported content type");
+    throw new SubmissionError("A JSON request is required.", 415);
   }
 
   const declaredLength = Number(request.headers.get("content-length") || 0);
   if (declaredLength > MAX_BODY_BYTES) {
-    throw new Error("Request body too large");
+    throw new SubmissionError("The submission is too large.", 413);
   }
 
   const reader = request.body && request.body.getReader();
-  if (!reader) throw new Error("Missing request body");
+  if (!reader) throw new SubmissionError("A submission body is required.", 400);
 
   const chunks = [];
   let total = 0;
@@ -48,7 +55,8 @@ async function readJsonBody(request) {
     offset += chunk.byteLength;
   }
 
-  return JSON.parse(new TextDecoder().decode(bytes));
+  try { return JSON.parse(new TextDecoder().decode(bytes)); }
+  catch { throw new SubmissionError("The submission is not valid JSON.", 400); }
 }
 
 function readText(payload, key, options = {}) {
@@ -57,17 +65,17 @@ function readText(payload, key, options = {}) {
   const fallback = options.fallback || "";
 
   if (payload[key] === undefined || payload[key] === null) {
-    if (required) throw new Error("Missing required field");
+    if (required) throw new SubmissionError("A required field is missing.", 400);
     return fallback;
   }
 
   if (typeof payload[key] !== "string") {
-    throw new Error("Invalid field type");
+    throw new SubmissionError("A submission field has an invalid type.", 400);
   }
 
   const value = payload[key].trim();
   if (required && !value) throw new Error("Missing required field");
-  if (value.length > max) throw new Error("Field too long");
+  if (value.length > max) throw new SubmissionError("A submission field is too long.", 400);
   return value;
 }
 
@@ -233,6 +241,9 @@ export async function onRequestPost({ request, env }) {
 
     return jsonResponse({ success: true }, 200);
   } catch (error) {
+    if (error instanceof SubmissionError) {
+      return jsonResponse({ success: false, error: error.message }, error.status);
+    }
     console.error("Assessment submission failed:", error && error.message ? error.message : "Unknown error");
     return jsonResponse({ success: false, error: "Submission could not be completed. Please try again later." }, 500);
   }
