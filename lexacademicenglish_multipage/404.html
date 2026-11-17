@@ -3,32 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Page Not Found | Lex Academic English</title>
-  <link rel="stylesheet" href="/students/ielts/assets/ielts-editorial.css" />
+  <title>Page Not Found | Fex Academic English</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/assets/halcyon-theme.css" />
 </head>
-<body>
-  <header class="lex-topbar">
-    <div class="lex-topbar-inner">
-      <a href="/" class="lex-brand">Lex Academic English</a>
-      <nav class="lex-nav">
-        <a href="/">Home</a>
-        <a href="/services">Services & Pricing</a>
-        <a href="/ielts-preparation">IELTS Preparation</a>
-        <a href="/students/">Student Portal</a>
+<body class="halcyon-body">
+
+  <header id="halcyon-header" class="halcyon-header solid-glass">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <a href="/" class="font-editorial text-2xl sm:text-[26px] font-bold tracking-wide">
+        Fex Academic English
+      </a>
+      <nav class="hidden lg:flex items-center space-x-8">
+        <a href="/" class="halcyon-nav-link">Home</a>
+        <a href="/services" class="halcyon-nav-link">Services</a>
+        <a href="/ielts-preparation" class="halcyon-nav-link">IELTS Suite</a>
+        <a href="/students/" class="nav-portal-pill px-4 py-1.5 rounded-full border border-[#13294B]/30 text-[11px] font-semibold uppercase tracking-widest text-[#13294B]">
+          Student Portal →
+        </a>
       </nav>
     </div>
   </header>
 
-  <main class="lex-container" style="text-align: center; padding-top: 96px; padding-bottom: 96px;">
-    <p class="lex-eyebrow">Error 404 · Page Not Found</p>
-    <h1 class="lex-title" style="max-width: 600px; margin: 0 auto 16px;">This page has moved or no longer exists.</h1>
-    <p class="lex-subtitle" style="margin: 0 auto 36px;">
-      If you were looking for your course exercises, enter the Student Portal using your registered email address.
-    </p>
-    <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
-      <a href="/" class="btn-secondary">Return to Homepage</a>
-      <a href="/students/" class="btn-primary">Open Student Portal →</a>
+  <main class="max-w-3xl mx-auto px-6 pt-44 pb-32 text-center">
+    <div class="glass-panel p-10 sm:p-16">
+      <span class="eyebrow block mb-3">Error 404 · Page Not Found</span>
+      <h1 class="font-editorial text-4xl sm:text-5xl font-semibold mb-4">
+        This page has moved or no longer exists.
+      </h1>
+      <p class="text-sm sm:text-base text-[#5C5B57] max-w-lg mx-auto mb-8">
+        If you were looking for your course exercises, enter the Student Portal using your registered email address.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="/" class="btn-glass">Return to Homepage</a>
+        <a href="/students/" class="btn-navy">Open Student Portal →</a>
+      </div>
     </div>
   </main>
+
+  <script src="/assets/halcyon-motion.js" defer></script>
 </body>
 </html>
