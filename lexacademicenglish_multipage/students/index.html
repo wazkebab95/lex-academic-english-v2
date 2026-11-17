@@ -15,25 +15,42 @@
         <a href="/students/" class="active">Student Portal</a>
         <a href="/students/ielts/">IELTS Suite</a>
         <a href="/students/retail/">Retail English</a>
+        <a href="/students/resources/">Reference Sheets</a>
       </nav>
     </div>
   </header>
 
   <main class="lex-container">
-    <div style="padding-bottom: 40px; border-bottom: 1px solid var(--border-hairline); margin-bottom: 40px;">
+    <div style="padding-bottom: 36px; border-bottom: 1px solid var(--border-hairline); margin-bottom: 36px;">
       <p class="lex-eyebrow">Enrolled Student Workspace</p>
       <h1 class="lex-title">Lex Academic English Student Portal</h1>
       <p class="lex-subtitle">
-        Select your assigned learning programme below. All diagnostic exercises and written submissions are automatically recorded to your student progress ledger.
+        Select your assigned learning programme or reference library below. All diagnostic exercises and written submissions are automatically recorded to your student progress ledger.
       </p>
     </div>
+
+    <!-- Live Student Progress Bar -->
+    <section id="progress-strip" style="background: var(--bg-card); border: 1px solid var(--border-hairline); padding: 24px 28px; margin-bottom: 36px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+      <div>
+        <p style="font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-navy); margin: 0 0 4px;">
+          Active Session Summary
+        </p>
+        <p id="session-identity" style="font-family: var(--font-serif); font-size: 21px; margin: 0 0 6px;">
+          Welcome to your workspace
+        </p>
+        <div id="session-badges" style="display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px;"></div>
+      </div>
+      <button id="reset-session-btn" type="button" class="btn-secondary" style="font-size: 12px;">
+        Reset Local Session
+      </button>
+    </section>
 
     <section class="module-grid">
       <a href="/students/ielts/" class="module-card">
         <div>
           <div class="module-meta">
             <span class="module-num">PROGRAMME 01 · ACADEMIC & GENERAL</span>
-            <span class="status-pill done">4 Modules Active</span>
+            <span class="status-pill done" id="ielts-card-pill">4 Modules Active</span>
           </div>
           <h2>IELTS Band 7.0+ Diagnostic & Practice Suite</h2>
           <p>
@@ -56,7 +73,57 @@
         </div>
         <span class="module-cta">Enter Retail Module →</span>
       </a>
+
+      <a href="/students/resources/" class="module-card" style="grid-column: 1 / -1;">
+        <div>
+          <div class="module-meta">
+            <span class="module-num">PROGRAMME 03 · BAND 8+ REFERENCE LIBRARY</span>
+            <span class="status-pill">Printable Study Guides</span>
+          </div>
+          <h2>Academic Writing & Lexical Reference Sheets</h2>
+          <p>
+            Curated British English reference matrices for Task 1 data commentary, Task 2 academic hedging verbs, nominalisation transformations, and formal diplomatic phrases.
+          </p>
+        </div>
+        <span class="module-cta">Open Reference Library →</span>
+      </a>
     </section>
   </main>
+
+  <script>
+    (function () {
+      const name = localStorage.getItem('lex_ielts_name') || '';
+      const email = localStorage.getItem('lex_ielts_email') || '';
+      const history = JSON.parse(localStorage.getItem('lex_ielts_history') || '{}');
+
+      const idEl = document.getElementById('session-identity');
+      const badgesEl = document.getElementById('session-badges');
+
+      if (name) {
+        idEl.textContent = email ? `${name} (${email})` : name;
+      } else {
+        idEl.textContent = 'No candidate registered on this browser yet';
+      }
+
+      const keys = Object.keys(history);
+      if (keys.length > 0) {
+        document.getElementById('ielts-card-pill').textContent = `${keys.length} / 4 Completed`;
+        badgesEl.innerHTML = keys.map(k => `
+          <span class="status-pill done" style="text-transform: capitalize;">${k}: ${history[k]}</span>
+        `).join('');
+      } else {
+        badgesEl.innerHTML = '<span class="status-pill">No completed diagnostics recorded in this browser yet</span>';
+      }
+
+      document.getElementById('reset-session-btn').addEventListener('click', () => {
+        if (confirm('Clear saved name, email, and local progress badges on this device? (Your Google Sheet records remain safe.)')) {
+          localStorage.removeItem('lex_ielts_name');
+          localStorage.removeItem('lex_ielts_email');
+          localStorage.removeItem('lex_ielts_history');
+          location.reload();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
