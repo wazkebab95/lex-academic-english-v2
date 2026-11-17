@@ -1,0 +1,186 @@
+/* ==========================================================================
+   OVERTURE STUDIO PORTAL THEME — FEX ACADEMIC ENGLISH (/students/*)
+   Lightweight (<3 KB), GPU-accelerated, mobile & desktop responsive
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --alabaster: #FAF9F6;
+  --dove: #E2E1DF;
+  --surface: #FFFFFF;
+  --ink: #1C1C1C;
+  --muted: #5E5D5A;
+  --espresso: #2D2A27;
+  --espresso-hover: #141311;
+  --hairline: rgba(28, 28, 28, 0.11);
+  --ease-glide: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-serif: 'Newsreader', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@supports (view-transition-name: none) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.28s;
+    animation-timing-function: var(--ease-glide);
+  }
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body.overture-body {
+  margin: 0;
+  background-color: var(--alabaster);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-editorial { font-family: var(--font-serif); }
+
+/* Studio Top Bar */
+.overture-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(250, 249, 246, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.overture-link {
+  position: relative;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  padding-bottom: 3px;
+}
+.overture-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.32s var(--ease-glide);
+}
+.overture-link:hover::after,
+.overture-link.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Espresso Pill Button */
+.btn-espresso {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--espresso);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 11px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--espresso);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.28s var(--ease-glide);
+}
+.btn-espresso:hover {
+  background: var(--espresso-hover);
+  transform: translateY(-1.5px);
+}
+
+.btn-outline-studio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--hairline);
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+.btn-outline-studio:hover {
+  border-color: var(--ink);
+  background: #FFFFFF;
+}
+
+/* Three-Column Studio Cards */
+.studio-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.4s var(--ease-glide);
+}
+.studio-card:hover {
+  transform: translateY(-4px);
+}
+.studio-card-media {
+  position: relative;
+  aspect-ratio: 4 / 4.2;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--dove);
+  margin-bottom: 18px;
+}
+.studio-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.65s var(--ease-glide);
+}
+.studio-card:hover .studio-card-media img {
+  transform: scale(1.035);
+}
+
+/* Full-Width Dove-Grey Statement Band */
+.dove-band {
+  background-color: var(--dove);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+
+/* Studio Form & Exercise Cards */
+.workspace-card {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.studio-input {
+  width: 100%;
+  background: var(--alabaster);
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  padding: 12px 15px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.studio-input:focus {
+  outline: none;
+  border-color: var(--ink);
+  background: #FFFFFF;
+}
