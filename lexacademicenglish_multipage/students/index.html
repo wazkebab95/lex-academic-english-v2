@@ -41,7 +41,7 @@
         <div id="session-badges" style="display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px;"></div>
       </div>
       <button id="reset-session-btn" type="button" class="btn-secondary" style="font-size: 12px;">
-        Reset Local Session
+        Clear Saved Identity
       </button>
     </section>
 
@@ -134,7 +134,7 @@
       }
 
       document.getElementById('reset-session-btn').addEventListener('click', () => {
-        if (!confirm('Clear the name, email and progress summary saved in this browser? This does not delete a submission already sent to the instructor.')) return;
+        if (!confirm('Clear the saved name, email and IELTS completion summary from this browser? Retail practice progress is stored separately and will not be cleared. This does not delete a submission already sent to the instructor.')) return;
         try {
           localStorage.removeItem('lex_ielts_name');
           localStorage.removeItem('lex_ielts_email');
