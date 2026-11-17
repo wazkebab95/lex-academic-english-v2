@@ -1,11 +1,11 @@
-/* Fex Studio — Daily 3-Word Active-Recall Lexicon (B1, B2, C1–C2 · British English) */
+/* Fex Studio — Daily 3-Word Active-Recall Lexicon (B1, B2, C1-C2 · British English) */
 (function () {
   const FEX_DAILY_SETS = [
     [
       {
-        level: "B1 · Intermediate",
+        level: "B1 \u00b7 Intermediate",
         word: "allocate",
-        ipa: "/ˈæl.ə.keɪt/",
+        ipa: "/\u02c8\u00e6l.\u0259.ke\u026at/",
         pos: "verb",
         options: [
           "To distribute resources or duties for a particular purpose",
@@ -18,9 +18,9 @@
         collocation: "allocate funds / resources / time"
       },
       {
-        level: "B2 · Upper-Intermediate",
+        level: "B2 \u00b7 Upper-Intermediate",
         word: "substantial",
-        ipa: "/səbˈstæn.ʃəl/",
+        ipa: "/s\u0259b\u02c8st\u00e6n.\u0283\u0259l/",
         pos: "adjective",
         options: [
           "Temporary and easily reversed",
@@ -33,9 +33,9 @@
         collocation: "substantial increase / evidence / proportion"
       },
       {
-        level: "C1–C2 · Advanced",
+        level: "C1\u2013C2 \u00b7 Advanced",
         word: "exacerbate",
-        ipa: "/ɪɡˈzæs.ə.beɪt/",
+        ipa: "/\u026a\u0261\u02c8z\u00e6s.\u0259.be\u026at/",
         pos: "verb",
         options: [
           "To resolve a dispute through neutral mediation",
@@ -50,9 +50,9 @@
     ],
     [
       {
-        level: "B1 · Intermediate",
+        level: "B1 \u00b7 Intermediate",
         word: "fluctuate",
-        ipa: "/ˈflʌk.tʃu.eɪt/",
+        ipa: "/\u02c8fl\u028ck.t\u0283u.e\u026at/",
         pos: "verb",
         options: [
           "To remain completely unchanged over several years",
@@ -65,9 +65,9 @@
         collocation: "fluctuate between / wildly / considerably"
       },
       {
-        level: "B2 · Upper-Intermediate",
+        level: "B2 \u00b7 Upper-Intermediate",
         word: "discrepancy",
-        ipa: "/dɪˈskrep.ən.si/",
+        ipa: "/d\u026a\u02c8skrep.\u0259n.si/",
         pos: "noun",
         options: [
           "A difference between two or more things that should be the same",
@@ -80,9 +80,9 @@
         collocation: "account for a discrepancy / glaring discrepancy"
       },
       {
-        level: "C1–C2 · Advanced",
+        level: "C1\u2013C2 \u00b7 Advanced",
         word: "corroborate",
-        ipa: "/kəˈrɒb.ə.reɪt/",
+        ipa: "/k\u0259\u02c8r\u0252b.\u0259.re\u026at/",
         pos: "verb",
         options: [
           "To contradict an established clinical guideline",
@@ -97,9 +97,9 @@
     ],
     [
       {
-        level: "B1 · Intermediate",
+        level: "B1 \u00b7 Intermediate",
         word: "feasible",
-        ipa: "/ˈfiː.zə.bəl/",
+        ipa: "/\u02c8fi\u02d0.z\u0259.b\u0259l/",
         pos: "adjective",
         options: [
           "Possible and likely to be achieved",
@@ -112,9 +112,9 @@
         collocation: "economically / technically / practically feasible"
       },
       {
-        level: "B2 · Upper-Intermediate",
+        level: "B2 \u00b7 Upper-Intermediate",
         word: "mitigate",
-        ipa: "/ˈmɪt.ɪ.ɡeɪt/",
+        ipa: "/\u02c8m\u026at.\u026a.\u0261e\u026at/",
         pos: "verb",
         options: [
           "To amplify the impact of a financial loss",
@@ -127,9 +127,9 @@
         collocation: "mitigate the risk / impact / effects"
       },
       {
-        level: "C1–C2 · Advanced",
+        level: "C1\u2013C2 \u00b7 Advanced",
         word: "ameliorate",
-        ipa: "/əˈmiː.li.ə.reɪt/",
+        ipa: "/\u0259\u02c8mi\u02d0.li.\u0259.re\u026at/",
         pos: "verb",
         options: [
           "To make something bad or unsatisfactory better",
@@ -144,9 +144,9 @@
     ],
     [
       {
-        level: "B1 · Intermediate",
+        level: "B1 \u00b7 Intermediate",
         word: "deteriorate",
-        ipa: "/dɪˈtɪə.ri.ə.reɪt/",
+        ipa: "/d\u026a\u02c8t\u026a\u0259.ri.\u0259.re\u026at/",
         pos: "verb",
         options: [
           "To improve rapidly after targeted intervention",
@@ -159,9 +159,9 @@
         collocation: "deteriorate rapidly / steadily / significantly"
       },
       {
-        level: "B2 · Upper-Intermediate",
+        level: "B2 \u00b7 Upper-Intermediate",
         word: "substantiate",
-        ipa: "/səbˈstæn.ʃi.eɪt/",
+        ipa: "/s\u0259b\u02c8st\u00e6n.\u0283i.e\u026at/",
         pos: "verb",
         options: [
           "To provide evidence to support or prove the truth of something",
@@ -174,9 +174,9 @@
         collocation: "substantiate an argument / allegation / claim"
       },
       {
-        level: "C1–C2 · Advanced",
+        level: "C1\u2013C2 \u00b7 Advanced",
         word: "commensurate",
-        ipa: "/kəˈmen.ʃər.ət/",
+        ipa: "/k\u0259\u02c8men.\u0283\u0259r.\u0259t/",
         pos: "adjective",
         options: [
           "Completely unrelated to prior qualifications",
@@ -321,7 +321,7 @@
         solvedCount++;
 
         const isCorrect = oIdx === wordObj.correct;
-        verdictEl.textContent = isCorrect ? "Correct · Meaning Unlocked" : "Review Meaning Below";
+        verdictEl.textContent = isCorrect ? "Correct \u00b7 Meaning Unlocked" : "Review Meaning Below";
         verdictEl.className = isCorrect
           ? "font-bold uppercase tracking-wider text-emerald-700"
           : "font-bold uppercase tracking-wider text-amber-700";
