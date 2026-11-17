@@ -1,255 +1,459 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en-GB">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101b2d">
-  <title>Retail Business English | Lex Practice</title>
-  <meta name="description" content="A personalised Retail Business English practice space by Lex Academic English.">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fex Retail Exercise — Commercial English Studio | Fex Academic English</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/overture-portal.css" />
   <style>
-    :root{color-scheme:dark;--navy:#101b2d;--panel:#17263b;--gold:#d9b875;--muted:#9aabc0}
-    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#213753 0%,var(--navy) 48%);color:#edf2f8;font-family:"DM Sans",sans-serif;min-height:100vh}
-    h1,h2,h3,.serif{font-family:"Playfair Display",serif}.panel{background:rgba(23,38,59,.88);border:1px solid rgba(217,184,117,.16);box-shadow:0 18px 50px rgba(0,0,0,.16)}
-    .gold{color:var(--gold)}.muted{color:var(--muted)}.module{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);transition:.2s}
-    .module:hover,.module.active{border-color:var(--gold);background:rgba(217,184,117,.09);transform:translateY(-1px)}
-    .choice{display:block;width:100%;text-align:left;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:13px 15px;margin-top:9px;background:rgba(255,255,255,.035);transition:.15s}
-    .choice:hover{border-color:var(--gold)}.choice.selected{border-color:var(--gold);background:rgba(217,184,117,.12)}
-    .choice.correct{border-color:#42bd8b;background:rgba(66,189,139,.1)}.choice.wrong{border-color:#e18b83;background:rgba(225,139,131,.1)}
-    .btn{border-radius:999px;padding:11px 18px;font-weight:700;transition:.2s}.btn-primary{background:var(--gold);color:#172033}.btn-primary:hover{filter:brightness(1.08)}.btn-ghost{border:1px solid rgba(255,255,255,.18);color:#edf2f8}
-    .progress{height:7px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}.progress>span{display:block;height:100%;background:var(--gold);transition:width .25s}
-    textarea{width:100%;min-height:170px;background:#101b2d;border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:14px;color:#edf2f8;resize:vertical}
-    textarea:focus,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-    .tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
-    @media(max-width:640px){.shell{padding-left:16px;padding-right:16px}.hero-title{font-size:2.4rem}}
+    :root {
+      --lyceum-grey: #E6E9EE;
+      --lyceum-grey-deep: #DCE1E7;
+      --lyceum-blue: #D9E8F6;
+      --lyceum-blue-tint: #EBF3FB;
+      --slate-blue: #2A5A84;
+      --slate-blue-dark: #1E4263;
+    }
+    body.lyceum-studio {
+      background-color: #F7F9FB;
+    }
+    .lyceum-hero-band {
+      background-color: var(--lyceum-grey);
+      border-bottom: 1px solid rgba(42, 90, 132, 0.14);
+    }
+    .lyceum-blue-band {
+      background-color: var(--lyceum-blue);
+      border-top: 1px solid rgba(42, 90, 132, 0.14);
+      border-bottom: 1px solid rgba(42, 90, 132, 0.14);
+    }
+    .btn-slate {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--slate-blue);
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 11px 22px;
+      border-radius: 999px;
+      border: 1px solid var(--slate-blue);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.25s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-slate:hover {
+      background: var(--slate-blue-dark);
+      transform: translateY(-1.5px);
+    }
+    .module-tab-btn {
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid rgba(28, 28, 28, 0.12);
+      background: #FFFFFF;
+      color: #1C1C1C;
+      cursor: pointer;
+      transition: all 0.22s ease;
+    }
+    .module-tab-btn:hover {
+      border-color: var(--slate-blue);
+      color: var(--slate-blue);
+    }
+    .module-tab-btn.active {
+      background: var(--slate-blue);
+      border-color: var(--slate-blue);
+      color: #FFFFFF;
+    }
   </style>
 </head>
-<body>
-  <div class="shell max-w-6xl mx-auto px-6 py-7 md:py-10">
-    <header class="flex items-center justify-between gap-4 border-b border-white/10 pb-5">
-      <a href="/students/" class="flex items-center gap-3 no-underline text-white" aria-label="Lex Student Hub">
-        <div class="w-11 h-11 rounded-xl grid place-items-center border border-amber-200/30 gold font-bold text-lg">L</div>
-        <div><div class="font-bold tracking-[.18em] text-sm">LEX ACADEMIC ENGLISH</div><div class="muted text-xs tracking-wider">STUDENT LEARNING SPACE</div></div>
-      </a>
-      <div class="hidden sm:block text-right"><div class="tag">Professional English</div><div class="text-sm muted">Retail Business Programme</div></div>
-    </header>
+<body class="overture-body lyceum-studio">
 
-    <main class="grid lg:grid-cols-[285px_1fr] gap-6 mt-8">
-      <aside class="space-y-4">
-        <section class="panel rounded-2xl p-5">
-          <div class="tag">Your programme</div>
-          <h1 class="text-2xl mt-2">Retail Business English</h1>
-          <p class="muted text-sm leading-relaxed mt-2">Practise the language of retail operations, sales performance and professional communication.</p>
-          <div class="mt-5 flex items-center justify-between text-xs"><span class="muted">Overall progress</span><strong id="progress-label">0 / 5 modules</strong></div>
-          <div class="progress mt-2"><span id="overall-progress" style="width:0%"></span></div>
-        </section>
-        <nav id="module-nav" class="grid grid-cols-1 gap-2" aria-label="Learning modules">
-          <button class="module active rounded-xl p-4 text-left" data-module="vocabulary"><span class="tag">01 · Core skills</span><span class="block font-semibold mt-1">Retail vocabulary</span><span class="muted text-xs">Terms and definitions</span></button>
-          <button class="module rounded-xl p-4 text-left" data-module="grammar"><span class="tag">02 · Accuracy</span><span class="block font-semibold mt-1">Business grammar</span><span class="muted text-xs">Grammar in context</span></button>
-          <button class="module rounded-xl p-4 text-left" data-module="communication"><span class="tag">03 · Fluency</span><span class="block font-semibold mt-1">Professional communication</span><span class="muted text-xs">Workplace scenarios</span></button>
-          <button class="module rounded-xl p-4 text-left" data-module="case"><span class="tag">04 · Application</span><span class="block font-semibold mt-1">Retail case study</span><span class="muted text-xs">Analyse and recommend</span></button>
-          <button class="module rounded-xl p-4 text-left" data-module="assessment"><span class="tag">05 · Review</span><span class="block font-semibold mt-1">Final assessment</span><span class="muted text-xs">Mixed skills check</span></button>
+  <!-- Studio Header -->
+  <header class="overture-header" style="background: rgba(247, 249, 251, 0.92);">
+    <div class="max-w-7xl mx-auto px-6 sm:px-10 h-20 flex items-center justify-between gap-6">
+      <div class="flex items-center gap-10">
+        <a href="/students/" class="font-editorial text-2xl sm:text-[26px] font-medium tracking-tight text-[#1C1C1C]">
+          Fex Studio
+        </a>
+        <nav class="hidden md:flex items-center gap-7">
+          <a href="/students/" class="overture-link">Overview</a>
+          <a href="/students/ielts/" class="overture-link">IELTS Suite</a>
+          <a href="/students/retail/" class="overture-link active">Retail English</a>
+          <a href="/students/resources/" class="overture-link">Band 8+ Library</a>
         </nav>
-        <button id="results-button" type="button" class="module rounded-xl p-4 text-left w-full"><span class="tag">Progress review</span><span class="block font-semibold mt-1">Results &amp; completion</span><span class="muted text-xs">Scores and module status</span></button>
-        <p class="text-xs muted leading-relaxed px-1">Progress is currently saved only in this browser on this device. It is not yet sent to your teacher.</p>
-      </aside>
+      </div>
 
-      <section class="panel rounded-2xl p-5 sm:p-8 min-h-[620px]" aria-live="polite">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div><div class="tag" id="module-kicker">MODULE 01</div><h2 class="text-3xl mt-1" id="module-title">Retail vocabulary</h2></div>
-          <span class="rounded-full border border-amber-200/20 px-3 py-1 text-xs gold" id="module-status">Not completed</span>
+      <div class="flex items-center gap-3">
+        <a href="/students/" class="btn-outline-studio">← Studio Hub</a>
+        <button id="studio-menu-btn" aria-label="Toggle Menu" class="md:hidden p-2 text-lg leading-none">☰</button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="studio-drawer" class="hidden md:hidden px-6 pb-6 pt-2 border-t border-black/10 space-y-3 bg-[#F7F9FB]">
+      <a href="/students/" class="block text-sm">Overview</a>
+      <a href="/students/ielts/" class="block text-sm">IELTS Suite</a>
+      <a href="/students/retail/" class="block text-sm font-semibold text-[#2A5A84]">Retail English</a>
+      <a href="/students/resources/" class="block text-sm">Band 8+ Library</a>
+    </div>
+  </header>
+
+  <!-- Band 1: Lyceum Light Grey Editorial Split -->
+  <section class="lyceum-hero-band">
+    <div class="max-w-7xl mx-auto px-6 sm:px-10 py-14 sm:py-20 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      <div class="lg:col-span-8">
+        <p class="text-[11px] uppercase tracking-[0.2em] text-[#2A5A84] font-bold mb-3">
+          Fex Practice · Commercial & Retail Operations
+        </p>
+        <h1 class="font-editorial text-3xl sm:text-[42px] leading-[1.2] text-[#1C1C1C] font-normal mb-6">
+          We are a specialist language practice dedicated to delivering high-impact commercial communication training. Our mission is to bridge operational retail fluency and diplomatic executive register across international teams.
+        </h1>
+        <div class="flex flex-wrap gap-3">
+          <a href="#retail-workspace" class="btn-slate">Begin 5-Module Exercise ↓</a>
+          <span id="retail-header-badge" class="px-4 py-2.5 rounded-full bg-white/80 border border-black/10 text-xs font-semibold text-[#1C1C1C]">
+            0 / 4 Diagnostic Items Completed
+          </span>
         </div>
-        <p class="muted mt-3 leading-relaxed" id="module-intro">Build a practical vocabulary for everyday retail business discussions.</p>
-        <div id="activity" class="mt-7"></div>
-      </section>
-    </main>
-    <footer class="text-center text-xs muted py-8">LEX ACADEMIC ENGLISH <span class="gold">·</span> ABSORB · APPLY · DOMINATE</footer>
-  </div>
+      </div>
 
-<script>
-/* Student-specific settings can be configured here once the learner's level, role and goals are confirmed. */
-const STUDENT_PROFILE = { displayName: "Retail Business Student", level: "To be confirmed", role: "To be confirmed", priorities: ["Retail vocabulary","Business grammar","Professional communication"] };
-const modules = {
- vocabulary:{title:"Retail vocabulary",intro:"Choose the term that best completes each retail business definition.",questions:[
-  {q:"The amount of goods a retailer has available for sale is called…",a:["Revenue","Inventory","Footfall","Margin"],c:1,e:"Inventory refers to the goods or materials a business holds for sale or use."},
-  {q:"The percentage of visitors who make a purchase is the…",a:["Conversion rate","Market share","Markup","Stock level"],c:0,e:"Conversion rate measures the proportion of visitors who complete a desired action, such as making a purchase."},
-  {q:"A product that is temporarily unavailable because all units have sold is…",a:["Overpriced","Out of stock","Marked down","Seasonal"],c:1,e:"Out of stock means the business has no units of that product currently available."},
-  {q:"The total income generated from sales before costs are deducted is…",a:["Net profit","Revenue","Overhead","Discount"],c:1,e:"Revenue is income from sales before expenses are deducted."},
-  {q:"A reduction from the original selling price is a…",a:["Forecast","Refund","Discount","Supplier"],c:2,e:"A discount is a reduction in the usual or original price."},
-  {q:"The percentage of revenue remaining after the cost of goods sold is deducted is the gross…",a:["Margin","Footfall","Turnover","Return"],c:0,e:"Gross margin expresses gross profit as a percentage of revenue."},
-  {q:"The number of people entering a shop during a period is its…",a:["Footfall","Inventory","Markup","Retention"],c:0,e:"Footfall is the count of visitors entering a retail location."},
-  {q:"A business that provides products to a retailer is a…",a:["Customer","Competitor","Supplier","Shareholder"],c:2,e:"A supplier provides goods or services to another business."},
-  {q:"The rate at which stock is sold and replaced is called stock…",a:["Retention","Turnover","Clearance","Allocation"],c:1,e:"Stock turnover indicates how frequently inventory is sold and replenished."},
-  {q:"Encouraging existing customers to continue buying from a business is customer…",a:["Retention","Acquisition cost","Shrinkage","Segmentation"],c:0,e:"Customer retention is the ability to keep customers over time."}
- ]},
- grammar:{title:"Business grammar",intro:"Apply accurate grammar to realistic retail reports and workplace communication.",questions:[
-  {q:"Our online sales _____ by 12% since January.",a:["increased","have increased","has increase","are increase"],c:1,e:"Use the present perfect for a change from the past up to the present. 'Sales' is plural: have increased."},
-  {q:"If we _____ the stock level more carefully, we could reduce waste.",a:["monitor","monitored","will monitor","monitoring"],c:1,e:"This is a second conditional: If + past simple, would/could + infinitive."},
-  {q:"The new store _____ by the regional manager next month.",a:["will open","will be opened","opens by","is opening by"],c:1,e:"The passive is appropriate because the focus is on the store, not the person doing the action."},
-  {q:"There are _____ customers visiting the shop at weekends than on weekdays.",a:["much","more","most","many"],c:1,e:"Use 'more' to compare countable plural nouns."},
-  {q:"We need to respond _____ to customer complaints.",a:["prompt","promptly","promptness","more prompt"],c:1,e:"An adverb ('promptly') modifies the verb 'respond'."},
-  {q:"The supplier said that the delivery _____ delayed.",a:["is","was","were","be"],c:1,e:"In reported speech, a past reporting verb commonly shifts 'is' to 'was'."},
-  {q:"Neither the manager nor the assistants _____ available this morning.",a:["is","are","was","be"],c:1,e:"With 'neither…nor', the verb commonly agrees with the nearer subject; 'assistants' is plural."},
-  {q:"We have worked with this supplier _____ 2022.",a:["for","since","during","from"],c:1,e:"Use 'since' with a starting point in time; use 'for' with a duration."}
- ]},
- communication:{title:"Professional communication",intro:"Choose the most effective and professional response in each workplace situation.",questions:[
-  {q:"A customer says an item was damaged when delivered. What is the best first response?",a:["That is not our fault.","You should contact the courier.","I'm sorry to hear that. Let me look into this for you.","We cannot help without a receipt."],c:2,e:"Acknowledge the customer's concern politely before explaining the next steps."},
-  {q:"You need to ask a supplier to confirm a delayed delivery. Which sentence is most appropriate?",a:["Tell me where the order is.","Could you please confirm the revised delivery date?","Why haven't you sent it?","Send it immediately."],c:1,e:"A clear, polite request supports a constructive supplier relationship."},
-  {q:"Your manager asks for a concise update on sales. You should…",a:["Give every detail from the week.","Summarise the key figures, trends and actions.","Avoid mentioning weaker results.","Talk about unrelated operational issues."],c:1,e:"A useful business update is concise, evidence-based and action-oriented."},
-  {q:"You disagree with a colleague's forecast. What is the most constructive approach?",a:["Your forecast is completely wrong.","I see your point. Could we compare it with last quarter's figures?","That makes no sense.","I refuse to discuss it."],c:1,e:"Acknowledge the other view and suggest reviewing evidence together."},
-  {q:"You do not know the answer to a customer's question. You should…",a:["Guess confidently.","Ignore the question.","Explain that you will check and follow up with accurate information.","Blame another department."],c:2,e:"It is more professional to be transparent and follow up with verified information."}
- ]},
- assessment:{title:"Final assessment",intro:"A short mixed-skills review covering vocabulary, grammar and professional judgement.",questions:[
-  {q:"Which KPI measures the percentage of visitors who purchase?",a:["Footfall","Conversion rate","Gross margin","Stock turnover"],c:1,e:"Conversion rate measures the proportion of visitors who buy."},
-  {q:"The store _____ its best monthly result this year.",a:["has achieved","have achieve","achieving","were achieve"],c:0,e:"'The store' is singular; the present perfect is 'has achieved'."},
-  {q:"A customer requests a refund. Your first step is to…",a:["Refuse immediately.","Listen, clarify the issue and check the returns policy.","Promise any outcome.","End the conversation."],c:1,e:"Listen and establish the facts before explaining the relevant policy."},
-  {q:"Revenue is £80,000 and cost of goods sold is £50,000. What is gross profit?",a:["£30,000","£50,000","£80,000","£130,000"],c:0,e:"Gross profit = revenue − cost of goods sold = £30,000."},
-  {q:"If demand _____ next quarter, we may need to increase our order.",a:["will rise","rises","rose","rising"],c:1,e:"In a first conditional, the if-clause uses present simple: If demand rises, we may need…"},
-  {q:"What does 'clearance sale' usually mean?",a:["A sale of new premises","A promotion to sell remaining stock, often at reduced prices","A supplier audit","A customer survey"],c:1,e:"Clearance sales help retailers sell remaining or discontinued stock."},
-  {q:"Which is the clearest report sentence?",a:["Sales were good and stuff happened.","Sales increased by 8% compared with the previous month.","We did lots more.","Sales are nice."],c:1,e:"A strong business report uses precise, measurable language."},
-  {q:"A product's selling price is £60 and its cost is £36. What is the gross margin?",a:["24%","36%","40%","60%"],c:2,e:"Gross profit is £24. Gross margin = 24 ÷ 60 × 100 = 40%."},
-  {q:"Which phrase is best for politely interrupting a meeting?",a:["Stop talking.","Can I just add something here?","You are wrong.","Listen to me."],c:1,e:"This is a polite, natural way to enter a discussion."},
-  {q:"The new returns procedure _____ across all branches next week.",a:["will implement","will be implemented","implemented by","is implement"],c:1,e:"Use the future passive: will be + past participle."}
- ]}
-};
-const caseStudy = {title:"The Riverside Store: a retail performance challenge",brief:"Riverside is a medium-sized clothing retailer. Over the last three months, monthly revenue has fallen from £120,000 to £102,000. Store footfall has remained almost unchanged, but the conversion rate has dropped from 24% to 19%. At the same time, the business is holding high levels of last season's stock. Customer feedback mentions long queues at weekends and limited availability of popular sizes.",tasks:["Identify two likely business problems using evidence from the case.","Recommend three practical actions the store manager could take.","Write a short professional update to the regional manager (80–120 words)."],model:"Riverside's main challenges are a lower conversion rate and excess seasonal inventory. Revenue has fallen by 15%, while footfall has remained stable, suggesting that fewer visitors are completing purchases. The store should review weekend staffing to reduce queues, analyse sales data to replenish popular sizes, and introduce a targeted clearance promotion for last season's stock. The manager should monitor conversion rate, average transaction value and stock turnover over the next month to evaluate the impact."};
-const KEY="lex-retail-progress-v1";let state=loadState(),current="vocabulary",questionIndex=0,answers=[],revealed=false;
-function loadState(){try{return JSON.parse(localStorage.getItem(KEY))||{completed:{},scores:{},caseText:""}}catch{return{completed:{},scores:{},caseText:""}}}
-function save(){localStorage.setItem(KEY,JSON.stringify(state));updateProgress()}
-function updateProgress(){const n=Object.keys(state.completed).filter(k=>state.completed[k]).length;document.getElementById("progress-label").textContent=n+" / 5 modules";document.getElementById("overall-progress").style.width=(n/5*100)+"%"}
-function setModule(id){current=id;questionIndex=0;answers=[];revealed=false;document.querySelectorAll("[data-module]").forEach(b=>b.classList.toggle("active",b.dataset.module===id));document.getElementById("results-button").classList.remove("active");render()}
-function setResults(){current="results";document.querySelectorAll("[data-module]").forEach(b=>b.classList.remove("active"));document.getElementById("results-button").classList.add("active");render()}
-document.querySelectorAll("[data-module]").forEach(b=>b.addEventListener("click",()=>setModule(b.dataset.module)));
-document.getElementById("results-button").addEventListener("click",setResults);
-function render(){if(current==="results"){const completedCount=["vocabulary","grammar","communication","case","assessment"].filter(id=>state.completed[id]).length;document.getElementById("module-kicker").textContent="PROGRAMME SUMMARY";document.getElementById("module-title").textContent="Results & completion";document.getElementById("module-intro").textContent="Review your progress across the five learning modules.";document.getElementById("module-status").textContent=completedCount+" / 5 complete";renderResults();return}const isCase=current==="case",m=modules[current],num=["vocabulary","grammar","communication","case","assessment"].indexOf(current)+1;document.getElementById("module-kicker").textContent="MODULE 0"+num;document.getElementById("module-title").textContent=isCase?caseStudy.title:m.title;document.getElementById("module-intro").textContent=isCase?"Read the business scenario, analyse the evidence and write recommendations.":m.intro;document.getElementById("module-status").textContent=state.completed[current]?"Completed · "+(state.scores[current]??"Written task"):"Not completed";if(isCase)renderCase();else renderQuestion()}
-function renderResults(){const root=document.getElementById("activity");const order=[["vocabulary","Retail vocabulary"],["grammar","Business grammar"],["communication","Professional communication"],["case","Retail case study"],["assessment","Final assessment"]];const quizIds=["vocabulary","grammar","communication","assessment"];let earned=0,possible=0;quizIds.filter(id=>state.completed[id]).forEach(id=>{const count=modules[id].questions.length;earned+=Math.round(Number(state.scores[id]??0)*count/100);possible+=count});const combined=possible?Math.round(earned/possible*100):null;const rows=order.map(([id,label])=>{const done=Boolean(state.completed[id]);const score=id==="case"?(done?"Completed · self-review":"Not completed"):(done?String(state.scores[id])+"%":"Not attempted");return '<div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 p-4"><div><div class="font-semibold">'+label+'</div><div class="text-xs muted mt-1">'+(done?"Completed":"Not yet completed")+'</div></div><strong class="gold text-sm">'+score+'</strong></div>'}).join("");root.innerHTML='<div class="grid sm:grid-cols-2 gap-3"><div class="rounded-xl bg-white/5 p-5"><div class="tag">Modules completed</div><div class="text-4xl serif gold mt-2">'+order.filter(([id])=>state.completed[id]).length+' / 5</div></div><div class="rounded-xl bg-white/5 p-5"><div class="tag">Combined quiz score</div><div class="text-4xl serif gold mt-2">'+(combined===null?"—":combined+"%")+'</div><p class="text-xs muted mt-1">Based on completed scored quizzes only</p></div></div><h3 class="text-xl mt-7 mb-3">Module breakdown</h3><div class="space-y-2">'+rows+'</div><div class="rounded-xl border border-amber-200/20 bg-amber-100/5 p-4 mt-5"><strong class="text-sm">About your case study</strong><p class="text-sm muted mt-1">The case study is marked as complete by you. It is not automatically graded; your teacher must review the written response separately.</p></div><div class="flex flex-wrap gap-3 mt-6"><button class="btn btn-primary" id="results-assessment">Go to final assessment</button><button class="btn btn-ghost" id="results-case">Review case study</button></div>';document.getElementById("results-assessment").onclick=()=>setModule("assessment");document.getElementById("results-case").onclick=()=>setModule("case")}
-function renderQuestion(){const list=modules[current].questions,q=list[questionIndex],done=questionIndex>=list.length;const root=document.getElementById("activity");if(done){const score=answers.filter((v,i)=>v===list[i].c).length,percent=Math.round(score/list.length*100);state.completed[current]=true;state.scores[current]=percent;save();root.innerHTML='<div class="rounded-2xl bg-white/5 p-6 text-center"><div class="tag">Module complete</div><div class="text-5xl serif gold mt-3">'+percent+'%</div><h3 class="text-2xl mt-2">You scored '+score+' out of '+list.length+'</h3><p class="muted mt-2">Review the explanations and practise again whenever you need to.</p><button class="btn btn-primary mt-6" id="retry">Try again</button></div><div class="mt-5 flex flex-wrap gap-2 justify-between"><button class="btn btn-ghost" id="previous">Back to last question</button><button class="btn btn-ghost" id="next-module">Next module →</button></div>';document.getElementById("retry").onclick=()=>{questionIndex=0;answers=[];renderQuestion()};document.getElementById("previous").onclick=()=>{questionIndex=list.length-1;renderQuestion()};document.getElementById("next-module").onclick=()=>setModule(({vocabulary:"grammar",grammar:"communication",communication:"case",case:"assessment",assessment:"vocabulary"})[current]);return}
- const selected=answers[questionIndex];root.innerHTML='<div class="flex items-center justify-between text-xs muted mb-2"><span>QUESTION '+(questionIndex+1)+' OF '+list.length+'</span><span>'+Math.round(questionIndex/list.length*100)+'% complete</span></div><div class="progress mb-6"><span style="width:'+((questionIndex)/list.length*100)+'%"></span></div><h3 class="text-xl sm:text-2xl leading-snug">'+q.q+'</h3><div id="choices" class="mt-4">'+q.a.map((a,i)=>'<button class="choice '+(selected===i?'selected':'')+'" data-choice="'+i+'">'+String.fromCharCode(65+i)+'. '+a+'</button>').join("")+'</div><div id="feedback" class="mt-4"></div><div class="flex justify-between gap-3 mt-6"><button class="btn btn-ghost" id="back" '+(questionIndex===0?'disabled':'')+'>← Back</button><button class="btn btn-primary" id="continue" '+(selected===undefined?'disabled':'')+'>'+(questionIndex===list.length-1?'Finish module':'Continue →')+'</button></div>';
- document.querySelectorAll("[data-choice]").forEach(b=>b.onclick=()=>{if(answers[questionIndex]!==undefined)return;const i=Number(b.dataset.choice);answers[questionIndex]=i;document.querySelectorAll("[data-choice]").forEach(x=>{x.disabled=true;const v=Number(x.dataset.choice);if(v===q.c)x.classList.add("correct");else if(v===i)x.classList.add("wrong")});document.getElementById("feedback").innerHTML='<div class="rounded-xl p-4 '+(i===q.c?'bg-emerald-400/10 border border-emerald-300/30':'bg-rose-400/10 border border-rose-300/30')+'"><strong>'+(i===q.c?'Correct. Well done.':'Not quite. Keep learning.')+'</strong><p class="text-sm muted mt-1">'+q.e+'</p></div>';document.getElementById("continue").disabled=false});
- document.getElementById("back").onclick=()=>{if(questionIndex>0){questionIndex--;renderQuestion()}};document.getElementById("continue").onclick=()=>{questionIndex++;renderQuestion()}
-}
-function renderCase(){const root=document.getElementById("activity");root.innerHTML='<div class="rounded-xl border border-amber-200/20 p-5 bg-amber-100/5"><div class="tag">Business scenario</div><p class="leading-relaxed mt-3">'+caseStudy.brief+'</p></div><div class="mt-6"><h3 class="text-xl">Your tasks</h3><ol class="list-decimal pl-5 mt-3 space-y-2 muted text-sm">'+caseStudy.tasks.map(t=>'<li>'+t+'</li>').join("")+'</ol></div><div class="mt-6"><label for="case-answer" class="block font-semibold mb-2">Your analysis and recommendations</label><textarea id="case-answer" placeholder="Write your analysis here. Support your recommendations with evidence from the case...">'+(state.caseText||"")+'</textarea><div class="flex flex-wrap gap-3 mt-3"><button class="btn btn-primary" id="save-case">Save my response</button><button class="btn btn-ghost" id="show-model">Show model response</button></div><div id="case-feedback" class="mt-4"></div><div id="model-response" class="hidden rounded-xl border border-amber-200/20 p-4 mt-4"><div class="tag">Example response · Compare and adapt</div><p class="text-sm leading-relaxed mt-2">'+caseStudy.model+'</p></div></div><div class="mt-6 border-t border-white/10 pt-5"><p class="muted text-xs">Self-review: have you used figures accurately, explained causes, proposed realistic actions and used a professional tone?</p><button class="btn btn-ghost mt-3" id="complete-case">Mark written task as completed</button></div>';
- document.getElementById("save-case").onclick=()=>{state.caseText=document.getElementById("case-answer").value;save();document.getElementById("case-feedback").textContent="Your response has been saved in this browser."};document.getElementById("show-model").onclick=()=>document.getElementById("model-response").classList.toggle("hidden");document.getElementById("complete-case").onclick=()=>{state.caseText=document.getElementById("case-answer").value;state.completed.case=true;state.scores.case="Submitted for self-review";save();render()}}
-updateProgress();render();
-</script>
-<!-- Automated Google Sheet & Dual-Email Submission Bridge -->
-<div id="retail-sync-box" style="max-width: 760px; margin: 40px auto 60px; padding: 28px; background: #FAF9F6; border: 1px solid #E2DFD7; font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #1C1C1C;">
-  <p style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #1B365D; margin: 0 0 6px;">
-    Official Record & Receipt
-  </p>
-  <h3 style="font-family: Georgia, serif; font-size: 22px; margin: 0 0 8px; font-weight: 600;">
-    Submit Retail Module Results
-  </h3>
-  <p style="font-size: 14px; color: #5C5B57; margin: 0 0 18px;">
-    Once you have completed the Retail exercises above, confirm your details below to register your score in the student ledger and receive your email receipt.
-  </p>
-
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 16px;">
-    <div>
-      <label style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #5C5B57; margin-bottom: 6px;">Full Name</label>
-      <input type="text" id="retail-cand-name" placeholder="e.g. Aylin Yılmaz" style="width: 100%; padding: 10px 12px; border: 1px solid #E2DFD7; background: #FFFFFF; font-size: 16px;" />
+      <div class="lg:col-span-4">
+        <div class="rounded-2xl overflow-hidden shadow-md border border-black/10 bg-white aspect-[4/4.6] max-w-xs mx-auto lg:ml-auto">
+          <img
+            src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80"
+            alt="Commercial retail strategy briefing"
+            class="w-full h-full object-cover"
+          />
+        </div>
+      </div>
     </div>
-    <div>
-      <label style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #5C5B57; margin-bottom: 6px;">Email Address</label>
-      <input type="email" id="retail-cand-email" placeholder="e.g. aylin@example.com" style="width: 100%; padding: 10px 12px; border: 1px solid #E2DFD7; background: #FFFFFF; font-size: 16px;" />
+  </section>
+
+  <!-- Band 2: Lyceum Soft Light Blue Executive Outcomes Band -->
+  <section class="lyceum-blue-band">
+    <div class="max-w-7xl mx-auto px-6 sm:px-10 py-14 sm:py-16">
+      <h2 class="font-editorial text-4xl sm:text-5xl font-medium tracking-tight text-[#1C1C1C] mb-10">
+        Commercial Learning Outcomes
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        <div class="p-6 rounded-2xl bg-white/75 backdrop-blur-sm border border-[#2A5A84]/15">
+          <p class="font-editorial text-xl leading-snug text-[#1C1C1C] mb-3">
+            “Precision merchandising terminology and supplier negotiation frameworks for store operations.”
+          </p>
+          <span class="text-[11px] uppercase tracking-widest font-bold text-[#2A5A84]">Modules 01 & 02 · Lexis & Conditionals</span>
+        </div>
+        <div class="p-6 rounded-2xl bg-white/75 backdrop-blur-sm border border-[#2A5A84]/15">
+          <p class="font-editorial text-xl leading-snug text-[#1C1C1C] mb-3">
+            “Diplomatic British English de-escalation for wholesale discrepancies and VIP client service.”
+          </p>
+          <span class="text-[11px] uppercase tracking-widest font-bold text-[#2A5A84]">Modules 03 & 04 · Register & Case Analysis</span>
+        </div>
+        <div class="p-6 rounded-2xl bg-white/75 backdrop-blur-sm border border-[#2A5A84]/15">
+          <p class="font-editorial text-xl leading-snug text-[#1C1C1C] mb-3">
+            “Automated post-submission coaching diagnostics delivered directly to your inbox within 15 minutes.”
+          </p>
+          <span class="text-[11px] uppercase tracking-widest font-bold text-[#2A5A84]">Module 05 · Executive Assessment</span>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <div style="margin-bottom: 18px;">
-    <label style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #5C5B57; margin-bottom: 6px;">Final Score / Notes (Auto-detected or enter score)</label>
-    <input type="text" id="retail-score-summary" placeholder="e.g. 5/5 Modules Completed — 88%" style="width: 100%; padding: 10px 12px; border: 1px solid #E2DFD7; background: #FFFFFF; font-size: 16px;" />
-  </div>
+  <!-- Band 3: Interactive 5-Module Retail Studio Workspace -->
+  <main id="retail-workspace" class="max-w-5xl mx-auto px-6 sm:px-10 pt-14 pb-24">
+    <!-- Learner Identity Strip -->
+    <section class="workspace-card mb-8 border-[#2A5A84]/15">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div>
+          <label class="block text-[11px] uppercase tracking-wider font-semibold text-[#5E5D5A] mb-1.5">Student Name</label>
+          <input id="retail-student-name" type="text" required placeholder="Full Name" class="studio-input" />
+        </div>
+        <div>
+          <label class="block text-[11px] uppercase tracking-wider font-semibold text-[#5E5D5A] mb-1.5">Registered Email</label>
+          <input id="retail-student-email" type="email" required placeholder="student@domain.com" class="studio-input" />
+        </div>
+        <div>
+          <label class="block text-[11px] uppercase tracking-wider font-semibold text-[#5E5D5A] mb-1.5">Department / Role</label>
+          <input id="retail-student-role" type="text" placeholder="e.g., Store Operations / Buying" class="studio-input" />
+        </div>
+      </div>
+    </section>
 
-  <button id="retail-submit-btn" type="button" style="background: #1B365D; color: #FFFFFF; border: none; padding: 13px 24px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; cursor: pointer;">
-    Submit & Email Retail Results →
-  </button>
-  <p id="retail-sync-status" style="font-size: 13px; margin: 12px 0 0;"></p>
-</div>
+    <!-- Quick Jump Pills -->
+    <div class="flex flex-wrap gap-2 mb-8">
+      <a href="#mod-1" class="module-tab-btn active">01 Retail Vocabulary</a>
+      <a href="#mod-2" class="module-tab-btn">02 Business Grammar</a>
+      <a href="#mod-3" class="module-tab-btn">03 Communication</a>
+      <a href="#mod-4" class="module-tab-btn">04 Retail Case Study</a>
+      <a href="#mod-5" class="module-tab-btn">05 Final Assessment</a>
+    </div>
 
-<script>
-  (function () {
-    const startTime = Date.now();
-    const nameInput = document.getElementById('retail-cand-name');
-    const emailInput = document.getElementById('retail-cand-email');
-    const scoreInput = document.getElementById('retail-score-summary');
-    const statusEl = document.getElementById('retail-sync-status');
-    const submitBtn = document.getElementById('retail-submit-btn');
+    <!-- Modules 1 to 4 -->
+    <div id="retail-modules-container" class="space-y-8 mb-8"></div>
 
-    // Pre-fill from shared Student Portal localStorage
-    nameInput.value = localStorage.getItem('lex_ielts_name') || '';
-    emailInput.value = localStorage.getItem('lex_ielts_email') || '';
+    <!-- Module 5: Final Executive Correspondence Assessment -->
+    <section id="mod-5" class="workspace-card mb-8 border-[#2A5A84]/15">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-5 mb-6 border-b border-black/10">
+        <div>
+          <span class="text-[11px] uppercase tracking-widest text-[#2A5A84] font-bold">Module 05 · Final Assessment</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl font-medium">Executive Supplier Escalation Brief</h2>
+        </div>
+        <span id="retail-word-counter" class="px-3.5 py-1 rounded-full bg-[#EBF3FB] text-[#2A5A84] text-xs font-semibold">
+          0 words (Target: 120–180)
+        </span>
+      </div>
 
-    // Auto-capture any Retail progress/score stored in localStorage
-    function collectRetailSnapshot() {
-      const entries = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && !key.startsWith('lex_ielts_')) {
-          entries.push(`${key}: ${localStorage.getItem(key)}`);
-        }
-      }
-      return entries.length ? entries.join(' | ') : 'Completed Retail Business English session';
+      <div class="p-5 rounded-xl bg-[#EBF3FB]/70 border border-[#2A5A84]/15 mb-5 text-sm leading-relaxed space-y-2">
+        <p class="text-[11px] uppercase tracking-widest font-bold text-[#2A5A84]">Scenario Brief</p>
+        <p class="font-medium text-[#1C1C1C]">
+          A seasonal apparel consignment has been delayed at customs by 10 days, threatening your flagship launch and Q4 footfall targets. Write a diplomatic yet firm email to your regional account director requesting: (1) split air-freight dispatch for priority SKUs, (2) a revised delivery schedule within 24 hours, and (3) a 5% invoice rebate to offset markdown exposure.
+        </p>
+      </div>
+
+      <textarea
+        id="retail-writing-response"
+        rows="7"
+        placeholder="Dear [Account Director], I am writing regarding purchase order #4092..."
+        class="studio-input leading-relaxed"
+      ></textarea>
+    </section>
+
+    <!-- Action Bar -->
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <button id="retail-clear-btn" type="button" class="btn-outline-studio">Clear Local Draft</button>
+      <button id="retail-submit-btn" type="button" class="btn-slate px-8 py-3.5">
+        Submit Fex Retail Assessment →
+      </button>
+    </div>
+
+    <div id="retail-status-box" class="hidden mt-8 workspace-card border-[#2A5A84]/30"></div>
+  </main>
+
+  <!-- Light Grey Studio Footer -->
+  <footer class="lyceum-hero-band border-t border-black/10">
+    <div class="max-w-7xl mx-auto px-6 sm:px-10 py-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs text-[#5E5D5A]">
+      <span>© 2021-2026 Fawwaz Izeddin · Fex Academic English Retail Studio</span>
+      <a href="/students/resources/" class="font-semibold text-[#2A5A84] underline">Open Band 8.0+ Lexical & Grammar Matrix →</a>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile Menu Toggle
+    document.getElementById('studio-menu-btn')?.addEventListener('click', () => {
+      document.getElementById('studio-drawer')?.classList.toggle('hidden');
+    });
+
+    // Hydrate Identity & Saved Drafts (Compatible with both lex_ and fex_ keys)
+    const nameEl = document.getElementById('retail-student-name');
+    const emailEl = document.getElementById('retail-student-email');
+    const roleEl = document.getElementById('retail-student-role');
+    const essayEl = document.getElementById('retail-writing-response');
+    const wordCounterEl = document.getElementById('retail-word-counter');
+
+    nameEl.value = localStorage.getItem('fex_student_name') || localStorage.getItem('lex_student_name') || '';
+    emailEl.value = localStorage.getItem('fex_student_email') || localStorage.getItem('lex_student_email') || '';
+    roleEl.value = localStorage.getItem('fex_retail_role') || localStorage.getItem('lex_retail_role') || '';
+
+    const savedDraft = localStorage.getItem('fex_retail_draft') || localStorage.getItem('lex_retail_draft');
+    if (savedDraft) {
+      essayEl.value = savedDraft;
+      updateWordCount();
     }
 
-    submitBtn.addEventListener('click', async () => {
-      const studentName = nameInput.value.trim();
-      const studentEmail = emailInput.value.trim();
-      const manualScore = scoreInput.value.trim();
+    function updateWordCount() {
+      const count = essayEl.value.trim() ? essayEl.value.trim().split(/\s+/).length : 0;
+      wordCounterEl.textContent = `${count} words (Target: 120–180)`;
+    }
+
+    essayEl.addEventListener('input', () => {
+      localStorage.setItem('fex_retail_draft', essayEl.value);
+      updateWordCount();
+    });
+
+    // 4 Diagnostic Modules
+    const retailModules = [
+      {
+        anchor: 'mod-1',
+        id: 'rm1',
+        badge: 'Module 01 · Retail Vocabulary',
+        title: 'Inventory & Merchandising Terminology',
+        context: 'When excess seasonal stock remains unsold past peak trading weeks, retailers apply structured price reductions to protect cash flow and floor space.',
+        prompt: 'Which commercial term accurately describes the percentage reduction from the original retail selling price to clear slow-moving inventory?',
+        options: [
+          'Stockout shrinkage',
+          'Promotional markdown',
+          'Backorder consignment'
+        ],
+        correct: 1
+      },
+      {
+        anchor: 'mod-2',
+        id: 'rm2',
+        badge: 'Module 02 · Business Grammar',
+        title: 'Conditional Negotiation Structures',
+        context: 'In formal supplier negotiations, mixed and first/second conditionals soften demands while preserving commercial leverage.',
+        prompt: 'Select the most idiomatic executive formulation for a conditional volume discount:',
+        options: [
+          'Provided that your warehouse dispatches the consignment by Friday, we will confirm the Q2 reorder.',
+          'If your warehouse will dispatch the consignment by Friday, we would confirmed the Q2 reorder.',
+          'Unless your warehouse dispatches by Friday, we are confirming the Q2 reorder.'
+        ],
+        correct: 0
+      },
+      {
+        anchor: 'mod-3',
+        id: 'rm3',
+        badge: 'Module 03 · Professional Communication',
+        title: 'Diplomatic De-escalation & Client Register',
+        context: 'High-value wholesale buyers and VIP retail clients expect accountable, solution-focused British English register rather than defensive phrasing.',
+        prompt: 'Which response best replaces the blunt statement: "You sent us the wrong invoice again and we will not pay it"?',
+        options: [
+          'Please note that there appears to be a discrepancy on invoice #884; we would appreciate a revised statement prior to settlement.',
+          'Your billing team made another mistake on invoice #884 so we are ignoring it until fixed.',
+          'We refuse to settle invoice #884 because your figures are completely inaccurate.'
+        ],
+        correct: 0
+      },
+      {
+        anchor: 'mod-4',
+        id: 'rm4',
+        badge: 'Module 04 · Retail Case Study',
+        title: 'Omnichannel Conversion & Footfall Analysis',
+        context: 'A flagship store records a 14% year-on-year increase in footfall following a window redesign, yet net revenue rises by only 2% due to lower average transaction value (ATV).',
+        prompt: 'Which operational recommendation addresses the root commercial bottleneck?',
+        options: [
+          'Reduce store opening hours to lower payroll overhead immediately.',
+          'Train floor associates in consultative cross-selling and bundle complementary high-margin accessories at checkout.',
+          'Cancel click-and-collect fulfilment to force customers into longer queues.'
+        ],
+        correct: 1
+      }
+    ];
+
+    const modulesContainer = document.getElementById('retail-modules-container');
+    retailModules.forEach((mod) => {
+      const section = document.createElement('section');
+      section.id = mod.anchor;
+      section.className = 'workspace-card border-[#2A5A84]/15';
+      section.innerHTML = `
+        <div class="pb-4 mb-5 border-b border-black/10">
+          <span class="text-[11px] uppercase tracking-widest text-[#2A5A84] font-bold">${mod.badge}</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl font-medium mt-0.5">${mod.title}</h2>
+        </div>
+        <p class="text-sm text-[#5E5D5A] mb-4 leading-relaxed">${mod.context}</p>
+        <p class="font-medium text-sm sm:text-[15px] mb-4">${mod.prompt}</p>
+        <div class="space-y-2.5 text-sm">
+          ${mod.options
+            .map(
+              (opt, idx) => `
+              <label class="flex items-start gap-3 p-3.5 rounded-xl bg-[#F7F9FB] border border-black/10 cursor-pointer hover:border-[#2A5A84]">
+                <input type="radio" name="${mod.id}" value="${idx}" class="mt-0.5 accent-[#2A5A84]" />
+                <span>${opt}</span>
+              </label>`
+            )
+            .join('')}
+        </div>
+      `;
+      modulesContainer.appendChild(section);
+    });
+
+    // Live Answer Counter
+    modulesContainer.addEventListener('change', () => {
+      const answered = retailModules.filter((m) => document.querySelector(`input[name="${m.id}"]:checked`)).length;
+      document.getElementById('retail-header-badge').textContent = `${answered} / ${retailModules.length} Diagnostic Items Completed`;
+    });
+
+    // Clear Draft
+    document.getElementById('retail-clear-btn').addEventListener('click', () => {
+      localStorage.removeItem('fex_retail_draft');
+      localStorage.removeItem('lex_retail_draft');
+      essayEl.value = '';
+      updateWordCount();
+    });
+
+    // Submit to /api/submit-ielts Endpoint
+    document.getElementById('retail-submit-btn').addEventListener('click', async () => {
+      const studentName = nameEl.value.trim();
+      const studentEmail = emailEl.value.trim();
+      const studentRole = roleEl.value.trim();
+      const responseText = essayEl.value.trim();
+      const statusBox = document.getElementById('retail-status-box');
 
       if (!studentName || !studentEmail) {
-        statusEl.style.color = '#9E3B33';
-        statusEl.textContent = 'Please enter both your name and email address.';
+        statusBox.classList.remove('hidden');
+        statusBox.innerHTML = '<p class="text-sm font-semibold text-red-700">Please enter your name and registered email address before submitting.</p>';
         return;
       }
 
-      localStorage.setItem('lex_ielts_name', studentName);
-      localStorage.setItem('lex_ielts_email', studentEmail);
+      let score = 0;
+      const missedModules = [];
+      retailModules.forEach((m) => {
+        const selected = document.querySelector(`input[name="${m.id}"]:checked`);
+        if (selected && Number(selected.value) === m.correct) {
+          score++;
+        } else {
+          missedModules.push(m.title);
+        }
+      });
 
-      const elapsedSec = Math.floor((Date.now() - startTime) / 1000);
-      const timeTaken = `${Math.floor(elapsedSec / 60)}m ${elapsedSec % 60}s`;
-      const snapshot = collectRetailSnapshot();
-      const finalScore = manualScore || 'Completed';
+      const scoreText = `${score} / ${retailModules.length}`;
+      const wordCount = responseText ? responseText.split(/\s+/).length : 0;
+      const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Recording & Dispatching...';
-      statusEl.textContent = '';
+      localStorage.setItem('fex_student_name', studentName);
+      localStorage.setItem('fex_student_email', studentEmail);
+      localStorage.setItem('lex_student_name', studentName);
+      localStorage.setItem('lex_student_email', studentEmail);
+      if (studentRole) localStorage.setItem('fex_retail_role', studentRole);
+      localStorage.setItem('lex_ielts_last_score', `Fex Retail ${scoreText}`);
+      localStorage.setItem('lex_ielts_last_date', today);
+
+      const btn = document.getElementById('retail-submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting Assessment...';
 
       try {
         const res = await fetch('/api/submit-ielts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            studentName,
-            studentEmail,
-            category: 'Retail Business English',
-            score: finalScore,
-            bandEstimate: 'Specialist Module',
-            timeTaken,
-            detailsHtml: `
-              <p><strong>Programme:</strong> Retail Business English</p>
-              <p><strong>Recorded Score / Summary:</strong> ${finalScore}</p>
-              <p><strong>Session Data:</strong> ${snapshot}</p>
-            `,
-            detailsPlain: `Score: ${finalScore} | ${snapshot}`
+            name: studentName,
+            email: studentEmail,
+            module: `Fex Retail Business English${studentRole ? ' (' + studentRole + ')' : ''}`,
+            score: scoreText,
+            wordCount: wordCount,
+            missedTopics: missedModules.join(', ') || 'None — Full Marks',
+            essay: responseText
           })
         });
 
-        if (!res.ok) throw new Error('Server returned an error');
-
-        statusEl.style.color = '#2E5A44';
-        statusEl.innerHTML = `✓ <strong>Recorded!</strong> Your Retail Business English result has been logged to the instructor ledger and emailed to <strong>${studentEmail}</strong>.`;
-        submitBtn.textContent = 'Submitted ✓';
-      } catch (err) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit & Email Retail Results →';
-        statusEl.style.color = '#9E3B33';
-        statusEl.textContent = 'Submission failed—please check your connection and try again.';
+        statusBox.classList.remove('hidden');
+        if (res.ok) {
+          statusBox.innerHTML = `
+            <p class="text-xs uppercase tracking-widest text-[#2A5A84] font-bold mb-1">Assessment Logged · Score ${scoreText}</p>
+            <h3 class="font-editorial text-2xl font-medium mb-2">Fex Retail Module Complete</h3>
+            <p class="text-sm text-[#5E5D5A]">
+              Thank you, <strong>${studentName}</strong>. Your module score (${scoreText}) and executive escalation brief (${wordCount} words) have been recorded. Detailed British English feedback will arrive at <strong>${studentEmail}</strong> within 15 minutes.
+            </p>
+          `;
+        } else {
+          throw new Error('Non-200 status');
+        }
+      } catch (e) {
+        statusBox.classList.remove('hidden');
+        statusBox.innerHTML = `
+          <p class="text-xs uppercase tracking-widest font-bold text-[#2A5A84] mb-1">Local Session Recorded · Score ${scoreText}</p>
+          <p class="text-sm text-[#5E5D5A]">
+            Your score (${scoreText}) has been saved locally. Modules to review: <strong>${missedModules.join(', ') || 'None — Full Marks'}</strong>.
+          </p>
+        `;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Submit Fex Retail Assessment →';
       }
     });
-  })();
-</script>  
+  </script>
 </body>
 </html>
