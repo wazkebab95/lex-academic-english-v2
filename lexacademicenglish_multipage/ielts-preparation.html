@@ -1,339 +1,236 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth dark">
+<html lang="en-GB">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IELTS Preparation & Lexical Trainer | Fawwaz Izeddin</title>
-    <meta name="description" content="Master IELTS Band 7+ with expert coaching, interactive lexical trainers, and verified candidate feedback.">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], serif: ['Playfair Display', 'serif'] } } } }
-    </script>
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.6s ease, color 0.6s ease; overflow-x: hidden; }
-        body.theme-grey { background-color: #121418; color: #e5e7eb; }
-        body.theme-grey .portfolio-card { background-color: #1a1d24; border: 1px solid rgba(229, 231, 235, 0.12); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        body.theme-grey .portfolio-card:hover { border-color: #9ca3af; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(156, 163, 175, 0.1); }
-        body.theme-grey .accent-bg { background-color: #9ca3af; color: #111827; }
-        body.theme-grey .accent-text { color: #d1d5db; }
-        body.theme-grey .header-bg { background-color: rgba(18, 20, 24, 0.92); border-bottom: 1px solid rgba(229, 231, 235, 0.1); }
-        body.theme-grey .bg-watermark { color: rgba(229, 231, 235, 0.035); }
-
-        body.theme-olive { background-color: #131714; color: #f3f4f3; }
-        body.theme-olive .portfolio-card { background-color: #1c221e; border: 1px solid rgba(132, 169, 140, 0.2); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        body.theme-olive .portfolio-card:hover { border-color: #84a98c; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(132, 169, 140, 0.15); }
-        body.theme-olive .accent-bg { background-color: #84a98c; color: #131714; font-weight: 700; }
-        body.theme-olive .accent-text { color: #a3b18a; }
-        body.theme-olive .header-bg { background-color: rgba(19, 23, 20, 0.92); border-bottom: 1px solid rgba(132, 169, 140, 0.15); }
-        body.theme-olive .bg-watermark { color: rgba(132, 169, 140, 0.04); }
-
-        body.theme-navy { background-color: #0b0f19; color: #f3f4f6; }
-        body.theme-navy .portfolio-card { background-color: #111827; border: 1px solid rgba(212, 175, 55, 0.25); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        body.theme-navy .portfolio-card:hover { border-color: #d4af37; transform: translateY(-5px); box-shadow: 0 25px 50px rgba(212, 175, 55, 0.15); }
-        body.theme-navy .accent-bg { background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%); color: #0b0f19; font-weight: 700; }
-        body.theme-navy .accent-text { color: #d4af37; }
-        body.theme-navy .header-bg { background-color: rgba(11, 15, 25, 0.92); border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
-        body.theme-navy .bg-watermark { color: rgba(212, 175, 55, 0.035); }
-
-        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
-        .reveal-up { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal-up.active { opacity: 1; transform: translateY(0); }
-        @media (max-width: 768px) { body { padding-bottom: 70px; } }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IELTS Band 7.0+ Preparation | Fex Academic English</title>
+  <meta name="description" content="Targeted IELTS Academic & General Training preparation with diagnostic grammar analysis and interactive Student Portal practice." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/assets/halcyon-theme.css" />
 </head>
-<body class="theme-grey selection:bg-amber-500 selection:text-black">
-    <header class="sticky top-0 z-40 header-bg backdrop-blur-xl transition-all duration-500 py-3">
-        <div class="max-w-7xl mx-auto px-6 sm:px-12 flex flex-col md:flex-row items-center justify-between gap-3">
-            <a href="/" class="cursor-pointer group text-center md:text-left">
-                <span class="font-serif text-2xl font-bold tracking-wide block">Fawwaz Izeddin</span>
-                <span class="text-xs uppercase tracking-[0.2em] font-semibold accent-text block">Linguist & Language Specialist</span>
-            </a>
-            <nav class="hidden lg:flex items-center space-x-7 text-xs font-semibold tracking-widest uppercase opacity-85">
-                <a href="/" class="hover:opacity-100 transition-colors py-1">Home</a>
-                <a href="/about" class="hover:opacity-100 transition-colors py-1">About</a>
-                <a href="/services" class="hover:opacity-100 transition-colors py-1">Services & Pricing</a>
-                <a href="/ielts-preparation" class="opacity-100 transition-colors py-1">IELTS Preparation</a>
-                <a href="/contact" class="hover:opacity-100 transition-colors py-1">Contact</a>
-                <a href="/students/" class="accent-text hover:opacity-100 transition-colors py-1">Student Portal</a>
-            </nav>
-            <div class="hidden md:flex items-center space-x-4">
-                <div class="flex items-center bg-black/40 border border-current/20 p-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                    <button onclick="switchStyle('grey')" id="btn-theme-grey" class="px-3 py-1 rounded-full transition accent-bg">Slate Grey</button>
-                    <button onclick="switchStyle('olive')" id="btn-theme-olive" class="px-3 py-1 rounded-full transition opacity-60 hover:opacity-100">Olive</button>
-                    <button onclick="switchStyle('navy')" id="btn-theme-navy" class="px-3 py-1 rounded-full transition opacity-60 hover:opacity-100">Navy & Gold</button>
-                </div>
-                <a href="/contact" class="px-5 py-2 accent-bg text-xs uppercase tracking-widest font-bold transition shadow-lg rounded-full">Enquire</a>
-            </div>
-            <div class="flex items-center space-x-3 md:hidden absolute right-6 top-5">
-                <button id="menu-btn" class="text-xl p-2" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i></button>
-            </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 w-full border-b py-6 px-8 space-y-4 shadow-2xl header-bg">
-            <div class="grid grid-cols-3 gap-2 pb-3 border-b border-current/15 text-center text-[10px] font-bold uppercase">
-                <button onclick="switchStyle('grey'); toggleMobileMenu();" class="py-1.5 bg-zinc-800 text-white rounded">Grey</button>
-                <button onclick="switchStyle('olive'); toggleMobileMenu();" class="py-1.5 bg-emerald-900 text-white rounded">Olive</button>
-                <button onclick="switchStyle('navy'); toggleMobileMenu();" class="py-1.5 accent-bg rounded">Navy</button>
-            </div>
-            <a href="/" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">Home</a>
-            <a href="/about" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">About</a>
-            <a href="/services" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">Services & Pricing</a>
-            <a href="/ielts-preparation" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">IELTS Preparation</a>
-            <a href="/contact" onclick="toggleMobileMenu()" class="block text-sm uppercase tracking-widest">Contact</a>
-        </div>
-    </header>
+<body class="halcyon-body">
 
-    <section class="py-24 max-w-7xl mx-auto px-6 sm:px-12 space-y-24">
-        <div class="max-w-3xl mx-auto text-center space-y-4 reveal-up">
-            <span class="text-xs uppercase tracking-[0.3em] accent-text font-bold">Flagship Masterclass</span>
-            <h1 class="font-serif text-3xl sm:text-5xl font-bold">IELTS Band 7+ Preparation & Trainer</h1>
-            <p class="opacity-80 font-light text-sm sm:text-base">Systematic preparation for Academic and General IELTS exams backed by interactive examiner-aligned practice.</p>
-        </div>
+  <header id="halcyon-header" class="halcyon-header solid-glass">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <a href="/" class="font-editorial text-2xl sm:text-[26px] font-bold tracking-wide">
+        Fex Academic English
+      </a>
 
-        <div class="portfolio-card max-w-3xl mx-auto p-8 sm:p-12 rounded-3xl reveal-up space-y-8">
-            <div class="flex justify-between items-center border-b border-current/15 pb-4 text-xs font-bold uppercase tracking-widest">
-                <span id="quiz-question-counter" class="accent-text">Question 3 of 4</span>
-                <span id="quiz-score-display" class="opacity-75">Score: 0 / 4</span>
-            </div>
-            <div class="space-y-6">
-                <h3 id="quiz-question-title" class="font-serif text-xl sm:text-2xl font-bold leading-snug">
-                    How should you structure an IELTS Speaking Part 3 response for Band 7+?
-                </h3>
-                <div id="quiz-options-container" class="space-y-3"></div>
-            </div>
-            <div class="pt-4 border-t border-current/15 flex justify-between items-center">
-                <button onclick="prevQuizQuestion()" id="quiz-prev-btn" class="px-6 py-3 border border-current/30 text-xs font-bold uppercase tracking-widest rounded-xl hover:border-current transition">Previous</button>
-                <button onclick="nextQuizQuestion()" id="quiz-next-btn" class="px-8 py-3 accent-bg text-xs font-bold uppercase tracking-widest rounded-xl transition">Next Question</button>
-            </div>
-        </div>
-
-        <div class="reveal-up pt-12 border-t border-current/15">
-            <div class="max-w-3xl mx-auto text-center space-y-4 mb-12">
-                <span class="text-xs uppercase tracking-[0.3em] accent-text font-bold">Verified Candidate Feedback</span>
-                <h2 class="font-serif text-2xl sm:text-4xl font-bold">Success Stories</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <div class="portfolio-card p-8 space-y-4 rounded-2xl">
-                    <div class="flex text-amber-400 text-xs space-x-1"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="text-xs sm:text-sm opacity-85 font-light italic leading-relaxed">"I was stuck at Band 6.5 in Writing Task 2 for two consecutive attempts. Fawwaz's structural templates helped me achieve Band 8.0 in just 6 weeks!"</p>
-                    <div class="border-t border-current/15 pt-4 flex items-center justify-between">
-                        <div><h4 class="font-serif text-sm font-bold">Dr. Ahmet K.</h4><p class="text-[10px] opacity-60 uppercase">Medical Researcher</p></div>
-                        <span class="text-xs font-bold accent-text">IELTS 8.0</span>
-                    </div>
-                </div>
-                <div class="portfolio-card p-8 space-y-4 rounded-2xl">
-                    <div class="flex text-amber-400 text-xs space-x-1"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    <p class="text-xs sm:text-sm opacity-85 font-light italic leading-relaxed">"The spoken fluency sessions completely eliminated my hesitation in academic discussions and formal interviews."</p>
-                    <div class="border-t border-current/15 pt-4 flex items-center justify-between">
-                        <div><h4 class="font-serif text-sm font-bold">Sarah M.</h4><p class="text-[10px] opacity-60 uppercase">Postdoctoral Fellow</p></div>
-                        <span class="text-xs font-bold accent-text">Academic C1</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-<!-- Interactive Public IELTS Band 7.5+ Mini-Diagnostic -->
-<section id="ielts-taster" class="max-w-5xl mx-auto px-6 py-16">
-  <div class="portfolio-card rounded-2xl p-8 md:p-12">
-    <p class="text-xs uppercase tracking-[0.2em] font-semibold accent-text mb-2">
-      Complimentary Diagnostic Taster
-    </p>
-    <h2 class="font-serif text-3xl md:text-4xl font-bold mb-3">
-      IELTS Band 7.5+ Readiness Check
-    </h2>
-    <p class="text-sm opacity-80 max-w-2xl mb-8 leading-relaxed">
-      Test your command of C1 grammatical range, academic collocations, and sentence synthesis across three examiner-calibrated items before booking a diagnostic consultation.
-    </p>
-
-    <div id="taster-questions" class="space-y-6">
-      <!-- Q1 -->
-      <div class="p-6 rounded-xl border border-current/15 bg-black/20">
-        <p class="text-xs uppercase tracking-widest opacity-60 mb-2">01 · Grammatical Range & Accuracy</p>
-        <p class="font-medium mb-4">
-          Select the sentence that demonstrates Band 8.0+ punctuation and non-defining relative clause control:
-        </p>
-        <div class="space-y-2 text-sm">
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
-            <input type="radio" name="tq1" value="a" class="mt-1" />
-            <span>Urban congestion charges, that were introduced in 2003, have reduced central traffic volumes.</span>
-          </label>
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
-            <input type="radio" name="tq1" value="b" class="mt-1" />
-            <span>Urban congestion charges, which were introduced in 2003, have substantially curtailed central traffic volumes.</span>
-          </label>
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
-            <input type="radio" name="tq1" value="c" class="mt-1" />
-            <span>Urban congestion charges which were introduced in 2003, they have curtailed central traffic volumes.</span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Q2 -->
-      <div class="p-6 rounded-xl border border-current/15 bg-black/20">
-        <p class="text-xs uppercase tracking-widest opacity-60 mb-2">02 · Lexical Resource & Academic Hedging</p>
-        <p class="font-medium mb-4">
-          Which revision best replaces the informal phrase <em>"make the housing crisis worse"</em> in Task 2 Writing?
-        </p>
-        <div class="space-y-2 text-sm">
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
-            <input type="radio" name="tq2" value="a" class="mt-1" />
-            <span>...exacerbate acute housing shortages across metropolitan areas.</span>
-          </label>
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
-            <input type="radio" name="tq2" value="b" class="mt-1" />
-            <span>...push the housing problem into a much bigger mess for cities.</span>
-          </label>
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
-            <input type="radio" name="tq2" value="c" class="mt-1" />
-            <span>...make housing availability go down rapidly everywhere.</span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Q3 -->
-      <div class="p-6 rounded-xl border border-current/15 bg-black/20">
-        <p class="text-xs uppercase tracking-widest opacity-60 mb-2">03 · Coherence & Nominalisation</p>
-        <p class="font-medium mb-4">
-          Select the most concise academic transformation of: <em>"Because renewable energy has become cheaper, more factories are adopting solar power."</em>
-        </p>
-        <div class="space-y-2 text-sm">
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
-            <input type="radio" name="tq3" value="a" class="mt-1" />
-            <span>Declining renewable energy costs have accelerated industrial adoption of solar power.</span>
-          </label>
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
-            <input type="radio" name="tq3" value="b" class="mt-1" />
-            <span>Due to the fact that renewables got cheaper, factories started using solar.</span>
-          </label>
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
-            <input type="radio" name="tq3" value="c" class="mt-1" />
-            <span>Renewable energy is cheaper now, so more factories are putting solar panels on.</span>
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-8 flex flex-wrap items-center gap-4">
-      <button id="check-taster-btn" type="button" class="px-6 py-3 accent-bg text-xs uppercase tracking-widest font-bold rounded-full cursor-pointer transition shadow-lg">
-        Evaluate My Answers
-      </button>
-    </div>
-
-    <div id="taster-result" class="hidden mt-8 p-6 rounded-xl border border-current/20 bg-black/30 space-y-3 text-sm leading-relaxed"></div>
-  </div>
-</section>
-
-<script>
-  document.getElementById('check-taster-btn').addEventListener('click', function () {
-    const q1 = document.querySelector('input[name="tq1"]:checked');
-    const q2 = document.querySelector('input[name="tq2"]:checked');
-    const q3 = document.querySelector('input[name="tq3"]:checked');
-    const resultBox = document.getElementById('taster-result');
-
-    if (!q1 || !q2 || !q3) {
-      resultBox.classList.remove('hidden');
-      resultBox.innerHTML = '<p class="accent-text font-semibold">Please select an answer for all three questions before evaluating.</p>';
-      return;
-    }
-
-    let score = 0;
-    if (q1.value === 'b') score++;
-    if (q2.value === 'a') score++;
-    if (q3.value === 'a') score++;
-
-    const verdict = score === 3
-      ? 'Band 8.0+ Profile — Strong command of non-defining clauses, C1 collocations, and nominalisation.'
-      : score === 2
-      ? 'Band 7.0–7.5 Profile — Solid academic foundation with targeted room to refine clause punctuation or register.'
-      : 'Band 6.0–6.5 Profile — Focus on replacing informal phrasal verbs with nominalised noun phrases and accurate relative clauses.';
-
-    resultBox.classList.remove('hidden');
-    resultBox.innerHTML = `
-      <p class="text-xs uppercase tracking-widest accent-text font-bold">Diagnostic Score: ${score} / 3</p>
-      <p class="font-serif text-xl font-bold">${verdict}</p>
-      <ul class="space-y-1 opacity-85 list-disc pl-5">
-        <li><strong>01 Grammar:</strong> Non-defining clauses enclosed by commas require <em>"which"</em> (never <em>"that"</em>).</li>
-        <li><strong>02 Lexical Resource:</strong> <em>"Exacerbate acute housing shortages"</em> demonstrates precise C1 verb–noun collocation.</li>
-        <li><strong>03 Coherence:</strong> Nominalising <em>"because X became cheaper"</em> into <em>"Declining renewable energy costs"</em> raises lexical density.</li>
-      </ul>
-      <div class="pt-4">
-        <a href="/contact" class="inline-block px-6 py-3 accent-bg text-xs uppercase tracking-widest font-bold rounded-full shadow-lg">
-          Book a Full IELTS Diagnostic Consultation →
+      <nav class="hidden lg:flex items-center space-x-8">
+        <a href="/" class="halcyon-nav-link">Home</a>
+        <a href="/about" class="halcyon-nav-link">About</a>
+        <a href="/services" class="halcyon-nav-link">Services</a>
+        <a href="/ielts-preparation" class="halcyon-nav-link active">IELTS Suite</a>
+        <a href="/contact" class="halcyon-nav-link">Contact</a>
+        <a href="/students/" class="nav-portal-pill px-4 py-1.5 rounded-full border border-[#13294B]/30 text-[11px] font-semibold uppercase tracking-widest text-[#13294B] transition hover:bg-[#13294B] hover:text-white">
+          Student Portal →
         </a>
+      </nav>
+
+      <div class="flex items-center gap-3 lg:hidden">
+        <a href="/students/" class="px-3 py-1 rounded-full border border-[#13294B]/30 text-[10px] font-semibold uppercase tracking-wider text-[#13294B]">
+          Portal
+        </a>
+        <button id="mobile-menu-btn" aria-label="Toggle Menu" class="p-2 text-lg leading-none">☰</button>
       </div>
-    `;
-  });
-</script>
-    <footer class="border-t border-current/15 py-12 max-w-7xl mx-auto px-6 sm:px-12 opacity-90">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-6 pb-8 border-b border-current/15">
-            <div>
-                <span class="font-serif text-xl font-bold tracking-wider block">FAWWAZ IZEDDIN</span>
-                <span class="text-[10px] uppercase tracking-widest accent-text font-semibold block mt-0.5">Linguist & Language Specialist</span>
+    </div>
+
+    <div id="mobile-drawer" class="hidden lg:hidden mt-4 rounded-2xl p-6 space-y-4 shadow-xl">
+      <a href="/" class="block text-xs uppercase tracking-widest">Home</a>
+      <a href="/about" class="block text-xs uppercase tracking-widest">About</a>
+      <a href="/services" class="block text-xs uppercase tracking-widest">Services & Specialisations</a>
+      <a href="/ielts-preparation" class="block text-xs uppercase tracking-widest font-semibold text-[#13294B]">IELTS Preparation</a>
+      <a href="/contact" class="block text-xs uppercase tracking-widest">Contact</a>
+      <div class="pt-3 border-t border-black/10">
+        <a href="/students/" class="btn-navy w-full justify-center">Open Student Portal →</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 sm:px-10 pt-36 pb-24">
+    <!-- Hero -->
+    <div class="max-w-3xl mb-16 glide-reveal">
+      <span class="eyebrow block mb-3">Academic & General Training</span>
+      <h1 class="font-editorial text-4xl sm:text-6xl font-semibold leading-[1.08] mb-5">
+        Precision Coaching for IELTS Band 7.0–8.5
+      </h1>
+      <p class="text-base text-[#5C5B57] leading-relaxed mb-8">
+        Overcome the Band 6.5 plateau through systematic syntactic control, Task 1 analytical synthesis, and examiner-calibrated writing feedback.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="/contact" class="btn-navy">Book Diagnostic Consultation →</a>
+        <a href="/students/ielts/" class="btn-glass">Enrolled Student Login</a>
+      </div>
+    </div>
+
+    <!-- Four Band Descriptors -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+      <div class="glass-panel p-7 glide-reveal">
+        <span class="eyebrow block mb-2">Criterion 01</span>
+        <h2 class="font-editorial text-2xl font-semibold mb-2">Task Achievement</h2>
+        <p class="text-sm text-[#5C5B57]">Structuring clear Task 1 overviews and fully developed Task 2 positions without tangential drift.</p>
+      </div>
+      <div class="glass-panel p-7 glide-reveal">
+        <span class="eyebrow block mb-2">Criterion 02</span>
+        <h2 class="font-editorial text-2xl font-semibold mb-2">Coherence & Cohesion</h2>
+        <p class="text-sm text-[#5C5B57]">Replacing mechanical linkers with referential shell nouns and seamless paragraph progression.</p>
+      </div>
+      <div class="glass-panel p-7 glide-reveal">
+        <span class="eyebrow block mb-2">Criterion 03</span>
+        <h2 class="font-editorial text-2xl font-semibold mb-2">Lexical Resource</h2>
+        <p class="text-sm text-[#5C5B57]">Deploying C1 academic collocations, nominalisation, and calibrated hedging verbs accurately.</p>
+      </div>
+      <div class="glass-panel p-7 glide-reveal">
+        <span class="eyebrow block mb-2">Criterion 04</span>
+        <h2 class="font-editorial text-2xl font-semibold mb-2">Grammatical Range</h2>
+        <p class="text-sm text-[#5C5B57]">Mastering non-defining relative clauses, reduced participles, inversion, and passive reporting.</p>
+      </div>
+    </div>
+
+    <!-- Interactive Public Band 7.5+ Readiness Check -->
+    <section id="ielts-taster" class="max-w-4xl mx-auto glide-reveal">
+      <div class="glass-panel p-8 sm:p-12">
+        <span class="eyebrow block mb-2">Complimentary Diagnostic Taster</span>
+        <h2 class="font-editorial text-3xl sm:text-4xl font-semibold mb-3">
+          IELTS Band 7.5+ Readiness Check
+        </h2>
+        <p class="text-sm text-[#5C5B57] max-w-2xl mb-8 leading-relaxed">
+          Evaluate your command of C1 grammatical range, academic collocations, and nominalisation across three examiner-calibrated items.
+        </p>
+
+        <div class="space-y-6">
+          <div class="p-6 rounded-2xl bg-white/60 border border-black/10">
+            <p class="text-[11px] uppercase tracking-widest text-[#13294B] font-semibold mb-2">01 · Grammatical Range & Accuracy</p>
+            <p class="font-medium text-sm sm:text-base mb-4">
+              Select the sentence demonstrating Band 8.0+ punctuation and non-defining relative clause control:
+            </p>
+            <div class="space-y-2 text-sm">
+              <label class="flex items-start gap-3 p-3 rounded-xl border border-black/10 bg-white/70 cursor-pointer hover:border-[#13294B]">
+                <input type="radio" name="tq1" value="a" class="mt-1 accent-[#13294B]" />
+                <span>Urban congestion charges, that were introduced in 2003, have reduced central traffic volumes.</span>
+              </label>
+              <label class="flex items-start gap-3 p-3 rounded-xl border border-black/10 bg-white/70 cursor-pointer hover:border-[#13294B]">
+                <input type="radio" name="tq1" value="b" class="mt-1 accent-[#13294B]" />
+                <span>Urban congestion charges, which were introduced in 2003, have substantially curtailed central traffic volumes.</span>
+              </label>
+              <label class="flex items-start gap-3 p-3 rounded-xl border border-black/10 bg-white/70 cursor-pointer hover:border-[#13294B]">
+                <input type="radio" name="tq1" value="c" class="mt-1 accent-[#13294B]" />
+                <span>Urban congestion charges which were introduced in 2003, they have curtailed central traffic volumes.</span>
+              </label>
             </div>
-            <div class="flex flex-wrap justify-center gap-6 text-xs uppercase tracking-widest font-semibold">
-                <a href="/" class="hover:opacity-100 transition">Home</a>
-                <a href="/about" class="hover:opacity-100 transition">About</a>
-                <a href="/services" class="hover:opacity-100 transition">Services</a>
-                <a href="/ielts-preparation" class="hover:opacity-100 transition">IELTS</a>
-                <a href="/contact" class="hover:opacity-100 transition">Contact</a>
+          </div>
+
+          <div class="p-6 rounded-2xl bg-white/60 border border-black/10">
+            <p class="text-[11px] uppercase tracking-widest text-[#13294B] font-semibold mb-2">02 · Lexical Resource & Academic Hedging</p>
+            <p class="font-medium text-sm sm:text-base mb-4">
+              Which revision best replaces the informal phrase <em>"make the housing crisis worse"</em> in Task 2 Writing?
+            </p>
+            <div class="space-y-2 text-sm">
+              <label class="flex items-start gap-3 p-3 rounded-xl border border-black/10 bg-white/70 cursor-pointer hover:border-[#13294B]">
+                <input type="radio" name="tq2" value="a" class="mt-1 accent-[#13294B]" />
+                <span>...exacerbate acute housing shortages across metropolitan areas.</span>
+              </label>
+              <label class="flex items-start gap-3 p-3 rounded-xl border border-black/10 bg-white/70 cursor-pointer hover:border-[#13294B]">
+                <input type="radio" name="tq2" value="b" class="mt-1 accent-[#13294B]" />
+                <span>...push the housing problem into a much bigger mess for cities.</span>
+              </label>
+              <label class="flex items-start gap-3 p-3 rounded-xl border border-black/10 bg-white/70 cursor-pointer hover:border-[#13294B]">
+                <input type="radio" name="tq2" value="c" class="mt-1 accent-[#13294B]" />
+                <span>...make housing availability go down rapidly everywhere.</span>
+              </label>
             </div>
+          </div>
+
+          <div class="p-6 rounded-2xl bg-white/60 border border-black/10">
+            <p class="text-[11px] uppercase tracking-widest text-[#13294B] font-semibold mb-2">03 · Coherence & Nominalisation</p>
+            <p class="font-medium text-sm sm:text-base mb-4">
+              Select the most concise academic transformation of: <em>"Because renewable energy has become cheaper, more factories are adopting solar power."</em>
+            </p>
+            <div class="space-y-2 text-sm">
+              <label class="flex items-start gap-3 p-3 rounded-xl border border-black/10 bg-white/70 cursor-pointer hover:border-[#13294B]">
+                <input type="radio" name="tq3" value="a" class="mt-1 accent-[#13294B]" />
+                <span>Declining renewable energy costs have accelerated industrial adoption of solar power.</span>
+              </label>
+              <label class="flex items-start gap-3 p-3 rounded-xl border border-black/10 bg-white/70 cursor-pointer hover:border-[#13294B]">
+                <input type="radio" name="tq3" value="b" class="mt-1 accent-[#13294B]" />
+                <span>Due to the fact that renewables got cheaper, factories started using solar.</span>
+              </label>
+              <label class="flex items-start gap-3 p-3 rounded-xl border border-black/10 bg-white/70 cursor-pointer hover:border-[#13294B]">
+                <input type="radio" name="tq3" value="c" class="mt-1 accent-[#13294B]" />
+                <span>Renewable energy is cheaper now, so more factories are putting solar panels on.</span>
+              </label>
+            </div>
+          </div>
         </div>
-        <div class="pt-6 flex justify-between items-center text-[10px] uppercase tracking-widest opacity-60">
-            <p>&copy; 2026 Fawwaz Izeddin. All rights reserved.</p>
+
+        <div class="mt-8">
+          <button id="check-taster-btn" type="button" class="btn-navy">Evaluate My Answers</button>
         </div>
-    </footer>
 
-    <script>
-        function switchStyle(styleName) {
-            document.body.className = `theme-${styleName} selection:bg-amber-500 selection:text-black`;
-            localStorage.setItem('fawwaz_theme', styleName);
-        }
-        const savedStyle = localStorage.getItem('fawwaz_theme') || 'grey';
-        switchStyle(savedStyle);
-        const menuBtn = document.getElementById('menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (menuBtn) { menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden')); }
-        function toggleMobileMenu() { if (mobileMenu) mobileMenu.classList.add('hidden'); }
+        <div id="taster-result" class="hidden mt-8 p-6 rounded-2xl bg-white/85 border border-[#13294B]/20 space-y-3 text-sm leading-relaxed"></div>
+      </div>
+    </section>
+  </main>
 
-        const quizQuestions = [
-            { question: "What is the primary lexical criterion for achieving an IELTS Band 8+ in Writing Task 2?", options: ["Using overly complex, obscure archaic words.", "Using less common lexical items with natural and sophisticated control of collocation.", "Repeating key terms verbatim.", "Avoiding adjectives."], correct: 1 },
-            { question: "How should you approach IELTS Academic Writing Task 1 data descriptions?", options: ["List every single numerical data point.", "Provide an overview highlighting main trends, significant peaks, and key comparisons.", "Guess underlying causes.", "Write in informal narrative."], correct: 1 },
-            { question: "How should you structure an IELTS Speaking Part 3 response for Band 7+?", options: ["Simple 'yes' or 'no'.", "Immediate personal anecdote.", "Direct viewpoint -> Elaboration -> Exemplification -> Synthesis.", "Recite memorised paragraphs."], correct: 2 },
-            { question: "What distinguishes lexical resource from grammatical range?", options: ["Lexical resource evaluates vocabulary precision and collocations, whereas grammatical range evaluates sentence structure complexity.", "They are identical.", "Grammar only measures spelling.", "Lexical resource measures speed."], correct: 0 }
-        ];
-        let currentQuizIndex = 2;
-        let quizScore = 0;
-        let selectedOptionIndex = null;
+  <footer class="border-t border-black/10 bg-[#F2EFE9]/70 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 sm:px-10 py-14 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+      <div>
+        <span class="font-editorial text-2xl font-bold block">Fawwaz Izeddin</span>
+        <span class="text-[11px] uppercase tracking-[0.2em] text-[#5C5B57]">Linguist & Language Specialist · Lex Academic English</span>
+      </div>
+      <div class="flex flex-wrap gap-6 text-xs uppercase tracking-widest font-medium">
+        <a href="/" class="hover:text-[#13294B]">Home</a>
+        <a href="/about" class="hover:text-[#13294B]">About</a>
+        <a href="/services" class="hover:text-[#13294B]">Services</a>
+        <a href="/ielts-preparation" class="hover:text-[#13294B]">IELTS</a>
+        <a href="/contact" class="hover:text-[#13294B]">Contact</a>
+        <a href="/students/" class="font-semibold text-[#13294B]">Student Portal</a>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-6 sm:px-10 pb-8 text-[11px] uppercase tracking-widest text-[#5C5B57]">
+      © 2026 Fawwaz Izeddin · Lex Academic English. All rights reserved.
+    </div>
+  </footer>
 
-        function loadQuizQuestion() {
-            const q = quizQuestions[currentQuizIndex];
-            document.getElementById('quiz-question-counter').innerText = `Question ${currentQuizIndex + 1} of ${quizQuestions.length}`;
-            document.getElementById('quiz-score-display').innerText = `Score: ${quizScore} / ${quizQuestions.length}`;
-            document.getElementById('quiz-question-title').innerText = q.question;
-            const container = document.getElementById('quiz-options-container');
-            container.innerHTML = '';
-            q.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = `w-full text-left p-4 rounded-2xl border transition text-xs sm:text-sm opacity-85 ${selectedOptionIndex === idx ? 'border-amber-400 bg-amber-500/10' : 'border-current/25 hover:border-current'}`;
-                btn.innerHTML = `<div class="flex items-center justify-between"><span>${opt}</span><i class="fa-regular ${selectedOptionIndex === idx ? 'fa-circle-dot accent-text' : 'fa-circle'}"></i></div>`;
-                btn.onclick = () => selectQuizOption(idx);
-                container.appendChild(btn);
-            });
-        }
-        function selectQuizOption(idx) {
-            selectedOptionIndex = idx;
-            if (idx === quizQuestions[currentQuizIndex].correct) { quizScore = Math.min(quizQuestions.length, quizScore + 1); }
-            loadQuizQuestion();
-        }
-        function nextQuizQuestion() { currentQuizIndex = (currentQuizIndex + 1) % quizQuestions.length; selectedOptionIndex = null; loadQuizQuestion(); }
-        function prevQuizQuestion() { currentQuizIndex = (currentQuizIndex - 1 + quizQuestions.length) % quizQuestions.length; selectedOptionIndex = null; loadQuizQuestion(); }
-        loadQuizQuestion();
+  <script src="/assets/halcyon-motion.js" defer></script>
+  <script>
+    document.getElementById('check-taster-btn').addEventListener('click', function () {
+      const q1 = document.querySelector('input[name="tq1"]:checked');
+      const q2 = document.querySelector('input[name="tq2"]:checked');
+      const q3 = document.querySelector('input[name="tq3"]:checked');
+      const resultBox = document.getElementById('taster-result');
 
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); obs.unobserve(entry.target); } });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal-up').forEach(el => observer.observe(el));
-    </script>
+      if (!q1 || !q2 || !q3) {
+        resultBox.classList.remove('hidden');
+        resultBox.innerHTML = '<p class="text-[#13294B] font-semibold">Please select an answer for all three questions before evaluating.</p>';
+        return;
+      }
+
+      let score = 0;
+      if (q1.value === 'b') score++;
+      if (q2.value === 'a') score++;
+      if (q3.value === 'a') score++;
+
+      const verdict = score === 3
+        ? 'Band 8.0+ Profile — Strong command of non-defining clauses, C1 collocations, and nominalisation.'
+        : score === 2
+        ? 'Band 7.0–7.5 Profile — Solid academic foundation with targeted room to refine clause punctuation or register.'
+        : 'Band 6.0–6.5 Profile — Focus on replacing informal phrasal verbs with nominalised noun phrases and accurate relative clauses.';
+
+      resultBox.classList.remove('hidden');
+      resultBox.innerHTML = `
+        <p class="text-xs uppercase tracking-widest text-[#13294B] font-bold">Diagnostic Score: ${score} / 3</p>
+        <p class="font-editorial text-2xl font-semibold">${verdict}</p>
+        <ul class="space-y-1 text-[#5C5B57] list-disc pl-5">
+          <li><strong>01 Grammar:</strong> Non-defining clauses enclosed by commas require <em>"which"</em> (never <em>"that"</em>).</li>
+          <li><strong>02 Lexical Resource:</strong> <em>"Exacerbate acute housing shortages"</em> demonstrates precise C1 verb–noun collocation.</li>
+          <li><strong>03 Coherence:</strong> Nominalising <em>"because X became cheaper"</em> into <em>"Declining renewable energy costs"</em> raises lexical density.</li>
+        </ul>
+        <div class="pt-3">
+          <a href="/contact" class="btn-navy">Book a Full IELTS Diagnostic Consultation →</a>
+        </div>
+      `;
+    });
+  </script>
 </body>
 </html>
