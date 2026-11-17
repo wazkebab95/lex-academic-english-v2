@@ -103,6 +103,11 @@ function safeSubject(value) {
     .trim();
 }
 
+function safeSheetValue(value) {
+  const text = String(value ?? "");
+  return /^[\s]*[=+\-@]/.test(text) ? "'" + text : text;
+}
+
 export async function onRequestPost({ request, env }) {
   try {
     const payload = await readJsonBody(request);
@@ -171,14 +176,14 @@ export async function onRequestPost({ request, env }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        timestamp,
-        studentName,
-        studentEmail,
-        category,
-        score,
-        bandEstimate,
-        timeTaken,
-        details: detailsPlain
+        timestamp: safeSheetValue(timestamp),
+        studentName: safeSheetValue(studentName),
+        studentEmail: safeSheetValue(studentEmail),
+        category: safeSheetValue(category),
+        score: safeSheetValue(score),
+        bandEstimate: safeSheetValue(bandEstimate),
+        timeTaken: safeSheetValue(timeTaken),
+        details: safeSheetValue(detailsPlain)
       })
     });
 
