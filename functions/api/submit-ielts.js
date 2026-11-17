@@ -42,7 +42,7 @@ async function readJsonBody(request) {
 
     if (total > MAX_BODY_BYTES) {
       await reader.cancel();
-      throw new Error("Request body too large");
+      throw new SubmissionError("The submission is too large.", 413);
     }
 
     chunks.push(part.value);
@@ -74,7 +74,7 @@ function readText(payload, key, options = {}) {
   }
 
   const value = payload[key].trim();
-  if (required && !value) throw new Error("Missing required field");
+  if (required && !value) throw new SubmissionError("A required field is missing.", 400);
   if (value.length > max) throw new SubmissionError("A submission field is too long.", 400);
   return value;
 }
