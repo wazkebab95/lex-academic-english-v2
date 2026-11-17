@@ -55,6 +55,7 @@
         </nav>
         <button id="results-button" type="button" class="module rounded-xl p-4 text-left w-full"><span class="tag">Progress review</span><span class="block font-semibold mt-1">Results &amp; completion</span><span class="muted text-xs">Scores and module status</span></button>
         <p class="text-xs muted leading-relaxed px-1">Progress is currently saved only in this browser on this device. It is not yet sent to your teacher.</p>
+        <p id="storage-warning" class="text-xs text-amber-200 leading-relaxed px-1" role="status" hidden>Your browser is blocking or has invalid saved data. Progress may not persist after you leave this page.</p>
       </aside>
 
       <section class="panel rounded-2xl p-5 sm:p-8 min-h-[620px]" aria-live="polite">
@@ -116,9 +117,34 @@ const modules = {
  ]}
 };
 const caseStudy = {title:"The Riverside Store: a retail performance challenge",brief:"Riverside is a medium-sized clothing retailer. Over the last three months, monthly revenue has fallen from £120,000 to £102,000. Store footfall has remained almost unchanged, but the conversion rate has dropped from 24% to 19%. At the same time, the business is holding high levels of last season's stock. Customer feedback mentions long queues at weekends and limited availability of popular sizes.",tasks:["Identify two likely business problems using evidence from the case.","Recommend three practical actions the store manager could take.","Write a short professional update to the regional manager (80–120 words)."],model:"Riverside's main challenges are a lower conversion rate and excess seasonal inventory. Revenue has fallen by 15%, while footfall has remained stable, suggesting that fewer visitors are completing purchases. The store should review weekend staffing to reduce queues, analyse sales data to replenish popular sizes, and introduce a targeted clearance promotion for last season's stock. The manager should monitor conversion rate, average transaction value and stock turnover over the next month to evaluate the impact."};
-const KEY="lex-retail-progress-v1";let state=loadState(),current="vocabulary",questionIndex=0,answers=[],revealed=false;
-function loadState(){try{return JSON.parse(localStorage.getItem(KEY))||{completed:{},scores:{},caseText:""}}catch{return{completed:{},scores:{},caseText:""}}}
-function save(){localStorage.setItem(KEY,JSON.stringify(state));updateProgress()}
+const KEY="lex-retail-progress-v1";
+const MODULE_IDS=["vocabulary","grammar","communication","case","assessment"];
+let storageUnavailable=false;
+let state=loadState(),current="vocabulary",questionIndex=0,answers=[],revealed=false;
+function emptyState(){return{completed:{},scores:{},caseText:""}}
+function loadState(){
+ try{
+  const parsed=JSON.parse(localStorage.getItem(KEY)||"null");
+  if(!parsed||typeof parsed!=="object"||Array.isArray(parsed))return emptyState();
+  const completed={};
+  const scores={};
+  MODULE_IDS.forEach(id=>{
+   if(parsed.completed&&parsed.completed[id]===true)completed[id]=true;
+   const score=parsed.scores&&parsed.scores[id];
+   if(id==="case"&&typeof score==="string")scores[id]=score.slice(0,80);
+   else if(id!=="case"&&Number.isFinite(Number(score))&&Number(score)>=0&&Number(score)<=100)scores[id]=Number(score);
+  });
+  return{completed,scores,caseText:typeof parsed.caseText==="string"?parsed.caseText.slice(0,12000):""};
+ }catch{storageUnavailable=true;return emptyState()}
+}
+function save(){
+ try{localStorage.setItem(KEY,JSON.stringify(state));storageUnavailable=false}
+ catch{storageUnavailable=true}
+ updateProgress();
+ const warning=document.getElementById("storage-warning");
+ if(warning)warning.hidden=!storageUnavailable;
+ return !storageUnavailable;
+}
 function updateProgress(){const n=Object.keys(state.completed).filter(k=>state.completed[k]).length;document.getElementById("progress-label").textContent=n+" / 5 modules";document.getElementById("overall-progress").style.width=(n/5*100)+"%"}
 function setModule(id){current=id;questionIndex=0;answers=[];revealed=false;document.querySelectorAll("[data-module]").forEach(b=>b.classList.toggle("active",b.dataset.module===id));document.getElementById("results-button").classList.remove("active");render()}
 function setResults(){current="results";document.querySelectorAll("[data-module]").forEach(b=>b.classList.remove("active"));document.getElementById("results-button").classList.add("active");render()}
@@ -132,8 +158,8 @@ function renderQuestion(){const list=modules[current].questions,q=list[questionI
  document.getElementById("back").onclick=()=>{if(questionIndex>0){questionIndex--;renderQuestion()}};document.getElementById("continue").onclick=()=>{questionIndex++;renderQuestion()}
 }
 function renderCase(){const root=document.getElementById("activity");root.innerHTML='<div class="rounded-xl border border-amber-200/20 p-5 bg-amber-100/5"><div class="tag">Business scenario</div><p class="leading-relaxed mt-3">'+caseStudy.brief+'</p></div><div class="mt-6"><h3 class="text-xl">Your tasks</h3><ol class="list-decimal pl-5 mt-3 space-y-2 muted text-sm">'+caseStudy.tasks.map(t=>'<li>'+t+'</li>').join("")+'</ol></div><div class="mt-6"><label for="case-answer" class="block font-semibold mb-2">Your analysis and recommendations</label><textarea id="case-answer" placeholder="Write your analysis here. Support your recommendations with evidence from the case...">'+(state.caseText||"")+'</textarea><div class="flex flex-wrap gap-3 mt-3"><button class="btn btn-primary" id="save-case">Save my response</button><button class="btn btn-ghost" id="show-model">Show model response</button></div><div id="case-feedback" class="mt-4"></div><div id="model-response" class="hidden rounded-xl border border-amber-200/20 p-4 mt-4"><div class="tag">Example response · Compare and adapt</div><p class="text-sm leading-relaxed mt-2">'+caseStudy.model+'</p></div></div><div class="mt-6 border-t border-white/10 pt-5"><p class="muted text-xs">Self-review: have you used figures accurately, explained causes, proposed realistic actions and used a professional tone?</p><button class="btn btn-ghost mt-3" id="complete-case">Mark written task as completed</button></div>';
- document.getElementById("save-case").onclick=()=>{state.caseText=document.getElementById("case-answer").value;save();document.getElementById("case-feedback").textContent="Your response has been saved in this browser."};document.getElementById("show-model").onclick=()=>document.getElementById("model-response").classList.toggle("hidden");document.getElementById("complete-case").onclick=()=>{state.caseText=document.getElementById("case-answer").value;state.completed.case=true;state.scores.case="Submitted for self-review";save();render()}}
-updateProgress();render();
+ document.getElementById("save-case").onclick=()=>{state.caseText=document.getElementById("case-answer").value;const saved=save();document.getElementById("case-feedback").textContent=saved?"Your response has been saved in this browser.":"Your response is available on this page, but this browser could not save it."};document.getElementById("show-model").onclick=()=>document.getElementById("model-response").classList.toggle("hidden");document.getElementById("complete-case").onclick=()=>{state.caseText=document.getElementById("case-answer").value;state.completed.case=true;state.scores.case="Submitted for self-review";save();render()}}
+updateProgress();if(storageUnavailable){const warning=document.getElementById("storage-warning");if(warning)warning.hidden=false}render();
 </script>
 <!-- Automated Google Sheet & Dual-Email Submission Bridge -->
 <div id="retail-sync-box" style="max-width: 760px; margin: 40px auto 60px; padding: 28px; background: #FAF9F6; border: 1px solid #E2DFD7; font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #1C1C1C;">
