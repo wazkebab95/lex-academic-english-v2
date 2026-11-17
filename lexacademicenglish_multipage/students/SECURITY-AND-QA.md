@@ -2,12 +2,43 @@
 
 ## Current state
 
-The initial student pages are in the repository's `main` branch. The application is still a prototype:
+The student pages and shared submission endpoint are present in the repository's `main` branch. The application is still a prototype:
 
-- There is no login or server-side authorisation in the HTML application.
-- Progress and the case-study response are stored in browser `localStorage` only.
-- A browser's local storage is not a teacher dashboard, not cross-device storage, and not an access-control mechanism.
-- Do not enter or store real student personal data, sensitive work information, or confidential employer data.
+- There is no application-level login or server-side per-student authorisation.
+- Quiz progress and the Retail case-study response are stored in browser `localStorage` only; they do not synchronise between devices.
+- The Retail results form is a manual submission step. It sends a learner-reported progress summary to `/api/submit-ielts`; the case-study response is excluded unless the learner explicitly selects the consent checkbox.
+- The shared endpoint forwards submitted details to the configured Google Sheets webhook and Resend email service. Do not describe this as automatic tracking or independently verified scoring.
+- Browser storage is not a teacher dashboard and is not an access-control mechanism.
+- The changes in this feature branch harden request validation and email rendering, but do not create authentication. They are not live until merged and deployed.
+- Do not enter real student personal data, sensitive work information, or confidential employer data until Access protection and the tests below are in place.
+
+## Submission endpoint safeguards in this branch
+
+The proposed `functions/api/submit-ielts.js` changes:
+
+- Require JSON and cap request bodies at 64 KiB.
+- Validate required text fields, email addresses and field lengths.
+- Limit the plain-text details field to 20,000 characters.
+- Ignore client-supplied `detailsHtml`; escape plain text before rendering email HTML.
+- Return generic errors to the browser and check the HTTP status of all three upstream services.
+
+These controls reduce malformed requests and HTML injection risk. **They do not authenticate the caller or prevent automated abuse by themselves.** The current `main` branch still has the earlier endpoint implementation until this branch is reviewed and merged.
+
+## Required Cloudflare Access coverage
+
+Protect both of these paths with the same narrowly scoped student allow policy:
+
+1. The student pages: `https://lexacademicenglish.co.uk/students/*`
+2. The submission API: `https://lexacademicenglish.co.uk/api/submit-ielts`
+
+Protecting only `/students/*` does not automatically protect the separate `/api/submit-ielts` endpoint. Add the exact API path as its own Self-hosted Access application (or an equivalent more-specific application rule) and test the POST request while signed in and signed out.
+
+Also:
+
+- Configure and test the equivalent paths on `www.lexacademicenglish.co.uk` if it serves content independently rather than redirecting to the apex domain.
+- Protect the Cloudflare Pages preview hostname separately while testing.
+- Add a Cloudflare rate-limiting rule for POST requests to `/api/submit-ielts` (for example, begin with a low per-IP threshold and tune it for legitimate retries).
+- Keep the allow policy restricted to the intended student identity or identity group. Do not use an unlisted URL as a substitute.
 
 ## Recommended Cloudflare Access setup
 
@@ -16,7 +47,7 @@ Use Cloudflare Access as the first access gate for the static student area. It i
 ### Production custom domain
 
 1. In Cloudflare Zero Trust, open **Access controls → Applications** and create a **Self-hosted** application.
-2. Select the custom hostname `lexacademicenglish.co.uk` and set the application path to `/students/*`.
+2. Select the custom hostname `lexacademicenglish.co.uk` and set the application path to `/students/*`. Create a separate Self-hosted application for the exact path `/api/submit-ielts` using the same allow policy.
 3. Create an **Allow** policy for only the specific student email address or a tightly controlled identity-provider group. Leave all other visitors denied.
 4. Test both `https://lexacademicenglish.co.uk/students/` and `https://lexacademicenglish.co.uk/students/retail/` while signed out and while signed in as an authorised user.
 5. If the no-trailing-slash route `/students` is reachable separately, add and test an exact path rule for it as well.
@@ -73,12 +104,18 @@ Do not connect a database or collect real student submissions until the data mod
 ### Privacy and access
 
 - [ ] A signed-out visitor is blocked from `/students/` and `/students/retail/`.
+- [ ] A signed-out POST to `/api/submit-ielts` is blocked by Access.
 - [ ] An explicitly authorised student can open both routes.
 - [ ] An unauthorised signed-in account is blocked.
 - [ ] Public homepage and unrelated public pages remain accessible.
 - [ ] Both apex and `www` hostnames are tested if both serve content.
 - [ ] Preview-domain access is tested separately from production.
-- [ ] No real student personal data appears in repository files, page source, URLs, or browser storage.
+- [ ] No real student personal data appears in repository files, page source, URLs, or unnecessary browser storage.
+- [ ] The Retail submission includes only Retail programme data, not unrelated localStorage entries.
+- [ ] The case-study response is omitted unless the learner explicitly opts in.
+- [ ] Client-supplied HTML is ignored and plain-text submissions are escaped in email output.
+- [ ] Oversized, malformed and invalid-email requests are rejected before upstream services are called.
+- [ ] Rate limiting is enabled for POST requests to the submission endpoint.
 
 ## Release gate
 
