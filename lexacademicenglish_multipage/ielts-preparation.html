@@ -133,7 +133,138 @@
             </div>
         </div>
     </section>
+<!-- Interactive Public IELTS Band 7.5+ Mini-Diagnostic -->
+<section id="ielts-taster" class="max-w-5xl mx-auto px-6 py-16">
+  <div class="portfolio-card rounded-2xl p-8 md:p-12">
+    <p class="text-xs uppercase tracking-[0.2em] font-semibold accent-text mb-2">
+      Complimentary Diagnostic Taster
+    </p>
+    <h2 class="font-serif text-3xl md:text-4xl font-bold mb-3">
+      IELTS Band 7.5+ Readiness Check
+    </h2>
+    <p class="text-sm opacity-80 max-w-2xl mb-8 leading-relaxed">
+      Test your command of C1 grammatical range, academic collocations, and sentence synthesis across three examiner-calibrated items before booking a diagnostic consultation.
+    </p>
 
+    <div id="taster-questions" class="space-y-6">
+      <!-- Q1 -->
+      <div class="p-6 rounded-xl border border-current/15 bg-black/20">
+        <p class="text-xs uppercase tracking-widest opacity-60 mb-2">01 · Grammatical Range & Accuracy</p>
+        <p class="font-medium mb-4">
+          Select the sentence that demonstrates Band 8.0+ punctuation and non-defining relative clause control:
+        </p>
+        <div class="space-y-2 text-sm">
+          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
+            <input type="radio" name="tq1" value="a" class="mt-1" />
+            <span>Urban congestion charges, that were introduced in 2003, have reduced central traffic volumes.</span>
+          </label>
+          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
+            <input type="radio" name="tq1" value="b" class="mt-1" />
+            <span>Urban congestion charges, which were introduced in 2003, have substantially curtailed central traffic volumes.</span>
+          </label>
+          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
+            <input type="radio" name="tq1" value="c" class="mt-1" />
+            <span>Urban congestion charges which were introduced in 2003, they have curtailed central traffic volumes.</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="p-6 rounded-xl border border-current/15 bg-black/20">
+        <p class="text-xs uppercase tracking-widest opacity-60 mb-2">02 · Lexical Resource & Academic Hedging</p>
+        <p class="font-medium mb-4">
+          Which revision best replaces the informal phrase <em>"make the housing crisis worse"</em> in Task 2 Writing?
+        </p>
+        <div class="space-y-2 text-sm">
+          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
+            <input type="radio" name="tq2" value="a" class="mt-1" />
+            <span>...exacerbate acute housing shortages across metropolitan areas.</span>
+          </label>
+          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
+            <input type="radio" name="tq2" value="b" class="mt-1" />
+            <span>...push the housing problem into a much bigger mess for cities.</span>
+          </label>
+          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
+            <input type="radio" name="tq2" value="c" class="mt-1" />
+            <span>...make housing availability go down rapidly everywhere.</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="p-6 rounded-xl border border-current/15 bg-black/20">
+        <p class="text-xs uppercase tracking-widest opacity-60 mb-2">03 · Coherence & Nominalisation</p>
+        <p class="font-medium mb-4">
+          Select the most concise academic transformation of: <em>"Because renewable energy has become cheaper, more factories are adopting solar power."</em>
+        </p>
+        <div class="space-y-2 text-sm">
+          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
+            <input type="radio" name="tq3" value="a" class="mt-1" />
+            <span>Declining renewable energy costs have accelerated industrial adoption of solar power.</span>
+          </label>
+          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
+            <input type="radio" name="tq3" value="b" class="mt-1" />
+            <span>Due to the fact that renewables got cheaper, factories started using solar.</span>
+          </label>
+          <label class="flex items-start gap-3 p-3 rounded-lg border border-current/10 cursor-pointer hover:border-current/30">
+            <input type="radio" name="tq3" value="c" class="mt-1" />
+            <span>Renewable energy is cheaper now, so more factories are putting solar panels on.</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-wrap items-center gap-4">
+      <button id="check-taster-btn" type="button" class="px-6 py-3 accent-bg text-xs uppercase tracking-widest font-bold rounded-full cursor-pointer transition shadow-lg">
+        Evaluate My Answers
+      </button>
+    </div>
+
+    <div id="taster-result" class="hidden mt-8 p-6 rounded-xl border border-current/20 bg-black/30 space-y-3 text-sm leading-relaxed"></div>
+  </div>
+</section>
+
+<script>
+  document.getElementById('check-taster-btn').addEventListener('click', function () {
+    const q1 = document.querySelector('input[name="tq1"]:checked');
+    const q2 = document.querySelector('input[name="tq2"]:checked');
+    const q3 = document.querySelector('input[name="tq3"]:checked');
+    const resultBox = document.getElementById('taster-result');
+
+    if (!q1 || !q2 || !q3) {
+      resultBox.classList.remove('hidden');
+      resultBox.innerHTML = '<p class="accent-text font-semibold">Please select an answer for all three questions before evaluating.</p>';
+      return;
+    }
+
+    let score = 0;
+    if (q1.value === 'b') score++;
+    if (q2.value === 'a') score++;
+    if (q3.value === 'a') score++;
+
+    const verdict = score === 3
+      ? 'Band 8.0+ Profile — Strong command of non-defining clauses, C1 collocations, and nominalisation.'
+      : score === 2
+      ? 'Band 7.0–7.5 Profile — Solid academic foundation with targeted room to refine clause punctuation or register.'
+      : 'Band 6.0–6.5 Profile — Focus on replacing informal phrasal verbs with nominalised noun phrases and accurate relative clauses.';
+
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = `
+      <p class="text-xs uppercase tracking-widest accent-text font-bold">Diagnostic Score: ${score} / 3</p>
+      <p class="font-serif text-xl font-bold">${verdict}</p>
+      <ul class="space-y-1 opacity-85 list-disc pl-5">
+        <li><strong>01 Grammar:</strong> Non-defining clauses enclosed by commas require <em>"which"</em> (never <em>"that"</em>).</li>
+        <li><strong>02 Lexical Resource:</strong> <em>"Exacerbate acute housing shortages"</em> demonstrates precise C1 verb–noun collocation.</li>
+        <li><strong>03 Coherence:</strong> Nominalising <em>"because X became cheaper"</em> into <em>"Declining renewable energy costs"</em> raises lexical density.</li>
+      </ul>
+      <div class="pt-4">
+        <a href="/contact" class="inline-block px-6 py-3 accent-bg text-xs uppercase tracking-widest font-bold rounded-full shadow-lg">
+          Book a Full IELTS Diagnostic Consultation →
+        </a>
+      </div>
+    `;
+  });
+</script>
     <footer class="border-t border-current/15 py-12 max-w-7xl mx-auto px-6 sm:px-12 opacity-90">
         <div class="flex flex-col md:flex-row justify-between items-center gap-6 pb-8 border-b border-current/15">
             <div>
