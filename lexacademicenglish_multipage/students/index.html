@@ -25,7 +25,7 @@
       <p class="lex-eyebrow">Enrolled Student Workspace</p>
       <h1 class="lex-title">Lex Academic English Student Portal</h1>
       <p class="lex-subtitle">
-        Select your assigned learning programme or reference library below. All diagnostic exercises and written submissions are automatically recorded to your student progress ledger.
+        Select the learning programme or reference library assigned to you. Progress may remain in this browser unless a module offers a separate submission step; only a successful submission confirmation means work has been sent to the instructor.
       </p>
     </div>
 
@@ -33,7 +33,7 @@
     <section id="progress-strip" style="background: var(--bg-card); border: 1px solid var(--border-hairline); padding: 24px 28px; margin-bottom: 36px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
       <div>
         <p style="font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-navy); margin: 0 0 4px;">
-          Active Session Summary
+          Local Session Summary
         </p>
         <p id="session-identity" style="font-family: var(--font-serif); font-size: 21px; margin: 0 0 6px;">
           Welcome to your workspace
@@ -92,38 +92,57 @@
 
   <script>
     (function () {
-      const name = localStorage.getItem('lex_ielts_name') || '';
-      const email = localStorage.getItem('lex_ielts_email') || '';
-      const history = JSON.parse(localStorage.getItem('lex_ielts_history') || '{}');
+      function readLocal(key, fallback = '') {
+        try { return localStorage.getItem(key) ?? fallback; }
+        catch { return fallback; }
+      }
+
+      const name = readLocal('lex_ielts_name').trim();
+      let history = {};
+      try {
+        const parsed = JSON.parse(readLocal('lex_ielts_history', '{}'));
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) history = parsed;
+      } catch {
+        history = {};
+      }
 
       const idEl = document.getElementById('session-identity');
       const badgesEl = document.getElementById('session-badges');
+      const pill = document.getElementById('ielts-card-pill');
+      const allowedModules = ['grammar', 'vocabulary', 'sentences', 'writing'];
+      const entries = allowedModules
+        .filter(key => typeof history[key] === 'string' && history[key].trim())
+        .map(key => [key, history[key].trim().slice(0, 120)]);
 
-      if (name) {
-        idEl.textContent = email ? `${name} (${email})` : name;
-      } else {
-        idEl.textContent = 'No candidate registered on this browser yet';
-      }
+      idEl.textContent = name || 'No candidate registered on this browser yet';
+      badgesEl.replaceChildren();
 
-      const keys = Object.keys(history);
-      if (keys.length > 0) {
-        document.getElementById('ielts-card-pill').textContent = `${keys.length} / 4 Completed`;
-        badgesEl.innerHTML = keys.map(k => `
-          <span class="status-pill done" style="text-transform: capitalize;">${k}: ${history[k]}</span>
-        `).join('');
+      if (entries.length) {
+        pill.textContent = entries.length + ' / 4 Completed';
+        entries.forEach(([key, value]) => {
+          const badge = document.createElement('span');
+          badge.className = 'status-pill done';
+          badge.style.textTransform = 'capitalize';
+          badge.textContent = key + ': ' + value;
+          badgesEl.appendChild(badge);
+        });
       } else {
-        badgesEl.innerHTML = '<span class="status-pill">No completed diagnostics recorded in this browser yet</span>';
+        const empty = document.createElement('span');
+        empty.className = 'status-pill';
+        empty.textContent = 'No completed diagnostics recorded in this browser yet';
+        badgesEl.appendChild(empty);
       }
 
       document.getElementById('reset-session-btn').addEventListener('click', () => {
-        if (confirm('Clear saved name, email, and local progress badges on this device? (Your Google Sheet records remain safe.)')) {
+        if (!confirm('Clear the name, email and progress summary saved in this browser? This does not delete a submission already sent to the instructor.')) return;
+        try {
           localStorage.removeItem('lex_ielts_name');
           localStorage.removeItem('lex_ielts_email');
           localStorage.removeItem('lex_ielts_history');
-          location.reload();
-        }
+        } catch { /* The browser may block local storage. */ }
+        location.reload();
       });
     })();
-  </script>
+  </script>>
 </body>
 </html>
