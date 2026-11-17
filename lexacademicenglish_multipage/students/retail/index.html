@@ -138,13 +138,13 @@ updateProgress();render();
 <!-- Automated Google Sheet & Dual-Email Submission Bridge -->
 <div id="retail-sync-box" style="max-width: 760px; margin: 40px auto 60px; padding: 28px; background: #FAF9F6; border: 1px solid #E2DFD7; font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #1C1C1C;">
   <p style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #1B365D; margin: 0 0 6px;">
-    Official Record & Receipt
+    Instructor Submission & Receipt
   </p>
   <h3 style="font-family: Georgia, serif; font-size: 22px; margin: 0 0 8px; font-weight: 600;">
     Submit Retail Module Results
   </h3>
   <p style="font-size: 14px; color: #5C5B57; margin: 0 0 18px;">
-    Once you have completed the Retail exercises above, confirm your details below to register your score in the student ledger and receive your email receipt.
+    Submit a progress summary for instructor review and receive a receipt. Quiz scores are calculated in this browser and are not independently verified. Your written case-study response is included only if you select the option below.
   </p>
 
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 16px;">
@@ -159,8 +159,17 @@ updateProgress();render();
   </div>
 
   <div style="margin-bottom: 18px;">
-    <label style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #5C5B57; margin-bottom: 6px;">Final Score / Notes (Auto-detected or enter score)</label>
-    <input type="text" id="retail-score-summary" placeholder="e.g. 5/5 Modules Completed — 88%" style="width: 100%; padding: 10px 12px; border: 1px solid #E2DFD7; background: #FFFFFF; font-size: 16px;" />
+    <label style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #5C5B57; margin-bottom: 6px;">Detected progress summary</label>
+    <input type="text" id="retail-score-summary" readonly aria-readonly="true" style="width: 100%; padding: 10px 12px; border: 1px solid #E2DFD7; background: #F4F3EF; font-size: 16px;" />
+    <p style="font-size: 12px; color: #6B6A66; margin: 6px 0 0;">Calculated from progress saved in this browser. It is a learner-submitted summary, not an independently verified result.</p>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <label style="display: flex; align-items: flex-start; gap: 9px; font-size: 13px; line-height: 1.5; color: #45443F;">
+      <input type="checkbox" id="retail-include-case" style="margin-top: 3px;" />
+      <span>Include my written case-study response in this submission for instructor feedback.</span>
+    </label>
+    <p style="font-size: 12px; color: #6B6A66; margin: 6px 0 0 24px;">Optional. If selected, the saved response will be sent to the instructor and included in the email receipt.</p>
   </div>
 
   <button id="retail-submit-btn" type="button" style="background: #1B365D; color: #FFFFFF; border: none; padding: 13px 24px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; cursor: pointer;">
@@ -175,29 +184,93 @@ updateProgress();render();
     const nameInput = document.getElementById('retail-cand-name');
     const emailInput = document.getElementById('retail-cand-email');
     const scoreInput = document.getElementById('retail-score-summary');
+    const includeCaseInput = document.getElementById('retail-include-case');
     const statusEl = document.getElementById('retail-sync-status');
     const submitBtn = document.getElementById('retail-submit-btn');
+    const questionCounts = { vocabulary: 10, grammar: 8, communication: 5, assessment: 10 };
+    const moduleNames = {
+      vocabulary: 'Retail vocabulary',
+      grammar: 'Business grammar',
+      communication: 'Professional communication',
+      case: 'Retail case study',
+      assessment: 'Final assessment'
+    };
 
-    // Pre-fill from shared Student Portal localStorage
-    nameInput.value = localStorage.getItem('lex_ielts_name') || '';
-    emailInput.value = localStorage.getItem('lex_ielts_email') || '';
-
-    // Auto-capture any Retail progress/score stored in localStorage
-    function collectRetailSnapshot() {
-      const entries = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && !key.startsWith('lex_ielts_')) {
-          entries.push(`${key}: ${localStorage.getItem(key)}`);
-        }
-      }
-      return entries.length ? entries.join(' | ') : 'Completed Retail Business English session';
+    try {
+      nameInput.value = localStorage.getItem('lex_ielts_name') || '';
+      emailInput.value = localStorage.getItem('lex_ielts_email') || '';
+    } catch {
+      statusEl.textContent = 'This browser is blocking saved details. You can still enter them manually.';
     }
+
+    function readRetailProgress() {
+      try {
+        const raw = localStorage.getItem('lex-retail-progress-v1');
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null;
+        return parsed;
+      } catch {
+        return null;
+      }
+    }
+
+    function collectRetailSnapshot(includeCaseStudy) {
+      const progress = readRetailProgress();
+      if (!progress) {
+        return {
+          summary: 'No saved Retail progress found in this browser',
+          details: 'No saved Retail progress was available at the time of submission.'
+        };
+      }
+
+      const completedState = progress.completed && typeof progress.completed === 'object' && !Array.isArray(progress.completed)
+        ? progress.completed : {};
+      const scores = progress.scores && typeof progress.scores === 'object' && !Array.isArray(progress.scores)
+        ? progress.scores : {};
+      const completed = Object.keys(moduleNames).filter(key => completedState[key] === true);
+      let earned = 0;
+      let possible = 0;
+      const scoreLines = [];
+
+      Object.entries(questionCounts).forEach(([key, questionCount]) => {
+        const score = Number(scores[key]);
+        if (completedState[key] === true && Number.isFinite(score)) {
+          const boundedScore = Math.max(0, Math.min(100, score));
+          earned += Math.round(boundedScore * questionCount / 100);
+          possible += questionCount;
+          scoreLines.push(moduleNames[key] + ': ' + Math.round(boundedScore) + '%');
+        }
+      });
+
+      const combined = possible ? Math.round(earned / possible * 100) : null;
+      const summary = completed.length + '/5 modules completed' +
+        (combined === null ? '' : ' — combined quiz score ' + combined + '%');
+      const lines = [
+        'Progress summary: ' + summary,
+        'Completed modules: ' + (completed.map(key => moduleNames[key]).join(', ') || 'None'),
+        'Scored modules: ' + (scoreLines.join('; ') || 'No scored quiz results'),
+        'Case study status: ' + (completedState.case === true ? 'Marked complete for self-review' : 'Not marked complete')
+      ];
+
+      if (includeCaseStudy) {
+        const caseText = typeof progress.caseText === 'string' ? progress.caseText.trim().slice(0, 12000) : '';
+        lines.push('Case study response (included at the student’s request):');
+        lines.push(caseText || 'No saved written response was found.');
+      }
+
+      return { summary, details: lines.join('\n') };
+    }
+
+    function refreshSummary() {
+      scoreInput.value = collectRetailSnapshot(false).summary;
+    }
+
+    refreshSummary();
 
     submitBtn.addEventListener('click', async () => {
       const studentName = nameInput.value.trim();
       const studentEmail = emailInput.value.trim();
-      const manualScore = scoreInput.value.trim();
 
       if (!studentName || !studentEmail) {
         statusEl.style.color = '#9E3B33';
@@ -205,13 +278,16 @@ updateProgress();render();
         return;
       }
 
-      localStorage.setItem('lex_ielts_name', studentName);
-      localStorage.setItem('lex_ielts_email', studentEmail);
-
+      const snapshot = collectRetailSnapshot(includeCaseInput.checked);
       const elapsedSec = Math.floor((Date.now() - startTime) / 1000);
-      const timeTaken = `${Math.floor(elapsedSec / 60)}m ${elapsedSec % 60}s`;
-      const snapshot = collectRetailSnapshot();
-      const finalScore = manualScore || 'Completed';
+      const timeTaken = Math.floor(elapsedSec / 60) + 'm ' + (elapsedSec % 60) + 's';
+
+      try {
+        localStorage.setItem('lex_ielts_name', studentName);
+        localStorage.setItem('lex_ielts_email', studentEmail);
+      } catch {
+        // Submission can continue even if this browser cannot remember the details.
+      }
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'Recording & Dispatching...';
@@ -225,28 +301,24 @@ updateProgress();render();
             studentName,
             studentEmail,
             category: 'Retail Business English',
-            score: finalScore,
-            bandEstimate: 'Specialist Module',
+            score: snapshot.summary,
+            bandEstimate: 'Learner-submitted summary · instructor review',
             timeTaken,
-            detailsHtml: `
-              <p><strong>Programme:</strong> Retail Business English</p>
-              <p><strong>Recorded Score / Summary:</strong> ${finalScore}</p>
-              <p><strong>Session Data:</strong> ${snapshot}</p>
-            `,
-            detailsPlain: `Score: ${finalScore} | ${snapshot}`
+            detailsPlain: snapshot.details
           })
         });
 
-        if (!res.ok) throw new Error('Server returned an error');
+        const result = await res.json().catch(() => ({}));
+        if (!res.ok || !result.success) throw new Error('Submission was not confirmed.');
 
         statusEl.style.color = '#2E5A44';
-        statusEl.innerHTML = `✓ <strong>Recorded!</strong> Your Retail Business English result has been logged to the instructor ledger and emailed to <strong>${studentEmail}</strong>.`;
+        statusEl.textContent = '✓ Submission received. A receipt has been sent to ' + studentEmail + '.';
         submitBtn.textContent = 'Submitted ✓';
-      } catch (err) {
+      } catch {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Submit & Email Retail Results →';
         statusEl.style.color = '#9E3B33';
-        statusEl.textContent = 'Submission failed—please check your connection and try again.';
+        statusEl.textContent = 'Submission could not be confirmed. Please check your connection and try again.';
       }
     });
   })();
