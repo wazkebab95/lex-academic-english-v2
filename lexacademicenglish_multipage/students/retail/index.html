@@ -135,5 +135,121 @@ function renderCase(){const root=document.getElementById("activity");root.innerH
  document.getElementById("save-case").onclick=()=>{state.caseText=document.getElementById("case-answer").value;save();document.getElementById("case-feedback").textContent="Your response has been saved in this browser."};document.getElementById("show-model").onclick=()=>document.getElementById("model-response").classList.toggle("hidden");document.getElementById("complete-case").onclick=()=>{state.caseText=document.getElementById("case-answer").value;state.completed.case=true;state.scores.case="Submitted for self-review";save();render()}}
 updateProgress();render();
 </script>
+<!-- Automated Google Sheet & Dual-Email Submission Bridge -->
+<div id="retail-sync-box" style="max-width: 760px; margin: 40px auto 60px; padding: 28px; background: #FAF9F6; border: 1px solid #E2DFD7; font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #1C1C1C;">
+  <p style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #1B365D; margin: 0 0 6px;">
+    Official Record & Receipt
+  </p>
+  <h3 style="font-family: Georgia, serif; font-size: 22px; margin: 0 0 8px; font-weight: 600;">
+    Submit Retail Module Results
+  </h3>
+  <p style="font-size: 14px; color: #5C5B57; margin: 0 0 18px;">
+    Once you have completed the Retail exercises above, confirm your details below to register your score in the student ledger and receive your email receipt.
+  </p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 16px;">
+    <div>
+      <label style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #5C5B57; margin-bottom: 6px;">Full Name</label>
+      <input type="text" id="retail-cand-name" placeholder="e.g. Aylin Yılmaz" style="width: 100%; padding: 10px 12px; border: 1px solid #E2DFD7; background: #FFFFFF; font-size: 16px;" />
+    </div>
+    <div>
+      <label style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #5C5B57; margin-bottom: 6px;">Email Address</label>
+      <input type="email" id="retail-cand-email" placeholder="e.g. aylin@example.com" style="width: 100%; padding: 10px 12px; border: 1px solid #E2DFD7; background: #FFFFFF; font-size: 16px;" />
+    </div>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <label style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #5C5B57; margin-bottom: 6px;">Final Score / Notes (Auto-detected or enter score)</label>
+    <input type="text" id="retail-score-summary" placeholder="e.g. 5/5 Modules Completed — 88%" style="width: 100%; padding: 10px 12px; border: 1px solid #E2DFD7; background: #FFFFFF; font-size: 16px;" />
+  </div>
+
+  <button id="retail-submit-btn" type="button" style="background: #1B365D; color: #FFFFFF; border: none; padding: 13px 24px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; cursor: pointer;">
+    Submit & Email Retail Results →
+  </button>
+  <p id="retail-sync-status" style="font-size: 13px; margin: 12px 0 0;"></p>
+</div>
+
+<script>
+  (function () {
+    const startTime = Date.now();
+    const nameInput = document.getElementById('retail-cand-name');
+    const emailInput = document.getElementById('retail-cand-email');
+    const scoreInput = document.getElementById('retail-score-summary');
+    const statusEl = document.getElementById('retail-sync-status');
+    const submitBtn = document.getElementById('retail-submit-btn');
+
+    // Pre-fill from shared Student Portal localStorage
+    nameInput.value = localStorage.getItem('lex_ielts_name') || '';
+    emailInput.value = localStorage.getItem('lex_ielts_email') || '';
+
+    // Auto-capture any Retail progress/score stored in localStorage
+    function collectRetailSnapshot() {
+      const entries = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && !key.startsWith('lex_ielts_')) {
+          entries.push(`${key}: ${localStorage.getItem(key)}`);
+        }
+      }
+      return entries.length ? entries.join(' | ') : 'Completed Retail Business English session';
+    }
+
+    submitBtn.addEventListener('click', async () => {
+      const studentName = nameInput.value.trim();
+      const studentEmail = emailInput.value.trim();
+      const manualScore = scoreInput.value.trim();
+
+      if (!studentName || !studentEmail) {
+        statusEl.style.color = '#9E3B33';
+        statusEl.textContent = 'Please enter both your name and email address.';
+        return;
+      }
+
+      localStorage.setItem('lex_ielts_name', studentName);
+      localStorage.setItem('lex_ielts_email', studentEmail);
+
+      const elapsedSec = Math.floor((Date.now() - startTime) / 1000);
+      const timeTaken = `${Math.floor(elapsedSec / 60)}m ${elapsedSec % 60}s`;
+      const snapshot = collectRetailSnapshot();
+      const finalScore = manualScore || 'Completed';
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Recording & Dispatching...';
+      statusEl.textContent = '';
+
+      try {
+        const res = await fetch('/api/submit-ielts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studentName,
+            studentEmail,
+            category: 'Retail Business English',
+            score: finalScore,
+            bandEstimate: 'Specialist Module',
+            timeTaken,
+            detailsHtml: `
+              <p><strong>Programme:</strong> Retail Business English</p>
+              <p><strong>Recorded Score / Summary:</strong> ${finalScore}</p>
+              <p><strong>Session Data:</strong> ${snapshot}</p>
+            `,
+            detailsPlain: `Score: ${finalScore} | ${snapshot}`
+          })
+        });
+
+        if (!res.ok) throw new Error('Server returned an error');
+
+        statusEl.style.color = '#2E5A44';
+        statusEl.innerHTML = `✓ <strong>Recorded!</strong> Your Retail Business English result has been logged to the instructor ledger and emailed to <strong>${studentEmail}</strong>.`;
+        submitBtn.textContent = 'Submitted ✓';
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit & Email Retail Results →';
+        statusEl.style.color = '#9E3B33';
+        statusEl.textContent = 'Submission failed—please check your connection and try again.';
+      }
+    });
+  })();
+</script>  
 </body>
 </html>
