@@ -3,125 +3,319 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IELTS Diagnostic & Practice Suite | Lex Academic English</title>
-  <link rel="stylesheet" href="./assets/ielts-editorial.css" />
+  <title>IELTS Studio Workspace | Fex Academic English</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/assets/overture-portal.css" />
 </head>
-<body>
-  <header class="lex-topbar">
-    <div class="lex-topbar-inner">
-      <a href="/students/ielts/" class="lex-brand">Lex Academic English</a>
-      <nav class="lex-nav">
-        <a href="/students/ielts/" class="active">Overview</a>
-        <a href="/students/ielts/grammar/">01 Grammar</a>
-        <a href="/students/ielts/vocabulary/">02 Vocabulary</a>
-        <a href="/students/ielts/sentences/">03 Sentences</a>
-        <a href="/students/ielts/writing/">04 Writing</a>
-      </nav>
+<body class="overture-body">
+
+  <!-- Studio Header -->
+  <header class="overture-header">
+    <div class="max-w-7xl mx-auto px-6 sm:px-10 h-20 flex items-center justify-between gap-6">
+      <div class="flex items-center gap-10">
+        <a href="/students/" class="font-editorial text-2xl sm:text-[26px] font-medium tracking-tight">
+          Fex Studio
+        </a>
+        <nav class="hidden md:flex items-center gap-7">
+          <a href="/students/" class="overture-link">Overview</a>
+          <a href="/students/ielts/" class="overture-link active">IELTS Suite</a>
+          <a href="/students/retail/" class="overture-link">Retail English</a>
+          <a href="/students/resources/" class="overture-link">Band 8+ Library</a>
+        </nav>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="/students/" class="btn-outline-studio">← Studio Hub</a>
+        <button id="studio-menu-btn" aria-label="Toggle Menu" class="md:hidden p-2 text-lg leading-none">☰</button>
+      </div>
+    </div>
+
+    <div id="studio-drawer" class="hidden md:hidden px-6 pb-6 pt-2 border-t border-black/10 space-y-3 bg-[#FAF9F6]">
+      <a href="/students/" class="block text-sm">Overview</a>
+      <a href="/students/ielts/" class="block text-sm font-semibold">IELTS Suite</a>
+      <a href="/students/retail/" class="block text-sm">Retail English</a>
+      <a href="/students/resources/" class="block text-sm">Band 8+ Library</a>
     </div>
   </header>
 
-  <main class="lex-container">
-    <section class="hub-hero">
-      <div>
-        <p class="lex-eyebrow">IELTS Academic & General Training</p>
-        <h1 class="lex-title">Band 7.0+ Diagnostic & Practice Suite</h1>
-        <p class="lex-subtitle">
-          Complete each dedicated module below. Upon submission, your diagnostic breakdown is automatically logged to your student record and dispatched to both your email and your instructor.
+  <main class="max-w-5xl mx-auto px-6 sm:px-10 pt-12 pb-24">
+    <!-- Page Header -->
+    <div class="mb-12">
+      <p class="text-xs uppercase tracking-[0.18em] text-[#5E5D5A] font-semibold mb-2">
+        IELTS Academic & General Training
+      </p>
+      <h1 class="font-editorial text-4xl sm:text-5xl font-medium tracking-tight mb-4">
+        Diagnostic & Writing Studio
+      </h1>
+      <p class="text-sm sm:text-base text-[#5E5D5A] max-w-2xl leading-relaxed">
+        Complete Part 1 (Syntactic & Lexical Diagnostic) and Part 2 (Timed Writing Submission). Your responses are logged automatically and a tailored British English review is dispatched to your inbox within 15 minutes.
+      </p>
+    </div>
+
+    <!-- Student Identity Bar -->
+    <section class="workspace-card mb-8">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div>
+          <label class="block text-[11px] uppercase tracking-wider font-semibold text-[#5E5D5A] mb-1.5">Student Name</label>
+          <input id="student-name" type="text" required placeholder="e.g., Amina Rahman" class="studio-input" />
+        </div>
+        <div>
+          <label class="block text-[11px] uppercase tracking-wider font-semibold text-[#5E5D5A] mb-1.5">Registered Email</label>
+          <input id="student-email" type="email" required placeholder="student@domain.com" class="studio-input" />
+        </div>
+        <div>
+          <label class="block text-[11px] uppercase tracking-wider font-semibold text-[#5E5D5A] mb-1.5">Target IELTS Band</label>
+          <select id="target-band" class="studio-input">
+            <option value="Band 7.0">Band 7.0</option>
+            <option value="Band 7.5" selected>Band 7.5</option>
+            <option value="Band 8.0+">Band 8.0+</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 1: C1 Grammar & Lexical Diagnostic -->
+    <section class="workspace-card mb-8">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-5 mb-6 border-b border-black/10">
+        <div>
+          <span class="text-[11px] uppercase tracking-widest text-[#5E5D5A] font-semibold">Part 01</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl font-medium">C1 Grammar & Cohesion Diagnostic</h2>
+        </div>
+        <span id="live-quiz-badge" class="px-3.5 py-1 rounded-full bg-[#E2E1DF] text-xs font-semibold">
+          5 Items · Unscored
+        </span>
+      </div>
+
+      <div id="diagnostic-questions" class="space-y-6"></div>
+    </section>
+
+    <!-- Part 2: Writing Task Studio -->
+    <section class="workspace-card mb-8">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-5 mb-6 border-b border-black/10">
+        <div>
+          <span class="text-[11px] uppercase tracking-widest text-[#5E5D5A] font-semibold">Part 02</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl font-medium">Writing Task 2 Response Studio</h2>
+        </div>
+        <span id="word-counter" class="px-3.5 py-1 rounded-full bg-[#E2E1DF] text-xs font-semibold">
+          0 words (Target: 250+)
+        </span>
+      </div>
+
+      <div class="p-5 rounded-xl bg-[#FAF9F6] border border-black/10 mb-5 text-sm leading-relaxed">
+        <p class="text-[11px] uppercase tracking-widest font-semibold text-[#5E5D5A] mb-1">Prompt</p>
+        <p class="font-medium">
+          Some policymakers argue that public funding should prioritise scientific research over the arts and humanities. To what extent do you agree or disagree with this view?
         </p>
       </div>
 
-      <div class="candidate-box">
-        <h3>Candidate Registration</h3>
-        <p>Enter your details once to link all module submissions to your profile.</p>
-        <div class="field-group">
-          <label for="cand-name">Full Name</label>
-          <input type="text" id="cand-name" placeholder="e.g. Aylin Yılmaz" />
-        </div>
-        <div class="field-group">
-          <label for="cand-email">Email Address (for result receipt)</label>
-          <input type="email" id="cand-email" placeholder="e.g. aylin@example.com" />
-        </div>
-        <p id="save-status" style="font-size: 12px; color: var(--status-sage); margin: 8px 0 0;"></p>
-      </div>
+      <textarea
+        id="essay-response"
+        rows="9"
+        placeholder="Compose your academic response here using formal British English register, clear paragraphing, and calibrated hedging..."
+        class="studio-input leading-relaxed"
+      ></textarea>
     </section>
 
-    <section class="module-grid">
-      <a href="/students/ielts/grammar/" class="module-card">
-        <div>
-          <div class="module-meta">
-            <span class="module-num">01 / GRAMMAR</span>
-            <span class="status-pill" id="status-grammar">Not Started</span>
-          </div>
-          <h2>Grammatical Range & Accuracy</h2>
-          <p>Complex clause subordination, non-defining relative clauses, third/mixed conditionals, and passive reporting structures.</p>
-        </div>
-        <span class="module-cta">Begin Grammar Module →</span>
-      </a>
+    <!-- Submit & Feedback Banner -->
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <p class="text-xs text-[#5E5D5A]">
+        Submissions log directly to your progress record and queue a 15-minute diagnostic feedback email.
+      </p>
+      <button id="submit-workspace-btn" type="button" class="btn-espresso px-8 py-3.5">
+        Submit Diagnostic & Essay →
+      </button>
+    </div>
 
-      <a href="/students/ielts/vocabulary/" class="module-card">
-        <div>
-          <div class="module-meta">
-            <span class="module-num">02 / VOCABULARY</span>
-            <span class="status-pill" id="status-vocabulary">Not Started</span>
-          </div>
-          <h2>Lexical Resource & Register</h2>
-          <p>Academic Word List precision, C1 collocations, hedging verbs, and Task 1 data commentary terminology.</p>
-        </div>
-        <span class="module-cta">Begin Vocabulary Module →</span>
-      </a>
-
-      <a href="/students/ielts/sentences/" class="module-card">
-        <div>
-          <div class="module-meta">
-            <span class="module-num">03 / SENTENCES</span>
-            <span class="status-pill" id="status-sentences">Not Started</span>
-          </div>
-          <h2>Sentence Architecture & Cohesion</h2>
-          <p>Nominalisation transformations, syntactic synthesis, and cohesive referencing to elevate Band 6.0 prose to Band 8.0.</p>
-        </div>
-        <span class="module-cta">Begin Sentences Module →</span>
-      </a>
-
-      <a href="/students/ielts/writing/" class="module-card">
-        <div>
-          <div class="module-meta">
-            <span class="module-num">04 / WRITING</span>
-            <span class="status-pill" id="status-writing">Not Started</span>
-          </div>
-          <h2>Task 1 & Task 2 Writing Workspace</h2>
-          <p>Timed essay environment with live word-count thresholds, interactive Band 8+ self-audit rubric, and direct instructor submission.</p>
-        </div>
-        <span class="module-cta">Open Writing Workspace →</span>
-      </a>
-    </section>
+    <div id="submission-status" class="hidden mt-8 workspace-card border-black/20"></div>
   </main>
 
-  <script src="./assets/ielts-engine.js"></script>
+  <!-- Dove-Grey Studio Footer Band -->
+  <section class="dove-band">
+    <div class="max-w-7xl mx-auto px-6 sm:px-10 py-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs text-[#5E5D5A]">
+      <span>© 2026 Fawwaz Izeddin · Lex Academic English IELTS Studio</span>
+      <a href="/students/resources/" class="font-semibold text-[#1C1C1C] underline">Open Band 8.0+ Lexical & Grammar Matrix →</a>
+    </div>
+  </section>
+
   <script>
-    const nameInput = document.getElementById('cand-name');
-    const emailInput = document.getElementById('cand-email');
-    const statusText = document.getElementById('save-status');
+    // Mobile Menu
+    document.getElementById('studio-menu-btn')?.addEventListener('click', () => {
+      document.getElementById('studio-drawer')?.classList.toggle('hidden');
+    });
 
-    const saved = LexIelts.getCandidate();
-    nameInput.value = saved.name;
-    emailInput.value = saved.email;
+    // Hydrate Saved Student Profile
+    const nameInput = document.getElementById('student-name');
+    const emailInput = document.getElementById('student-email');
+    if (localStorage.getItem('lex_student_name')) nameInput.value = localStorage.getItem('lex_student_name');
+    if (localStorage.getItem('lex_student_email')) emailInput.value = localStorage.getItem('lex_student_email');
 
-    function syncProfile() {
-      LexIelts.saveCandidate(nameInput.value, emailInput.value);
-      if (nameInput.value && emailInput.value) {
-        statusText.textContent = '✓ Profile saved for all modules.';
+    // 5-Item C1 Diagnostic Bank
+    const questions = [
+      {
+        id: 'q1',
+        topic: 'Inversion & Formal Emphasis',
+        prompt: 'Not only ________ carbon emissions, but it also stimulates regional green employment.',
+        options: [
+          'the policy reduces',
+          'does the policy reduce',
+          'reduces the policy'
+        ],
+        correct: 1
+      },
+      {
+        id: 'q2',
+        topic: 'Non-Defining Relative Clauses',
+        prompt: 'Select the sentence with accurate Band 8.0+ punctuation:',
+        options: [
+          'The longitudinal cohort study, which spanned twelve years, yielded decisive findings.',
+          'The longitudinal cohort study, that spanned twelve years, yielded decisive findings.',
+          'The longitudinal cohort study which spanned twelve years, it yielded decisive findings.'
+        ],
+        correct: 0
+      },
+      {
+        id: 'q3',
+        topic: 'Academic Hedging & Register',
+        prompt: 'Which verb phrase best softens an absolute claim in Task 2 Writing?',
+        options: [
+          'proves beyond any doubt that',
+          'appears to corroborate the hypothesis that',
+          'shows 100% clearly that'
+        ],
+        correct: 1
+      },
+      {
+        id: 'q4',
+        topic: 'Participle Clauses',
+        prompt: '________ initial infrastructure expenditure, municipal rail networks lower long-term congestion costs.',
+        options: [
+          'Despite requiring substantial',
+          'Although require substantial',
+          'In spite require substantial'
+        ],
+        correct: 0
+      },
+      {
+        id: 'q5',
+        topic: 'Referential Cohesion (Shell Nouns)',
+        prompt: 'Public transit fares rose by 18% in January. ________ prompted widespread commuter protests.',
+        options: [
+          'This steep escalation',
+          'This thing here',
+          'Because of that it'
+        ],
+        correct: 0
       }
-    }
+    ];
 
-    nameInput.addEventListener('input', syncProfile);
-    emailInput.addEventListener('input', syncProfile);
+    const container = document.getElementById('diagnostic-questions');
+    questions.forEach((item, idx) => {
+      const card = document.createElement('div');
+      card.className = 'p-5 rounded-xl bg-[#FAF9F6] border border-black/10';
+      card.innerHTML = `
+        <p class="text-[11px] uppercase tracking-widest text-[#5E5D5A] font-semibold mb-1">0${idx + 1} · ${item.topic}</p>
+        <p class="font-medium text-sm sm:text-[15px] mb-3.5">${item.prompt}</p>
+        <div class="space-y-2 text-sm">
+          ${item.options
+            .map(
+              (opt, oIdx) => `
+              <label class="flex items-start gap-3 p-3 rounded-lg bg-white border border-black/10 cursor-pointer hover:border-black/40">
+                <input type="radio" name="${item.id}" value="${oIdx}" class="mt-0.5 accent-[#2D2A27]" />
+                <span>${opt}</span>
+              </label>`
+            )
+            .join('')}
+        </div>
+      `;
+      container.appendChild(card);
+    });
 
-    const history = LexIelts.getHistory();
-    ['grammar', 'vocabulary', 'sentences', 'writing'].forEach(mod => {
-      if (history[mod]) {
-        const pill = document.getElementById(`status-${mod}`);
-        pill.textContent = history[mod];
-        pill.classList.add('done');
+    // Word Counter
+    const essayBox = document.getElementById('essay-response');
+    const wordCounter = document.getElementById('word-counter');
+    essayBox.addEventListener('input', () => {
+      const words = essayBox.value.trim() ? essayBox.value.trim().split(/\s+/).length : 0;
+      wordCounter.textContent = `${words} words (Target: 250+)`;
+    });
+
+    // Submit to Cloudflare Pages Function (/api/submit-ielts)
+    document.getElementById('submit-workspace-btn').addEventListener('click', async () => {
+      const studentName = nameInput.value.trim();
+      const studentEmail = emailInput.value.trim();
+      const targetBand = document.getElementById('target-band').value;
+      const essayText = essayBox.value.trim();
+      const statusBox = document.getElementById('submission-status');
+
+      if (!studentName || !studentEmail) {
+        statusBox.classList.remove('hidden');
+        statusBox.innerHTML = '<p class="text-sm font-semibold text-red-700">Please enter your name and registered email address before submitting.</p>';
+        return;
+      }
+
+      let score = 0;
+      const missedTopics = [];
+      questions.forEach((q) => {
+        const chosen = document.querySelector(`input[name="${q.id}"]:checked`);
+        if (chosen && Number(chosen.value) === q.correct) {
+          score++;
+        } else {
+          missedTopics.push(q.topic);
+        }
+      });
+
+      const scoreText = `${score} / ${questions.length}`;
+      const wordCount = essayText ? essayText.split(/\s+/).length : 0;
+      const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+      // Persist Locally
+      localStorage.setItem('lex_student_name', studentName);
+      localStorage.setItem('lex_student_email', studentEmail);
+      localStorage.setItem('lex_ielts_last_score', scoreText);
+      localStorage.setItem('lex_ielts_last_date', today);
+      document.getElementById('live-quiz-badge').textContent = `Score: ${scoreText}`;
+
+      const btn = document.getElementById('submit-workspace-btn');
+      btn.disabled = true;
+      btn.textContent = 'Logging Submission...';
+
+      try {
+        const response = await fetch('/api/submit-ielts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: studentName,
+            email: studentEmail,
+            module: `IELTS Studio (${targetBand})`,
+            score: scoreText,
+            wordCount: wordCount,
+            missedTopics: missedTopics.join(', ') || 'None — Full Marks',
+            essay: essayText
+          })
+        });
+
+        statusBox.classList.remove('hidden');
+        if (response.ok) {
+          statusBox.innerHTML = `
+            <p class="text-xs uppercase tracking-widest text-emerald-700 font-bold mb-1">Submission Recorded · Score ${scoreText}</p>
+            <h3 class="font-editorial text-2xl font-medium mb-2">Diagnostic Logged & Feedback Queued</h3>
+            <p class="text-sm text-[#5E5D5A]">
+              Thank you, <strong>${studentName}</strong>. Your diagnostic score (${scoreText}) and writing response (${wordCount} words) have been recorded. A personalised British English feedback report will arrive at <strong>${studentEmail}</strong> within 15 minutes.
+            </p>
+          `;
+        } else {
+          throw new Error('Endpoint returned non-200');
+        }
+      } catch (err) {
+        statusBox.classList.remove('hidden');
+        statusBox.innerHTML = `
+          <p class="text-xs uppercase tracking-widest font-bold mb-1">Local Diagnostic Saved · Score ${scoreText}</p>
+          <p class="text-sm text-[#5E5D5A]">
+            Your diagnostic score (${scoreText}) has been saved to this browser session. Focus areas identified: <strong>${missedTopics.join(', ') || 'None — Full Marks'}</strong>.
+          </p>
+        `;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Submit Diagnostic & Essay →';
       }
     });
   </script>
