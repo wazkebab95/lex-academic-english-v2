@@ -3,127 +3,174 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Portal | Lex Academic English</title>
-  <link rel="stylesheet" href="./ielts/assets/ielts-editorial.css" />
+  <title>Student Studio | Fex Academic English</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/assets/overture-portal.css" />
 </head>
-<body>
-  <header class="lex-topbar">
-    <div class="lex-topbar-inner">
-      <a href="/" class="lex-brand">Lex Academic English</a>
-      <nav class="lex-nav">
-        <a href="/">Main Website</a>
-        <a href="/students/" class="active">Student Portal</a>
-        <a href="/students/ielts/">IELTS Suite</a>
-        <a href="/students/retail/">Retail English</a>
-        <a href="/students/resources/">Reference Sheets</a>
-      </nav>
+<body class="overture-body">
+
+  <!-- Overture Studio Header -->
+  <header class="overture-header">
+    <div class="max-w-7xl mx-auto px-6 sm:px-10 h-20 flex items-center justify-between gap-6">
+      <div class="flex items-center gap-10">
+        <a href="/students/" class="font-editorial text-2xl sm:text-[26px] font-medium tracking-tight">
+          Lex Studio
+        </a>
+        <nav class="hidden md:flex items-center gap-7">
+          <a href="/students/" class="overture-link active">Overview</a>
+          <a href="/students/ielts/" class="overture-link">IELTS Suite</a>
+          <a href="/students/retail/" class="overture-link">Retail English</a>
+          <a href="/students/resources/" class="overture-link">Band 8+ Library</a>
+          <a href="/" class="overture-link text-[#5E5D5A]">Main Site</a>
+        </nav>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="/contact" class="btn-espresso">Book Review</a>
+        <button id="studio-menu-btn" aria-label="Toggle Menu" class="md:hidden p-2 text-lg leading-none">☰</button>
+      </div>
+    </div>
+
+    <!-- Mobile Studio Drawer -->
+    <div id="studio-drawer" class="hidden md:hidden px-6 pb-6 pt-2 border-t border-black/10 space-y-3 bg-[#FAF9F6]">
+      <a href="/students/" class="block text-sm font-semibold">Overview</a>
+      <a href="/students/ielts/" class="block text-sm">IELTS Academic & General Suite</a>
+      <a href="/students/retail/" class="block text-sm">Retail Business English</a>
+      <a href="/students/resources/" class="block text-sm">Band 8.0+ Reference Library</a>
+      <a href="/" class="block text-sm text-[#5E5D5A] pt-2 border-t border-black/10">← Return to Main Website</a>
     </div>
   </header>
 
-  <main class="lex-container">
-    <div style="padding-bottom: 36px; border-bottom: 1px solid var(--border-hairline); margin-bottom: 36px;">
-      <p class="lex-eyebrow">Enrolled Student Workspace</p>
-      <h1 class="lex-title">Lex Academic English Student Portal</h1>
-      <p class="lex-subtitle">
-        Select your assigned learning programme or reference library below. All diagnostic exercises and written submissions are automatically recorded to your student progress ledger.
-      </p>
-    </div>
-
-    <!-- Live Student Progress Bar -->
-    <section id="progress-strip" style="background: var(--bg-card); border: 1px solid var(--border-hairline); padding: 24px 28px; margin-bottom: 36px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-      <div>
-        <p style="font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-navy); margin: 0 0 4px;">
-          Active Session Summary
-        </p>
-        <p id="session-identity" style="font-family: var(--font-serif); font-size: 21px; margin: 0 0 6px;">
-          Welcome to your workspace
-        </p>
-        <div id="session-badges" style="display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px;"></div>
+  <!-- Active Session Progress Strip -->
+  <div class="max-w-7xl mx-auto px-6 sm:px-10 pt-8">
+    <div class="bg-white border border-black/10 rounded-xl px-5 py-3.5 flex flex-wrap items-center justify-between gap-4 text-xs">
+      <div class="flex items-center gap-2.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+        <span class="font-semibold">Student Workspace Active</span>
+        <span id="session-summary" class="text-[#5E5D5A]">Ready to begin your diagnostic or writing task.</span>
       </div>
-      <button id="reset-session-btn" type="button" class="btn-secondary" style="font-size: 12px;">
-        Reset Local Session
-      </button>
-    </section>
+      <div class="flex items-center gap-4">
+        <span id="session-score-badge" class="font-semibold text-[#1C1C1C]">Latest Diagnostic: —</span>
+        <button id="reset-session-btn" type="button" class="text-[#5E5D5A] underline hover:text-[#1C1C1C]">Reset Local Progress</button>
+      </div>
+    </div>
+  </div>
 
-    <section class="module-grid">
-      <a href="/students/ielts/" class="module-card">
-        <div>
-          <div class="module-meta">
-            <span class="module-num">PROGRAMME 01 · ACADEMIC & GENERAL</span>
-            <span class="status-pill done" id="ielts-card-pill">4 Modules Active</span>
-          </div>
-          <h2>IELTS Band 7.0+ Diagnostic & Practice Suite</h2>
-          <p>
-            Dedicated interactive modules covering Grammatical Range, Academic Lexical Resource, Sentence Architecture, and timed Task 1 & Task 2 Writing with automated email receipts.
-          </p>
+  <!-- Three-Column Overture Studio Grid -->
+  <main class="max-w-7xl mx-auto px-6 sm:px-10 pt-10 pb-20">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Card 1: IELTS Suite -->
+      <a href="/students/ielts/" class="studio-card group">
+        <div class="studio-card-media">
+          <img
+            src="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=900&q=80"
+            alt="Academic writing notebook and fountain pen"
+          />
+          <span class="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-[#FAF9F6]/90 backdrop-blur-sm text-[11px] font-semibold">
+            Module 01 · Active
+          </span>
         </div>
-        <span class="module-cta">Enter IELTS Suite →</span>
+        <h2 class="font-editorial text-2xl font-medium mb-2 group-hover:underline">
+          IELTS Academic & General Suite
+        </h2>
+        <p class="text-sm text-[#5E5D5A] leading-relaxed">
+          Complete the C1 syntactic accuracy diagnostic and submit Task 1 or Task 2 essays for automated British English coaching feedback within 15 minutes.
+        </p>
       </a>
 
-      <a href="/students/retail/" class="module-card">
-        <div>
-          <div class="module-meta">
-            <span class="module-num">PROGRAMME 02 · CORPORATE & SPECIALIST</span>
-            <span class="status-pill done">5 Modules Active</span>
-          </div>
-          <h2>Retail Business English Programme</h2>
-          <p>
-            Applied commercial English covering retail operations vocabulary, business grammar, client communication scenarios, case studies, and final assessment.
-          </p>
+      <!-- Card 2: Retail Business English -->
+      <a href="/students/retail/" class="studio-card group">
+        <div class="studio-card-media">
+          <img
+            src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=900&q=80"
+            alt="Collaborative commercial workspace"
+          />
+          <span class="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-[#FAF9F6]/90 backdrop-blur-sm text-[11px] font-semibold">
+            Module 02 · B2–C1
+          </span>
         </div>
-        <span class="module-cta">Enter Retail Module →</span>
+        <h2 class="font-editorial text-2xl font-medium mb-2 group-hover:underline">
+          Retail & Commercial English
+        </h2>
+        <p class="text-sm text-[#5E5D5A] leading-relaxed">
+          Five-part operational curriculum covering retail supply vocabulary, diplomatic supplier negotiations, business grammar, and executive case studies.
+        </p>
       </a>
 
-      <a href="/students/resources/" class="module-card" style="grid-column: 1 / -1;">
-        <div>
-          <div class="module-meta">
-            <span class="module-num">PROGRAMME 03 · BAND 8+ REFERENCE LIBRARY</span>
-            <span class="status-pill">Printable Study Guides</span>
-          </div>
-          <h2>Academic Writing & Lexical Reference Sheets</h2>
-          <p>
-            Curated British English reference matrices for Task 1 data commentary, Task 2 academic hedging verbs, nominalisation transformations, and formal diplomatic phrases.
-          </p>
+      <!-- Card 3: Band 8.0+ Reference Library -->
+      <a href="/students/resources/" class="studio-card group">
+        <div class="studio-card-media">
+          <img
+            src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=900&q=80"
+            alt="Curated academic reference shelves"
+          />
+          <span class="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-[#FAF9F6]/90 backdrop-blur-sm text-[11px] font-semibold">
+            Module 03 · Reference
+          </span>
         </div>
-        <span class="module-cta">Open Reference Library →</span>
+        <h2 class="font-editorial text-2xl font-medium mb-2 group-hover:underline">
+          Band 8.0+ Lexical & Grammar Matrix
+        </h2>
+        <p class="text-sm text-[#5E5D5A] leading-relaxed">
+          Curated academic collocations, nominalisation transformations, hedging verbs, and high-band Task 1 data commentary structures for rapid revision.
+        </p>
       </a>
-    </section>
+    </div>
   </main>
 
+  <!-- Full-Width Dove-Grey Overture Editorial Band -->
+  <section class="dove-band">
+    <div class="max-w-7xl mx-auto px-6 sm:px-10 py-20 sm:py-24">
+      <p class="font-editorial text-3xl sm:text-[42px] leading-[1.24] text-[#1C1C1C] font-normal max-w-5xl">
+        We specialise in modular, diagnostic-led language training that meets learners where they are—whether preparing for IELTS Band 7.5+, refining clinical presentations, or mastering commercial register. Our mission is to bridge linguistic theory and authoritative real-world performance.
+      </p>
+    </div>
+  </section>
+
+  <!-- Studio Footer -->
+  <footer class="max-w-7xl mx-auto px-6 sm:px-10 py-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs text-[#5E5D5A]">
+    <span>© 2026 Fawwaz Izeddin · Lex Academic English Student Studio</span>
+    <div class="flex gap-6">
+      <a href="/students/ielts/" class="hover:text-[#1C1C1C]">IELTS Suite</a>
+      <a href="/students/retail/" class="hover:text-[#1C1C1C]">Retail English</a>
+      <a href="/students/resources/" class="hover:text-[#1C1C1C]">Reference Library</a>
+      <a href="/" class="hover:text-[#1C1C1C]">Public Site</a>
+    </div>
+  </footer>
+
   <script>
-    (function () {
-      const name = localStorage.getItem('lex_ielts_name') || '';
-      const email = localStorage.getItem('lex_ielts_email') || '';
-      const history = JSON.parse(localStorage.getItem('lex_ielts_history') || '{}');
+    // Mobile Menu Toggle
+    document.getElementById('studio-menu-btn')?.addEventListener('click', () => {
+      document.getElementById('studio-drawer')?.classList.toggle('hidden');
+    });
 
-      const idEl = document.getElementById('session-identity');
-      const badgesEl = document.getElementById('session-badges');
+    // Hydrate Local Session Progress
+    function renderSessionProgress() {
+      const savedScore = localStorage.getItem('lex_ielts_last_score');
+      const savedDate = localStorage.getItem('lex_ielts_last_date');
+      const savedName = localStorage.getItem('lex_student_name');
+      const summaryEl = document.getElementById('session-summary');
+      const badgeEl = document.getElementById('session-score-badge');
 
-      if (name) {
-        idEl.textContent = email ? `${name} (${email})` : name;
-      } else {
-        idEl.textContent = 'No candidate registered on this browser yet';
+      if (savedName) {
+        summaryEl.textContent = `Welcome back, ${savedName}${savedDate ? ' · Last activity: ' + savedDate : ''}.`;
+      } else if (savedDate) {
+        summaryEl.textContent = `Last activity recorded on ${savedDate}.`;
       }
 
-      const keys = Object.keys(history);
-      if (keys.length > 0) {
-        document.getElementById('ielts-card-pill').textContent = `${keys.length} / 4 Completed`;
-        badgesEl.innerHTML = keys.map(k => `
-          <span class="status-pill done" style="text-transform: capitalize;">${k}: ${history[k]}</span>
-        `).join('');
-      } else {
-        badgesEl.innerHTML = '<span class="status-pill">No completed diagnostics recorded in this browser yet</span>';
+      if (savedScore) {
+        badgeEl.textContent = `Latest Diagnostic: ${savedScore}`;
       }
+    }
 
-      document.getElementById('reset-session-btn').addEventListener('click', () => {
-        if (confirm('Clear saved name, email, and local progress badges on this device? (Your Google Sheet records remain safe.)')) {
-          localStorage.removeItem('lex_ielts_name');
-          localStorage.removeItem('lex_ielts_email');
-          localStorage.removeItem('lex_ielts_history');
-          location.reload();
-        }
-      });
-    })();
+    document.getElementById('reset-session-btn')?.addEventListener('click', () => {
+      localStorage.removeItem('lex_ielts_last_score');
+      localStorage.removeItem('lex_ielts_last_date');
+      document.getElementById('session-score-badge').textContent = 'Latest Diagnostic: —';
+      document.getElementById('session-summary').textContent = 'Local progress cleared.';
+    });
+
+    renderSessionProgress();
   </script>
 </body>
 </html>
