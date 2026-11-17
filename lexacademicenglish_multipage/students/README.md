@@ -1,6 +1,6 @@
-# Lex Practice — Retail Business English
+# Lex Practice — Student Learning Area
 
-Lex Practice is the student learning area for Lex Academic English. The first programme is a standalone Retail Business English prototype.
+Lex Practice is the student learning area for Lex Academic English. The repository's current programmes include IELTS practice, Retail Business English, and reference resources.
 
 ## Location and deployment
 
@@ -11,9 +11,9 @@ Lex Practice is the student learning area for Lex Academic English. The first pr
 - Hosting and previews: Cloudflare Pages
 - Production branch: `main`
 
-The initial student-area implementation was merged into `main` in pull request #1. Continue future work on a separate feature branch and review its Cloudflare Pages preview before merging. Do not change DNS, hosting settings, or production deployment configuration as part of routine content work.
+Continue development on non-production feature branches. Review the Cloudflare Pages preview before merging. Do not change DNS, hosting settings, or production deployment configuration as part of routine content work.
 
-## Learning modules
+## Retail Business English modules
 
 1. Retail vocabulary — 10 scored multiple-choice questions.
 2. Business grammar — 8 scored multiple-choice questions.
@@ -21,20 +21,22 @@ The initial student-area implementation was merged into `main` in pull request #
 4. Retail case study — written analysis, local save, and example response.
 5. Final assessment — 10 mixed-skills questions.
 
-The quiz modules provide instant feedback, explanations, module scores and completion status. The Results & completion view summarises completed modules and the combined score from completed scored quizzes.
+Quiz modules provide instant feedback, explanations, module scores and completion status. The Results & completion view summarises completed modules and the combined score from completed scored quizzes. The written case study is self-reviewed and is not automatically graded.
 
-## Configuration
+## Student configuration
 
-The `STUDENT_PROFILE` object is intentionally generic. Confirm the learner's English level, professional role and priorities before adapting the content. Do not put a student's name, email address, employer-confidential information or identifiable assessment data in this public repository.
+The `STUDENT_PROFILE` object in the Retail programme is intentionally generic. Confirm the learner's English level, professional role and priorities before adapting the content. Do not put a student's name, email address, employer-confidential information or identifiable assessment data in this public repository.
 
-## Data and privacy status
+## Progress and submission data
 
-- Quiz progress and the case-study response are stored in the learner's current browser using `localStorage`.
-- This prototype does not send work or scores to the teacher and does not synchronise between devices.
-- There is currently no application-level login, database, or per-student authorisation.
-- Do not use this prototype for confidential student work or tell learners that their results are privately stored until the access and data architecture has been configured and tested.
+- Learning progress and the case-study response are saved in the current browser's `localStorage`; they do not synchronise between devices.
+- The Retail results form is a separate, explicit submission step. It sends a learner-reported progress summary to the `/api/submit-ielts` endpoint.
+- The Retail case-study response is excluded by default and is sent only when the learner selects the case-study consent checkbox.
+- The shared endpoint sends submissions to the configured Google Sheets webhook and Resend email service. A successful browser confirmation means the configured services accepted the request; it does not independently verify a learner's score.
+- The hardened endpoint and clearer student-facing disclosures in this feature branch are not live until reviewed and merged.
+- There is no application-level student account system or teacher dashboard. Browser storage and an unlisted URL are not access control.
 
-See [SECURITY-AND-QA.md](SECURITY-AND-QA.md) for the Cloudflare Access plan and release checks.
+Do not enter real student personal data or confidential employer information until Cloudflare Access protects both the student pages and the submission endpoint, and the access tests in [SECURITY-AND-QA.md](SECURITY-AND-QA.md) pass.
 
 ## Local preview
 
@@ -44,6 +46,8 @@ Serve `lexacademicenglish_multipage/` with a static HTTP server and open `/stude
 
 - Keep further changes on a non-production feature branch.
 - Check the Cloudflare Pages preview for the branch.
-- Test authorised and unauthorised access before sharing the student route.
-- Keep student data out of GitHub and client-side-only storage.
+- Protect `/students/*` and `/api/submit-ielts` with a matching Cloudflare Access allow policy before accepting student submissions.
+- Configure a rate-limiting rule for POST requests to `/api/submit-ielts`.
+- Test authorised and unauthorised access, invalid submissions, and the email rendering path.
+- Keep student data out of GitHub.
 - Merge to `main` only with explicit approval after review.
