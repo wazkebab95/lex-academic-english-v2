@@ -159,6 +159,30 @@
       </div>
 
       <div id="sec4-list" class="space-y-6"></div>
+      <!-- Direct Tutor Submission Bar -->
+      <div class="mt-8 pt-6 border-t border-black/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+          <label for="student-name-input" class="text-xs font-bold uppercase tracking-wider text-[#5E5D5A]">
+            Student Name:
+          </label>
+          <input
+            id="student-name-input"
+            type="text"
+            value="Erhan"
+            class="px-3.5 py-2 rounded-lg bg-[#FAF9F6] border border-black/20 text-xs font-semibold text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
+          />
+        </div>
+        <div class="flex items-center gap-3">
+          <span id="submit-hw-status" class="text-xs text-[#5E5D5A]"></span>
+          <button
+            id="submit-hw-btn"
+            type="button"
+            class="px-5 py-2.5 rounded-full bg-[#1C1C1C] text-white text-xs font-semibold uppercase tracking-wider hover:opacity-85 transition"
+          >
+            Submit Homework to Fawwaz →
+          </button>
+        </div>
+      </div>
     </section>
 
   </main>
@@ -573,6 +597,45 @@
        alert(report);
      }
    });
+      // Direct Homework Submission to Tutor
+      const submitHwBtn = document.getElementById("submit-hw-btn");
+      const submitHwStatus = document.getElementById("submit-hw-status");
+
+      if (submitHwBtn) {
+        submitHwBtn.addEventListener("click", async () => {
+          const studentName = (document.getElementById("student-name-input").value || "Erhan").trim();
+          const writing = JSON.parse(localStorage.getItem("lex_retail_ch2_writing") || "{}");
+          const score = localStorage.getItem("lex_retail_ch2_score") || `${sec1Score + sec2Score + sec3Score}/20`;
+
+          submitHwBtn.disabled = true;
+          submitHwBtn.textContent = "Sending...";
+          submitHwStatus.textContent = "";
+
+          try {
+            const res = await fetch("/api/submit-homework", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                studentName,
+                department: "Retail Business English",
+                chapter: "Chapter 02",
+                score,
+                answers: [writing[0] || "", writing[1] || "", writing[2] || ""]
+              })
+            });
+
+            if (!res.ok) throw new Error("Submission failed");
+            submitHwBtn.textContent = "Submitted to Fawwaz \u2713";
+            submitHwBtn.classList.remove("bg-[#1C1C1C]");
+            submitHwBtn.classList.add("bg-emerald-700");
+            submitHwStatus.textContent = "Logged & emailed for lesson review.";
+          } catch (err) {
+            submitHwBtn.disabled = false;
+            submitHwBtn.textContent = "Retry Submission";
+            submitHwStatus.textContent = "Network error — please try again.";
+          }
+        });
+      }
       // Reset All
       document.getElementById("ch2-reset-all").addEventListener("click", () => {
         localStorage.removeItem("lex_retail_ch2_score");
