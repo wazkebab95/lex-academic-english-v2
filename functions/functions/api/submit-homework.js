@@ -17,9 +17,9 @@ export async function onRequestPost(context) {
       timeStyle: "short"
     });
 
-    // 1. Log to Google Sheets via your existing Google Apps Script webhook
-    if (env.GOOGLE_SCRIPT_URL) {
-      await fetch(env.GOOGLE_SCRIPT_URL, {
+    // 1. Log to Google Sheets using your existing GOOGLE_SHEET_WEBHOOK_URL
+    if (env.GOOGLE_SHEET_WEBHOOK_URL) {
+      await fetch(env.GOOGLE_SHEET_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -34,13 +34,13 @@ export async function onRequestPost(context) {
       });
     }
 
-    // 2. Send formatted pre-lesson brief to your inbox via Resend API
-    if (env.RESEND_API_KEY && env.TUTOR_EMAIL) {
+    // 2. Email pre-lesson brief using your existing INSTRUCTOR_EMAIL & RESEND_API_KEY
+    if (env.RESEND_API_KEY && env.INSTRUCTOR_EMAIL) {
       const formattedList = answers
         .map((ans, idx) => `<p><strong>Prompt ${idx + 1}:</strong><br/>${ans || "<em>(Blank)</em>"}</p>`)
         .join("");
 
-      await fetch("https://api.resend.com/emails", {
+      const resendRes = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${env.RESEND_API_KEY}`,
@@ -48,7 +48,7 @@ export async function onRequestPost(context) {
         },
         body: JSON.stringify({
           from: env.RESEND_FROM_EMAIL || "Fex Studio <noreply@lexacademicenglish.co.uk>",
-          to: [env.TUTOR_EMAIL],
+          to: [env.INSTRUCTOR_EMAIL],
           subject: `[Fex Homework] ${studentName} · ${department} (${chapter}) — ${score}`,
           html: `
             <div style="font-family: -apple-system, sans-serif; color: #1C1C1C; max-width: 600px;">
@@ -64,6 +64,14 @@ export async function onRequestPost(context) {
           `
         })
       });
+
+      if (!resendRes.ok) {
+        const resendErr = await resendRes.text();
+        return new Response(JSON.stringify({ ok: false, error: `Resend: ${resendErr}` }), {
+          status: 502,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
     }
 
     return new Response(JSON.stringify({ ok: true, submittedAt }), {
