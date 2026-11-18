@@ -32,14 +32,17 @@
         <span class="text-xs font-bold uppercase tracking-[0.16em] text-[#1C1C1C]">
           Lex Practice · Retail Business English
         </span>
-      </div>
-
       <div class="flex items-center gap-3">
-        <span id="ch2-total-score" class="px-3.5 py-1 rounded-full bg-[#E2E1DF] text-xs font-semibold text-[#1C1C1C]">
-          0 / 20 Auto-Graded
-        </span>
-        <button id="ch2-reset-all" type="button" class="text-xs underline text-[#5E5D5A] hover:text-[#1C1C1C]">
-          Reset All
+     <span id="ch2-total-score" class="px-3.5 py-1 rounded-full bg-[#E2E1DF] text-xs font-semibold text-[#1C1C1C]">
+       0 / 20 Auto-Graded
+     </span>
+     <button id="ch2-copy-hw" type="button" class="px-3.5 py-1.5 rounded-full bg-[#1C1C1C] text-white text-xs font-semibold hover:opacity-85 transition">
+       Copy Homework
+     </button>
+     <button id="ch2-reset-all" type="button" class="text-xs underline text-[#5E5D5A] hover:text-[#1C1C1C]">
+       Reset All
+     </button>
+   </div>
         </button>
       </div>
     </div>
@@ -339,14 +342,30 @@
         localStorage.setItem("lex_retail_ch2_score", `${total}/20`);
       }
 
-      // Render Word Bank
-      const pillsBox = document.getElementById("word-bank-pills");
-      WORD_BANK.forEach((phrase) => {
-        const pill = document.createElement("span");
-        pill.className = "px-2.5 py-1 rounded-md bg-white border border-black/10 text-xs font-medium text-[#1C1C1C]";
-        pill.textContent = phrase;
-        pillsBox.appendChild(pill);
-      });
+      // British English Speech Helper
+   function speakBritish(text) {
+     if (!("speechSynthesis" in window)) return;
+     window.speechSynthesis.cancel();
+     const utter = new SpeechSynthesisUtterance(text);
+     utter.lang = "en-GB";
+     utter.rate = 0.94;
+     const voices = window.speechSynthesis.getVoices();
+     const ukVoice = voices.find((v) => v.lang === "en-GB" || v.lang.startsWith("en-GB"));
+     if (ukVoice) utter.voice = ukVoice;
+     window.speechSynthesis.speak(utter);
+   }
+
+   // Render Interactive Audio Word Bank
+   const pillsBox = document.getElementById("word-bank-pills");
+   WORD_BANK.forEach((phrase) => {
+     const pill = document.createElement("button");
+     pill.type = "button";
+     pill.title = "Listen in British English";
+     pill.className = "px-3 py-1 rounded-md bg-white border border-black/15 hover:border-[#1C1C1C] text-xs font-medium text-[#1C1C1C] inline-flex items-center gap-1.5 transition cursor-pointer";
+     pill.innerHTML = `<span>${phrase}</span><span class="text-[10px] text-[#5E5D5A]">▶</span>`;
+     pill.addEventListener("click", () => speakBritish(phrase));
+     pillsBox.appendChild(pill);
+   });
 
       // Render Section 1
       const sec1List = document.getElementById("sec1-list");
@@ -532,7 +551,28 @@
           btn.textContent = isHidden ? "Hide Model Answer" : "Show Model Answer";
         });
       });
+// Copy Chapter Homework
+   document.getElementById("ch2-copy-hw").addEventListener("click", async () => {
+     const btn = document.getElementById("ch2-copy-hw");
+     const writing = JSON.parse(localStorage.getItem("lex_retail_ch2_writing") || "{}");
+     const score = localStorage.getItem("lex_retail_ch2_score") || `${sec1Score + sec2Score + sec3Score}/20`;
+     const report = [
+       `RETAIL ENGLISH — CHAPTER 02 HOMEWORK (ERHAN)`,
+       `Auto-Graded Score: ${score}`,
+       `----------------------------------------`,
+       `1. Internal candidates email: ${writing[0] || "(Not answered)"}`,
+       `2. Look forward to (Istanbul): ${writing[1] || "(Not answered)"}`,
+       `3. Remind [someone] of [something]: ${writing[2] || "(Not answered)"}`
+     ].join("\n");
 
+     try {
+       await navigator.clipboard.writeText(report);
+       btn.textContent = "Copied \u2713";
+       setTimeout(() => (btn.textContent = "Copy Homework"), 2200);
+     } catch (e) {
+       alert(report);
+     }
+   });
       // Reset All
       document.getElementById("ch2-reset-all").addEventListener("click", () => {
         localStorage.removeItem("lex_retail_ch2_score");
