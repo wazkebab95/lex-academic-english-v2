@@ -1,0 +1,28 @@
+name: Lex Practice API regression tests
+
+on:
+  push:
+    branches:
+      - feature/lex-practice-api-contract-v2
+    paths:
+      - "functions/api/submit-ielts.js"
+      - "tests/submit-ielts.test.mjs"
+      - ".github/workflows/lex-practice-api-tests.yml"
+  pull_request:
+    paths:
+      - "functions/api/submit-ielts.js"
+      - "tests/submit-ielts.test.mjs"
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run submission API regression tests
+        run: node --test tests/submit-ielts.test.mjs
