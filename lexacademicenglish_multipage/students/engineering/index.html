@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Electrical & Electronics Engineering | Lex Practice Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #FAF9F6;
+      color: #1C1C1C;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .font-editorial {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Studio Header -->
+  <header class="border-b border-black/10 bg-[#FAF9F6]/95 backdrop-blur sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-6 sm:px-10 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <a href="/students/" class="text-xs font-semibold uppercase tracking-wider text-[#5E5D5A] hover:text-[#1C1C1C] transition">
+          ← Student Portal
+        </a>
+        <span class="text-black/20">|</span>
+        <span class="text-xs font-bold uppercase tracking-[0.16em] text-[#1C1C1C]">
+          Lex Practice · Electrical & Electronics Engineering
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <span id="eng-ch1-total" class="px-3.5 py-1 rounded-full bg-[#E2E1DF] text-xs font-semibold text-[#1C1C1C]">
+          0 / 20 Auto-Graded
+        </span>
+        <button id="eng-reset-all" type="button" class="text-xs underline text-[#5E5D5A] hover:text-[#1C1C1C]">
+          Reset All
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Department Table of Contents -->
+  <div class="max-w-6xl mx-auto w-full px-6 sm:px-10 pt-6">
+    <div class="bg-white border border-black/10 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <span class="text-[11px] uppercase tracking-[0.16em] text-[#5E5D5A] font-semibold block">
+          Department Curriculum · Table of Contents
+        </span>
+        <p class="text-sm font-medium text-[#1C1C1C]">
+          Electrical & Electronics Engineering Technical English Modules:
+        </p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2.5 text-xs">
+        <a href="/students/engineering/" class="px-4 py-2 rounded-full bg-[#1C1C1C] text-white font-semibold">
+          Chapter 01 · Circuits, Power & Specifications
+        </a>
+        <span class="px-4 py-2 rounded-full bg-[#FAF9F6] border border-black/10 text-[#5E5D5A] font-medium">
+          Chapter 02 · Embedded Systems & Control (Upcoming)
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chapter Hero & Quick Jump -->
+  <section class="max-w-6xl mx-auto w-full px-6 sm:px-10 pt-6 pb-6">
+    <div class="bg-white border border-black/10 rounded-2xl p-6 sm:p-8">
+      <span class="text-[11px] uppercase tracking-[0.18em] text-[#5E5D5A] font-semibold block mb-1">
+        Department Workbook · Module 04
+      </span>
+      <h1 class="font-editorial text-3xl sm:text-5xl font-medium text-[#1C1C1C] mb-3">
+        Chapter 01: Circuit Systems, Power & Technical Specifications
+      </h1>
+      <p class="text-sm text-[#5E5D5A] max-w-2xl leading-relaxed mb-6">
+        Master core British engineering terminology across power distribution, signal integrity, schematic documentation, and fault-finding reports. Sections 1–3 grade automatically; Section 4 saves your technical writing locally.
+      </p>
+
+      <div class="pt-5 border-t border-black/10 flex flex-wrap items-center gap-2.5 text-xs">
+        <span class="font-bold uppercase tracking-wider text-[#5E5D5A] mr-1">Jump to:</span>
+        <a href="#sec-1" class="px-3 py-1.5 rounded-full bg-[#FAF9F6] border border-black/10 hover:border-[#1C1C1C] font-medium transition">
+          1. Technical Gap-Fill (10)
+        </a>
+        <a href="#sec-2" class="px-3 py-1.5 rounded-full bg-[#FAF9F6] border border-black/10 hover:border-[#1C1C1C] font-medium transition">
+          2. Diagnostics & Standards (5)
+        </a>
+        <a href="#sec-3" class="px-3 py-1.5 rounded-full bg-[#FAF9F6] border border-black/10 hover:border-[#1C1C1C] font-medium transition">
+          3. Component & Parameter Matching (5)
+        </a>
+        <a href="#sec-4" class="px-3 py-1.5 rounded-full bg-[#FAF9F6] border border-black/10 hover:border-[#1C1C1C] font-medium transition">
+          4. Technical Report Writing (3)
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Workbook Content -->
+  <main class="max-w-6xl mx-auto w-full px-6 sm:px-10 pb-20 space-y-10 flex-1">
+
+    <!-- SECTION 1: TECHNICAL VOCABULARY GAP-FILL -->
+    <section id="sec-1" class="bg-white border border-black/10 rounded-2xl p-6 sm:p-8 scroll-mt-24">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6 border-b border-black/10">
+        <div>
+          <span class="text-[11px] uppercase tracking-[0.16em] text-[#5E5D5A] font-semibold block">Section 01</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl font-medium">Technical Vocabulary Gap-Fill</h2>
+        </div>
+        <span id="sec1-badge" class="px-3 py-1 rounded-full bg-[#E2E1DF] text-xs font-semibold">0 / 10 Correct</span>
+      </div>
+
+      <div class="rounded-xl bg-[#FAF9F6] border border-black/10 p-4 mb-6">
+        <p class="text-[11px] uppercase tracking-wider font-bold text-[#5E5D5A] mb-2.5">
+          Engineering Lexicon Bank (11 Terms · 1 Distractor):
+        </p>
+        <div id="word-bank-pills" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <div id="sec1-list" class="space-y-4"></div>
+
+      <div class="mt-6 pt-5 border-t border-black/10 flex flex-wrap items-center justify-between gap-4">
+        <button id="check-sec1-btn" type="button" class="px-5 py-2.5 rounded-full bg-[#1C1C1C] text-white text-xs font-semibold uppercase tracking-wider hover:opacity-85 transition">
+          Check Section 1 Answers
+        </button>
+        <span id="sec1-feedback" class="text-xs text-[#5E5D5A]"></span>
+      </div>
+    </section>
+
+    <!-- SECTION 2: DIAGNOSTICS & STANDARDS -->
+    <section id="sec-2" class="bg-white border border-black/10 rounded-2xl p-6 sm:p-8 scroll-mt-24">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6 border-b border-black/10">
+        <div>
+          <span class="text-[11px] uppercase tracking-[0.16em] text-[#5E5D5A] font-semibold block">Section 02</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl font-medium">Engineering Diagnostics & Standards</h2>
+        </div>
+        <span id="sec2-badge" class="px-3 py-1 rounded-full bg-[#E2E1DF] text-xs font-semibold">0 / 5 Correct</span>
+      </div>
+
+      <div id="sec2-list" class="space-y-6"></div>
+    </section>
+
+    <!-- SECTION 3: COMPONENT & PARAMETER MATCHING -->
+    <section id="sec-3" class="bg-white border border-black/10 rounded-2xl p-6 sm:p-8 scroll-mt-24">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6 border-b border-black/10">
+        <div>
+          <span class="text-[11px] uppercase tracking-[0.16em] text-[#5E5D5A] font-semibold block">Section 03</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl font-medium">Component & Parameter Matching</h2>
+        </div>
+        <span id="sec3-badge" class="px-3 py-1 rounded-full bg-[#E2E1DF] text-xs font-semibold">0 / 5 Correct</span>
+      </div>
+
+      <p class="text-xs text-[#5E5D5A] mb-5">
+        Match each electrical/electronic term in Column A with its precise engineering definition in Column B.
+      </p>
+
+      <div id="sec3-list" class="space-y-3"></div>
+
+      <div class="mt-6 pt-5 border-t border-black/10 flex flex-wrap items-center justify-between gap-4">
+        <button id="check-sec3-btn" type="button" class="px-5 py-2.5 rounded-full bg-[#1C1C1C] text-white text-xs font-semibold uppercase tracking-wider hover:opacity-85 transition">
+          Check Section 3 Matches
+        </button>
+        <span id="sec3-feedback" class="text-xs text-[#5E5D5A]"></span>
+      </div>
+    </section>
+
+    <!-- SECTION 4: TECHNICAL REPORT & SPECIFICATION WRITING -->
+    <section id="sec-4" class="bg-white border border-black/10 rounded-2xl p-6 sm:p-8 scroll-mt-24">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-6 border-b border-black/10">
+        <div>
+          <span class="text-[11px] uppercase tracking-[0.16em] text-[#5E5D5A] font-semibold block">Section 04</span>
+          <h2 class="font-editorial text-2xl sm:text-3xl font-medium">Technical Report & Specification Writing</h2>
+        </div>
+        <span class="px-3 py-1 rounded-full bg-[#E2E1DF] text-xs font-semibold">Auto-Saved Locally</span>
+      </div>
+
+      <div id="sec4-list" class="space-y-6"></div>
+    </section>
+
+  </main>
+
+  <!-- Studio Footer -->
+  <footer class="bg-[#E2E1DF] border-t border-black/10 py-8 px-6 sm:px-10 text-xs text-[#5E5D5A]">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <span>Lex Academic & Executive English · Engineering Studio</span>
+      <div class="flex gap-5">
+        <a href="/students/" class="underline hover:text-[#1C1C1C]">Student Portal</a>
+        <a href="/students/resources/" class="underline hover:text-[#1C1C1C]">Reference Library</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const WORD_BANK = [
+        "attenuation",
+        "impedance",
+        "commissioning",
+        "earthing",
+        "schematic",
+        "fault-finding",
+        "oscilloscope",
+        "tolerance",
+        "step-down transformer",
+        "ripple voltage",
+        "galvanic isolation"
+      ];
+
+      const SEC1_DATA = [
+        {
+          before: "1. Before energising the industrial distribution panel, engineers must complete full ",
+          after: " and insulation-resistance tests.",
+          answer: "commissioning"
+        },
+        {
+          before: "2. High-frequency signal ",
+          after: " increases substantially across long unshielded copper runs.",
+          answer: "attenuation"
+        },
+        {
+          before: "3. Proper protective ",
+          after: " prevents exposed metallic enclosures from reaching hazardous potentials during an insulation fault.",
+          answer: "earthing"
+        },
+        {
+          before: "4. Always cross-check pin assignments against the latest circuit ",
+          after: " before releasing the PCB layout for fabrication.",
+          answer: "schematic"
+        },
+        {
+          before: "5. Characteristic ",
+          after: " matching between the transmission line and load minimises signal reflections.",
+          answer: "impedance"
+        },
+        {
+          before: "6. The technician used a digital storage ",
+          after: " to capture the nanosecond switching transient on the MOSFET gate.",
+          answer: "oscilloscope"
+        },
+        {
+          before: "7. A ",
+          after: " reduces the 11 kV medium-voltage feeder to a 400 V three-phase supply.",
+          answer: "step-down transformer"
+        },
+        {
+          before: "8. Adding a bulk smoothing capacitor across the rectifier output significantly lowered the ",
+          after: ".",
+          answer: "ripple voltage"
+        },
+        {
+          before: "9. Optocouplers provide ",
+          after: " between the high-voltage power stage and the low-voltage microcontroller.",
+          answer: "galvanic isolation"
+        },
+        {
+          before: "10. Precision instrumentation amplifiers require resistors with a tight 0.1% ",
+          after: " rating.",
+          answer: "tolerance"
+        }
+      ];
+
+      const SEC2_DATA = [
+        {
+          q: '1. In AC power distribution, what does "power factor correction" primarily reduce?',
+          options: [
+            "a) Conductor insulation thickness",
+            "b) Reactive power demand and apparent current draw",
+            "c) DC supply voltage ripple",
+            "d) Printed circuit board solder-mask thickness"
+          ],
+          correct: 1,
+          note: "Power factor correction brings current and voltage closer in phase, reducing reactive power and distribution losses."
+        },
+        {
+          q: "2. Why is a flyback diode connected in antiparallel across an inductive relay coil?",
+          options: [
+            "a) To double the steady-state coil current",
+            "b) To provide a safe discharge path for back-EMF spikes when switched off",
+            "c) To convert AC mains into regulated DC",
+            "d) To increase the switching frequency of the relay"
+          ],
+          correct: 1,
+          note: "When current through an inductor is interrupted abruptly, the flyback diode clamps the high inductive voltage spike."
+        },
+        {
+          q: '3. In UK and IEC wiring standards (BS 7671), what is the primary function of an RCD (Residual Current Device)?',
+          options: [
+            "a) Regulating frequency fluctuations on the national grid",
+            "b) Disconnecting the circuit rapidly upon detecting earth-leakage current imbalance",
+            "c) Stepping up DC battery voltage for inverters",
+            "d) Filtering high-frequency electromagnetic interference"
+          ],
+          correct: 1,
+          note: "An RCD monitors live and neutral current balance and trips within milliseconds if leakage current flows to earth."
+        },
+        {
+          q: "4. Which instrument is specifically designed to measure insulation resistance at high DC test voltages (e.g., 500 V or 1000 V)?",
+          options: [
+            "a) Logic analyser",
+            "b) Megohmmeter (insulation tester)",
+            "c) Spectrum analyser",
+            "d) Function generator"
+          ],
+          correct: 1,
+          note: "A megohmmeter applies a controlled high DC voltage to verify cable and winding insulation integrity."
+        },
+        {
+          q: '5. What does "thermal runaway" describe in power semiconductors or lithium-ion cells?',
+          options: [
+            "a) A scheduled cooling fan diagnostic routine",
+            "b) A self-reinforcing cycle where rising temperature increases current/heat generation until failure",
+            "c) Heat dissipation through an aluminium heatsink",
+            "d) Normal warm-up drift during the first 60 seconds of operation"
+          ],
+          correct: 1,
+          note: "Thermal runaway occurs when increased temperature lowers resistance or accelerates exothermic reactions, driving further heating."
+        }
+      ];
+
+      const SEC3_OPTIONS = [
+        { id: "A", text: "A. Unwanted waveform distortion caused by non-linear loads such as switched-mode power supplies." },
+        { id: "B", text: "B. Protection mechanism that clamps brief, high-energy voltage spikes on power or data lines." },
+        { id: "C", text: "C. Systematic diagnostic procedure used to isolate the root cause of an electrical malfunction." },
+        { id: "D", text: "D. Ratio of useful active power (kW) to total apparent power (kVA) in an AC circuit." },
+        { id: "E", text: "E. Unintentional electromagnetic coupling between adjacent traces or conductors on a PCB." }
+      ];
+
+      const SEC3_DATA = [
+        { term: "1. Transient voltage suppression", correct: "B" },
+        { term: "2. Harmonic distortion", correct: "A" },
+        { term: "3. Crosstalk", correct: "E" },
+        { term: "4. Fault-finding", correct: "C" },
+        { term: "5. Power factor", correct: "D" }
+      ];
+
+      const SEC4_DATA = [
+        {
+          prompt: "1. Write a concise technical fault-report sentence explaining that a prototype PCB failed thermal stress testing due to insufficient copper pour under the voltage regulator.",
+          model: "During continuous-load thermal stress testing, the prototype PCB exceeded its maximum junction temperature limit due to insufficient copper pour beneath the linear voltage regulator."
+        },
+        {
+          prompt: "2. Construct a commissioning handover sentence confirming that protective earthing continuity and insulation resistance complied with BS 7671 specifications.",
+          model: "Prior to final commissioning handover, protective earthing continuity and 1000 V insulation-resistance measurements were verified in full compliance with BS 7671 standards."
+        },
+        {
+          prompt: "3. Write a specification note advising the hardware team to add galvanic isolation and impedance-controlled routing on a high-speed differential bus.",
+          model: "To mitigate ground-loop noise and signal reflections, the revised hardware specification mandates galvanic isolation alongside 100-ohm impedance-controlled differential routing."
+        }
+      ];
+
+      let sec1Score = 0;
+      let sec2Score = 0;
+      let sec3Score = 0;
+
+      function updateGlobalScore() {
+        const total = sec1Score + sec2Score + sec3Score;
+        document.getElementById("eng-ch1-total").textContent = `${total} / 20 Auto-Graded`;
+        localStorage.setItem("lex_eng_ch1_score", `${total}/20`);
+      }
+
+      // Render Word Bank
+      const pillsBox = document.getElementById("word-bank-pills");
+      WORD_BANK.forEach((term) => {
+        const pill = document.createElement("span");
+        pill.className = "px-2.5 py-1 rounded-md bg-white border border-black/10 text-xs font-medium text-[#1C1C1C]";
+        pill.textContent = term;
+        pillsBox.appendChild(pill);
+      });
+
+      // Render Section 1
+      const sec1List = document.getElementById("sec1-list");
+      SEC1_DATA.forEach((item, idx) => {
+        const row = document.createElement("div");
+        row.className = "p-4 rounded-xl bg-[#FAF9F6] border border-black/10 text-sm leading-relaxed flex flex-wrap items-center gap-2";
+        const optionsHtml = WORD_BANK.map((w) => `<option value="${w}">${w}</option>`).join("");
+        row.innerHTML = `
+          <span>${item.before}</span>
+          <select id="sec1-sel-${idx}" class="px-3 py-1.5 rounded-lg bg-white border border-black/20 text-xs sm:text-sm font-medium text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]">
+            <option value="">-- Select term --</option>
+            ${optionsHtml}
+          </select>
+          <span>${item.after}</span>
+          <span id="sec1-mark-${idx}" class="text-xs font-bold ml-auto"></span>
+        `;
+        sec1List.appendChild(row);
+      });
+
+      document.getElementById("check-sec1-btn").addEventListener("click", () => {
+        let correct = 0;
+        SEC1_DATA.forEach((item, idx) => {
+          const sel = document.getElementById(`sec1-sel-${idx}`);
+          const mark = document.getElementById(`sec1-mark-${idx}`);
+          sel.classList.remove("border-emerald-600", "bg-emerald-50", "border-red-500", "bg-red-50");
+          if (sel.value === item.answer) {
+            correct++;
+            sel.classList.add("border-emerald-600", "bg-emerald-50");
+            mark.textContent = "\u2713 Correct";
+            mark.className = "text-xs font-bold text-emerald-700 ml-auto";
+          } else {
+            sel.classList.add("border-red-500", "bg-red-50");
+            mark.textContent = `\u2717 Answer: ${item.answer}`;
+            mark.className = "text-xs font-bold text-amber-700 ml-auto";
+          }
+        });
+        sec1Score = correct;
+        document.getElementById("sec1-badge").textContent = `${correct} / 10 Correct`;
+        document.getElementById("sec1-feedback").textContent =
+          correct === 10 ? "Full marks on Section 1." : "Review highlighted gaps above and try again.";
+        updateGlobalScore();
+      });
+
+      // Render Section 2
+      const sec2List = document.getElementById("sec2-list");
+      const sec2Solved = new Array(SEC2_DATA.length).fill(false);
+
+      SEC2_DATA.forEach((item, qIdx) => {
+        const card = document.createElement("div");
+        card.className = "p-5 rounded-xl bg-[#FAF9F6] border border-black/10 space-y-3";
+        card.innerHTML = `
+          <p class="text-sm font-semibold text-[#1C1C1C]">${item.q}</p>
+          <div class="space-y-2" id="sec2-opts-${qIdx}">
+            ${item.options
+              .map(
+                (opt, oIdx) => `
+                <button type="button" data-q="${qIdx}" data-o="${oIdx}" class="sec2-btn w-full text-left text-xs sm:text-sm p-3 rounded-lg bg-white border border-black/10 hover:border-[#1C1C1C] transition">
+                  ${opt}
+                </button>`
+              )
+              .join("")}
+          </div>
+          <p id="sec2-note-${qIdx}" class="hidden text-xs text-[#5E5D5A] pt-2 border-t border-black/10"></p>
+        `;
+        sec2List.appendChild(card);
+      });
+
+      sec2List.querySelectorAll(".sec2-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const qIdx = Number(btn.getAttribute("data-q"));
+          const oIdx = Number(btn.getAttribute("data-o"));
+          if (sec2Solved[qIdx]) return;
+          sec2Solved[qIdx] = true;
+
+          const qObj = SEC2_DATA[qIdx];
+          const isCorrect = oIdx === qObj.correct;
+          if (isCorrect) sec2Score++;
+
+          const box = document.getElementById(`sec2-opts-${qIdx}`);
+          box.querySelectorAll("button").forEach((b, idx) => {
+            b.disabled = true;
+            if (idx === qObj.correct) {
+              b.classList.remove("bg-white", "border-black/10");
+              b.classList.add("bg-emerald-50", "border-emerald-600", "font-semibold");
+            } else if (idx === oIdx && !isCorrect) {
+              b.classList.remove("bg-white", "border-black/10");
+              b.classList.add("bg-red-50", "border-red-400");
+            } else {
+              b.classList.add("opacity-50");
+            }
+          });
+
+          const noteEl = document.getElementById(`sec2-note-${qIdx}`);
+          noteEl.textContent = (isCorrect ? "Correct \u00b7 " : "Review \u00b7 ") + qObj.note;
+          noteEl.classList.remove("hidden");
+
+          document.getElementById("sec2-badge").textContent = `${sec2Score} / 5 Correct`;
+          updateGlobalScore();
+        });
+      });
+
+      // Render Section 3
+      const sec3List = document.getElementById("sec3-list");
+      SEC3_DATA.forEach((item, idx) => {
+        const row = document.createElement("div");
+        row.className = "p-4 rounded-xl bg-[#FAF9F6] border border-black/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+        const optsHtml = SEC3_OPTIONS.map((o) => `<option value="${o.id}">${o.text}</option>`).join("");
+        row.innerHTML = `
+          <span class="text-sm font-semibold text-[#1C1C1C]">${item.term}</span>
+          <div class="flex items-center gap-2 sm:w-2/3">
+            <select id="sec3-sel-${idx}" class="w-full px-3 py-2 rounded-lg bg-white border border-black/20 text-xs font-medium text-[#1C1C1C]">
+              <option value="">-- Select matching definition --</option>
+              ${optsHtml}
+            </select>
+            <span id="sec3-mark-${idx}" class="text-xs font-bold whitespace-nowrap"></span>
+          </div>
+        `;
+        sec3List.appendChild(row);
+      });
+
+      document.getElementById("check-sec3-btn").addEventListener("click", () => {
+        let correct = 0;
+        SEC3_DATA.forEach((item, idx) => {
+          const sel = document.getElementById(`sec3-sel-${idx}`);
+          const mark = document.getElementById(`sec3-mark-${idx}`);
+          sel.classList.remove("border-emerald-600", "bg-emerald-50", "border-red-500", "bg-red-50");
+          if (sel.value === item.correct) {
+            correct++;
+            sel.classList.add("border-emerald-600", "bg-emerald-50");
+            mark.textContent = "\u2713";
+            mark.className = "text-xs font-bold text-emerald-700";
+          } else {
+            sel.classList.add("border-red-500", "bg-red-50");
+            mark.textContent = `\u2717 (${item.correct})`;
+            mark.className = "text-xs font-bold text-amber-700";
+          }
+        });
+        sec3Score = correct;
+        document.getElementById("sec3-badge").textContent = `${correct} / 5 Correct`;
+        document.getElementById("sec3-feedback").textContent =
+          correct === 5 ? "All 5 pairs matched accurately." : "Check the highlighted rows and try again.";
+        updateGlobalScore();
+      });
+
+      // Render Section 4
+      const sec4List = document.getElementById("sec4-list");
+      const savedWriting = JSON.parse(localStorage.getItem("lex_eng_ch1_writing") || "{}");
+
+      SEC4_DATA.forEach((item, idx) => {
+        const box = document.createElement("div");
+        box.className = "p-5 rounded-xl bg-[#FAF9F6] border border-black/10 space-y-3";
+        box.innerHTML = `
+          <p class="text-sm font-semibold text-[#1C1C1C]">${item.prompt}</p>
+          <textarea id="sec4-txt-${idx}" rows="2" placeholder="Write your engineering specification sentence here..." class="w-full p-3 rounded-lg bg-white border border-black/15 text-sm focus:outline-none focus:border-[#1C1C1C]">${savedWriting[idx] || ""}</textarea>
+          <div class="flex items-center justify-between">
+            <button type="button" data-model-idx="${idx}" class="toggle-model-btn text-xs font-semibold underline text-[#1C1C1C] hover:opacity-70">
+              Show Model Answer
+            </button>
+            <span class="text-[11px] text-[#5E5D5A]">Saved automatically</span>
+          </div>
+          <div id="sec4-model-${idx}" class="hidden p-3.5 rounded-lg bg-white border border-emerald-600/40 text-xs text-[#1C1C1C]">
+            <strong class="text-emerald-800 uppercase tracking-wider block mb-1">Model Engineering Sentence:</strong>
+            “${item.model}”
+          </div>
+        `;
+        sec4List.appendChild(box);
+      });
+
+      sec4List.querySelectorAll("textarea").forEach((ta, idx) => {
+        ta.addEventListener("input", () => {
+          const current = JSON.parse(localStorage.getItem("lex_eng_ch1_writing") || "{}");
+          current[idx] = ta.value;
+          localStorage.setItem("lex_eng_ch1_writing", JSON.stringify(current));
+        });
+      });
+
+      sec4List.querySelectorAll(".toggle-model-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const idx = btn.getAttribute("data-model-idx");
+          const modelBox = document.getElementById(`sec4-model-${idx}`);
+          const isHidden = modelBox.classList.contains("hidden");
+          modelBox.classList.toggle("hidden");
+          btn.textContent = isHidden ? "Hide Model Answer" : "Show Model Answer";
+        });
+      });
+
+      // Reset All
+      document.getElementById("eng-reset-all").addEventListener("click", () => {
+        localStorage.removeItem("lex_eng_ch1_score");
+        localStorage.removeItem("lex_eng_ch1_writing");
+        window.location.reload();
+      });
+    })();
+  </script>
+</body>
+</html>
