@@ -218,6 +218,14 @@
         placeholder="Dear [Account Director], I am writing regarding purchase order #4092..."
         class="studio-input leading-relaxed"
       ></textarea>
+      <label for="retail-include-case" class="mt-4 flex items-start gap-3 text-sm text-[#5E5D5A]">
+        <input id="retail-include-case" type="checkbox" class="mt-1 accent-[#2A5A84]" />
+        <span>
+          I agree to include my written case-study response in this submission for instructor feedback.
+          <span class="block text-xs mt-1">If unchecked, only your quiz summary and word count will be sent. Avoid confidential employer or customer information.</span>
+        </span>
+      </label>
+      <p class="text-xs text-[#5E5D5A] mt-3">Your draft is saved only in this browser. Clear it before leaving a shared device.</p>
     </section>
 
     <!-- Action Bar -->
@@ -252,11 +260,24 @@
     const essayEl = document.getElementById('retail-writing-response');
     const wordCounterEl = document.getElementById('retail-word-counter');
 
-    nameEl.value = localStorage.getItem('fex_student_name') || localStorage.getItem('lex_student_name') || '';
-    emailEl.value = localStorage.getItem('fex_student_email') || localStorage.getItem('lex_student_email') || '';
-    roleEl.value = localStorage.getItem('fex_retail_role') || localStorage.getItem('lex_retail_role') || '';
+    const includeCaseInput = document.getElementById('retail-include-case');
+    const statusBox = document.getElementById('retail-status-box');
 
-    const savedDraft = localStorage.getItem('fex_retail_draft') || localStorage.getItem('lex_retail_draft');
+    // Do not persist learner names or email addresses in browser storage.
+    // Only the optional local writing draft is retained on this device.
+    function storageGet(key) {
+      try { return localStorage.getItem(key); } catch { return null; }
+    }
+    function storageSet(key, value) {
+      try { localStorage.setItem(key, value); return true; } catch { return false; }
+    }
+    function storageRemove(key) {
+      try { localStorage.removeItem(key); } catch { /* Storage may be disabled. */ }
+    }
+
+    roleEl.value = '';
+
+    const savedDraft = storageGet('fex_retail_draft') || storageGet('lex_retail_draft');
     if (savedDraft) {
       essayEl.value = savedDraft;
       updateWordCount();
@@ -268,7 +289,7 @@
     }
 
     essayEl.addEventListener('input', () => {
-      localStorage.setItem('fex_retail_draft', essayEl.value);
+      storageSet('fex_retail_draft', essayEl.value);
       updateWordCount();
     });
 
@@ -367,8 +388,8 @@
 
     // Clear Draft
     document.getElementById('retail-clear-btn').addEventListener('click', () => {
-      localStorage.removeItem('fex_retail_draft');
-      localStorage.removeItem('lex_retail_draft');
+      storageRemove('fex_retail_draft');
+      storageRemove('lex_retail_draft');
       essayEl.value = '';
       updateWordCount();
     });
@@ -379,11 +400,10 @@
       const studentEmail = emailEl.value.trim();
       const studentRole = roleEl.value.trim();
       const responseText = essayEl.value.trim();
-      const statusBox = document.getElementById('retail-status-box');
-
       if (!studentName || !studentEmail) {
         statusBox.classList.remove('hidden');
-        statusBox.innerHTML = '<p class="text-sm font-semibold text-red-700">Please enter your name and registered email address before submitting.</p>';
+        statusBox.textContent = 'Please enter your name and registered email address before submitting.';
+        statusBox.className = 'mt-8 workspace-card border-red-300 text-sm font-semibold text-red-700';
         return;
       }
 
@@ -402,53 +422,66 @@
       const wordCount = responseText ? responseText.split(/\s+/).length : 0;
       const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-      localStorage.setItem('fex_student_name', studentName);
-      localStorage.setItem('fex_student_email', studentEmail);
-      localStorage.setItem('lex_student_name', studentName);
-      localStorage.setItem('lex_student_email', studentEmail);
-      if (studentRole) localStorage.setItem('fex_retail_role', studentRole);
-      localStorage.setItem('lex_ielts_last_score', `Fex Retail ${scoreText}`);
-      localStorage.setItem('lex_ielts_last_date', today);
+      // Keep the learner's identity in this submission only, not localStorage.
+      storageSet('lex_ielts_last_score', `Fex Retail ${scoreText}`);
+      storageSet('lex_ielts_last_date', today);
 
       const btn = document.getElementById('retail-submit-btn');
       btn.disabled = true;
       btn.textContent = 'Submitting Assessment...';
 
       try {
+        const detailsLines = [
+          `Department / role: ${studentRole || 'Not supplied'}`,
+          `Written response word count: ${wordCount}`,
+          `Modules to review: ${missedModules.join(', ') || 'None — Full Marks'}`
+        ];
+        if (includeCaseInput.checked && responseText) {
+          detailsLines.push('', 'Written case-study response (learner consent given):', responseText);
+        } else {
+          detailsLines.push('', 'Written case-study response: Not included in this submission.');
+        }
+
         const res = await fetch('/api/submit-ielts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name: studentName,
-            email: studentEmail,
-            module: `Fex Retail Business English${studentRole ? ' (' + studentRole + ')' : ''}`,
+            studentName,
+            studentEmail,
+            category: `Retail Business English${studentRole ? ' (' + studentRole + ')' : ''}`,
             score: scoreText,
-            wordCount: wordCount,
-            missedTopics: missedModules.join(', ') || 'None — Full Marks',
-            essay: responseText
+            bandEstimate: 'Diagnostic quiz only — instructor review required',
+            timeTaken: 'Not recorded',
+            detailsPlain: detailsLines.join('\\n')
           })
         });
+        const result = await res.json().catch(() => ({}));
+        if (!res.ok || !result.success) {
+          throw new Error('Submission was not confirmed.');
+        }
 
         statusBox.classList.remove('hidden');
-        if (res.ok) {
-          statusBox.innerHTML = `
-            <p class="text-xs uppercase tracking-widest text-[#2A5A84] font-bold mb-1">Assessment Logged · Score ${scoreText}</p>
-            <h3 class="font-editorial text-2xl font-medium mb-2">Fex Retail Module Complete</h3>
-            <p class="text-sm text-[#5E5D5A]">
-              Thank you, <strong>${studentName}</strong>. Your module score (${scoreText}) and executive escalation brief (${wordCount} words) have been recorded. Detailed British English feedback will arrive at <strong>${studentEmail}</strong> within 15 minutes.
-            </p>
-          `;
-        } else {
-          throw new Error('Non-200 status');
-        }
+        statusBox.className = 'mt-8 workspace-card border-[#2A5A84]/30';
+        const heading = document.createElement('p');
+        heading.className = 'text-xs uppercase tracking-widest text-[#2A5A84] font-bold mb-1';
+        heading.textContent = `Assessment received · Score ${scoreText}`;
+        const title = document.createElement('h3');
+        title.className = 'font-editorial text-2xl font-medium mb-2';
+        title.textContent = 'Fex Retail Module Complete';
+        const message = document.createElement('p');
+        message.className = 'text-sm text-[#5E5D5A]';
+        message.textContent = `Thank you, ${studentName}. Your score (${scoreText}) has been submitted. The instructor will review your work and follow up separately at ${studentEmail}.`;
+        statusBox.replaceChildren(heading, title, message);
       } catch (e) {
         statusBox.classList.remove('hidden');
-        statusBox.innerHTML = `
-          <p class="text-xs uppercase tracking-widest font-bold text-[#2A5A84] mb-1">Local Session Recorded · Score ${scoreText}</p>
-          <p class="text-sm text-[#5E5D5A]">
-            Your score (${scoreText}) has been saved locally. Modules to review: <strong>${missedModules.join(', ') || 'None — Full Marks'}</strong>.
-          </p>
-        `;
+        statusBox.className = 'mt-8 workspace-card border-[#2A5A84]/30';
+        const heading = document.createElement('p');
+        heading.className = 'text-xs uppercase tracking-widest font-bold text-[#2A5A84] mb-1';
+        heading.textContent = `Submission not confirmed · Score ${scoreText}`;
+        const message = document.createElement('p');
+        message.className = 'text-sm text-[#5E5D5A]';
+        message.textContent = `Your score is available in this session, but the server did not confirm receipt. Modules to review: ${missedModules.join(', ') || 'None — Full Marks'}. Please do not assume your work has been submitted.`;
+        statusBox.replaceChildren(heading, message);
       } finally {
         btn.disabled = false;
         btn.textContent = 'Submit Fex Retail Assessment →';
