@@ -452,7 +452,7 @@
             score: scoreText,
             bandEstimate: 'Diagnostic quiz only — instructor review required',
             timeTaken: 'Not recorded',
-            detailsPlain: detailsLines.join('\\n')
+            detailsPlain: detailsLines.join('\n')
           })
         });
         const result = await res.json().catch(() => ({}));
