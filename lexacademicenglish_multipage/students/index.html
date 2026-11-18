@@ -43,17 +43,29 @@
     </div>
   </header>
 
-  <!-- Active Session Progress Strip -->
+  <!-- Unified Cross-Department Progress Strip -->
   <div class="max-w-7xl mx-auto px-6 sm:px-10 pt-8">
     <div class="bg-white border border-black/10 rounded-xl px-5 py-3.5 flex flex-wrap items-center justify-between gap-4 text-xs">
-      <div class="flex items-center gap-2.5">
+      <div class="flex flex-wrap items-center gap-2.5">
         <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-        <span class="font-semibold">Student Workspace Active</span>
-        <span id="session-summary" class="text-[#5E5D5A]">Ready to begin your diagnostic or writing task.</span>
+        <span class="font-bold uppercase tracking-wider text-[#5E5D5A]">Student Progress</span>
+        <span id="pill-retail-ch2" class="px-3 py-1 rounded-full bg-[#FAF9F6] border border-black/10 font-semibold text-[#1C1C1C]">
+          Retail Ch. 2: –
+        </span>
+        <span id="pill-eng-ch1" class="px-3 py-1 rounded-full bg-[#FAF9F6] border border-black/10 font-semibold text-[#1C1C1C]">
+          Engineering Ch. 1: –
+        </span>
+        <span id="pill-ielts-diag" class="px-3 py-1 rounded-full bg-[#FAF9F6] border border-black/10 font-semibold text-[#1C1C1C]">
+          IELTS Diagnostic: –
+        </span>
       </div>
-      <div class="flex items-center gap-4">
-        <span id="session-score-badge" class="font-semibold text-[#1C1C1C]">Latest Diagnostic: —</span>
-        <button id="reset-session-btn" type="button" class="text-[#5E5D5A] underline hover:text-[#1C1C1C]">Reset Local Progress</button>
+      <div class="flex items-center gap-3">
+        <button id="copy-portal-report-btn" type="button" class="px-3.5 py-1.5 rounded-full bg-[#1C1C1C] text-white font-semibold hover:opacity-85 transition">
+          Copy Homework Report
+        </button>
+        <button id="reset-session-btn" type="button" class="text-[#5E5D5A] underline hover:text-[#1C1C1C]">
+          Reset Local Progress
+        </button>
       </div>
     </div>
   </div>
@@ -535,6 +547,78 @@
         });
       });
     })();
+    (function initUnifiedProgressBar() {
+    const retailScore = localStorage.getItem("lex_retail_ch2_score");
+    const engScore = localStorage.getItem("lex_eng_ch1_score");
+    const ieltsDiag = localStorage.getItem("lex_ielts_diagnostic") || localStorage.getItem("fex_ielts_score");
+
+    const retailEl = document.getElementById("pill-retail-ch2");
+    const engEl = document.getElementById("pill-eng-ch1");
+    const ieltsEl = document.getElementById("pill-ielts-diag");
+
+    if (retailEl && retailScore) {
+      retailEl.textContent = `Retail Ch. 2: ${retailScore}`;
+      retailEl.classList.add("bg-emerald-50", "border-emerald-600/40");
+    }
+    if (engEl && engScore) {
+      engEl.textContent = `Engineering Ch. 1: ${engScore}`;
+      engEl.classList.add("bg-emerald-50", "border-emerald-600/40");
+    }
+    if (ieltsEl && ieltsDiag) {
+      ieltsEl.textContent = `IELTS Diagnostic: ${ieltsDiag}`;
+      ieltsEl.classList.add("bg-emerald-50", "border-emerald-600/40");
+    }
+
+    const copyBtn = document.getElementById("copy-portal-report-btn");
+    if (copyBtn) {
+      copyBtn.addEventListener("click", async () => {
+        const retailWriting = JSON.parse(localStorage.getItem("lex_retail_ch2_writing") || "{}");
+        const engWriting = JSON.parse(localStorage.getItem("lex_eng_ch1_writing") || "{}");
+        const today = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+        const lines = [
+          `FEX STUDIO — STUDENT PROGRESS REPORT (${today})`,
+          `--------------------------------------------------`,
+          `• Retail Ch. 2 Auto-Graded Score: ${retailScore || "Not completed yet"}`,
+          `• Engineering Ch. 1 Auto-Graded Score: ${engScore || "Not completed yet"}`,
+          `• IELTS Diagnostic: ${ieltsDiag || "Not recorded"}`,
+          ``,
+          `RETAIL CH. 2 WRITTEN SENTENCES:`,
+          `1. ${retailWriting[0] || "(Blank)"}`,
+          `2. ${retailWriting[1] || "(Blank)"}`,
+          `3. ${retailWriting[2] || "(Blank)"}`,
+          ``,
+          `ENGINEERING CH. 1 TECHNICAL WRITING:`,
+          `1. ${engWriting[0] || "(Blank)"}`,
+          `2. ${engWriting[1] || "(Blank)"}`,
+          `3. ${engWriting[2] || "(Blank)"}`
+        ];
+
+        try {
+          await navigator.clipboard.writeText(lines.join("\n"));
+          copyBtn.textContent = "Copied to Clipboard \u2713";
+          setTimeout(() => {
+            copyBtn.textContent = "Copy Homework Report";
+          }, 2500);
+        } catch (err) {
+          alert(lines.join("\n"));
+        }
+      });
+    }
+
+    const resetBtn = document.getElementById("reset-session-btn");
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        localStorage.removeItem("lex_retail_ch2_score");
+        localStorage.removeItem("lex_retail_ch2_writing");
+        localStorage.removeItem("lex_eng_ch1_score");
+        localStorage.removeItem("lex_eng_ch1_writing");
+        localStorage.removeItem("lex_ielts_diagnostic");
+        localStorage.removeItem("fex_ielts_score");
+        window.location.reload();
+      });
+    }
+  })();
   </script>
   </body>
   </html>
