@@ -17,6 +17,10 @@ The current IELTS and Retail pages share `/api/submit-ielts`. The current IELTS 
 
 The repository currently places Pages Functions at `/functions/api/submit-ielts.js` while the static site files are under `/lexacademicenglish_multipage/`. Before deploying a Pages Function, confirm the Cloudflare Pages **Root directory** and **Build output directory**: the `functions/` directory must be inside the configured project root. Do not change those settings as part of this branch; verify them in the dashboard first.
 
+## Access scope decision
+
+The existing student hub contains the IELTS Suite and shared resources as well as the Retail programme. Protecting all of `/students/*` may therefore affect existing learners. The safer first rollout is to protect only `/students/retail/*`, then widen the policy only after confirming that the other student pages should also be private.
+
 ## Recommended Cloudflare Access setup
 
 Use Cloudflare Access as the first access gate for the static student area. It is preferable to an unlisted URL because Access checks identity against an allow policy.
@@ -24,7 +28,7 @@ Use Cloudflare Access as the first access gate for the static student area. It i
 ### Production custom domain
 
 1. In Cloudflare Zero Trust, open **Access controls → Applications** and create a **Self-hosted** application.
-2. Select the custom hostname `lexacademicenglish.co.uk` and set the application path to `/students/*`.
+2. For the first Retail programme, select the custom hostname `lexacademicenglish.co.uk` and set the application path to `/students/retail/*`. The existing `/students/` hub also links to IELTS pages and resources, so do not gate the entire `/students/*` tree unless you intend to restrict access for those existing learners too.
 3. Create an **Allow** policy for only the specific student email address or a tightly controlled identity-provider group. Leave all other visitors denied.
 4. Test both `https://lexacademicenglish.co.uk/students/` and `https://lexacademicenglish.co.uk/students/retail/` while signed out and while signed in as an authorised user.
 5. If the no-trailing-slash route `/students` is reachable separately, add and test an exact path rule for it as well.
