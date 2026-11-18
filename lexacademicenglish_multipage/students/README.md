@@ -15,13 +15,15 @@ The initial student-area implementation was merged into `main` in pull request #
 
 ## Learning modules
 
-1. Retail vocabulary — 10 scored multiple-choice questions.
-2. Business grammar — 8 scored multiple-choice questions.
-3. Professional communication — 5 workplace scenarios.
-4. Retail case study — written analysis, local save, and example response.
-5. Final assessment — 10 mixed-skills questions.
+The current Retail page is a reduced prototype:
 
-The quiz modules provide instant feedback, explanations, module scores and completion status. The Results & completion view summarises completed modules and the combined score from completed scored quizzes.
+1. Retail vocabulary — one diagnostic multiple-choice question.
+2. Business grammar — one diagnostic multiple-choice question.
+3. Professional communication — one diagnostic multiple-choice question.
+4. Retail case study — one diagnostic scenario question.
+5. Final assessment — a written supplier-escalation email task.
+
+This is **not yet** the intended expanded question bank (10 vocabulary, 8 grammar, 5 communication and 10 final-assessment questions). The current page does not yet provide the complete per-question feedback, module retry flow and comprehensive results dashboard described in the product brief. These remain development work, not delivered features.
 
 ## Configuration
 
@@ -35,6 +37,14 @@ The `STUDENT_PROFILE` object is intentionally generic. Confirm the learner's Eng
 - Do not use this prototype for confidential student work or tell learners that their results are privately stored until the access and data architecture has been configured and tested.
 
 See [SECURITY-AND-QA.md](SECURITY-AND-QA.md) for the Cloudflare Access plan and release checks.
+
+## Submission and data handling
+
+The Retail page submits to the shared `/api/submit-ielts` endpoint, which is also used by the IELTS diagnostic form. The endpoint accepts both the canonical fields (`studentName`, `studentEmail`, `category`, `detailsPlain`) and the legacy form fields (`name`, `email`, `module`, `essay`). It ignores client-supplied HTML and treats written responses as plain text.
+
+The Retail page asks for explicit consent before including the written case-study response in an email submission. Learner name and email are entered for each submission and are not saved by the Retail page to browser storage. The optional draft remains in the current browser until cleared.
+
+The shared endpoint remains publicly callable unless separately protected at the Cloudflare edge. Do not apply Access to `/api/submit-ielts` without first separating the public IELTS submission route, because that could break the public IELTS form. Add and test rate limiting. The student pages still require Cloudflare Access before they are described as private.
 
 ## Local preview
 
