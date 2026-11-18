@@ -622,9 +622,24 @@
                 score,
                 answers: [writing[0] || "", writing[1] || "", writing[2] || ""]
               })
+            try {
+            const res = await fetch("/api/submit-homework", {
+              method: "POST",
+              credentials: "same-origin",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                studentName,
+                department: "Retail Business English",
+                chapter: "Chapter 02",
+                score,
+                answers: [writing[0] || "", writing[1] || "", writing[2] || ""]
+              })
             });
 
-            if (!res.ok) throw new Error("Submission failed");
+            if (!res.ok) {
+              const errText = await res.text();
+              throw new Error(`HTTP ${res.status}: ${errText.slice(0, 80)}`);
+            }
             submitHwBtn.textContent = "Submitted to Fawwaz \u2713";
             submitHwBtn.classList.remove("bg-[#1C1C1C]");
             submitHwBtn.classList.add("bg-emerald-700");
@@ -632,7 +647,7 @@
           } catch (err) {
             submitHwBtn.disabled = false;
             submitHwBtn.textContent = "Retry Submission";
-            submitHwStatus.textContent = "Network error — please try again.";
+            submitHwStatus.textContent = err.message || "Network error — please try again.";
           }
         });
       }
