@@ -9,6 +9,14 @@ The initial student pages are in the repository's `main` branch. The application
 - A browser's local storage is not a teacher dashboard, not cross-device storage, and not an access-control mechanism.
 - Do not enter or store real student personal data, sensitive work information, or confidential employer data.
 
+## Shared assessment endpoint and deployment-root check
+
+The current IELTS and Retail pages share `/api/submit-ielts`. The current IELTS form still uses the legacy request keys (`name`, `email`, `module`, `wordCount`, `missedTopics`, `essay`). The Retail form now uses the canonical keys and asks for explicit consent before including its written response. The proposed API implementation accepts both contracts, ignores `detailsHtml`, escapes plain text for email output, validates field lengths and email addresses, limits request size, and neutralises spreadsheet formula prefixes.
+
+**This is input and output hardening, not authentication.** The shared endpoint remains callable without a student login unless Cloudflare Access or another edge control is applied. Do not protect the shared endpoint with an Access allow-list yet: the public IELTS form uses it too. First split the Retail submission into its own endpoint (for example, `/api/submit-retail`), verify the Access JWT server-side, and leave the IELTS flow independently available. Add a Cloudflare rate-limiting rule for the shared public endpoint in the meantime.
+
+The repository currently places Pages Functions at `/functions/api/submit-ielts.js` while the static site files are under `/lexacademicenglish_multipage/`. Before deploying a Pages Function, confirm the Cloudflare Pages **Root directory** and **Build output directory**: the `functions/` directory must be inside the configured project root. Do not change those settings as part of this branch; verify them in the dashboard first.
+
 ## Recommended Cloudflare Access setup
 
 Use Cloudflare Access as the first access gate for the static student area. It is preferable to an unlisted URL because Access checks identity against an allow policy.
