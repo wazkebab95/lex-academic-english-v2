@@ -47,3 +47,17 @@ Serve `lexacademicenglish_multipage/` with a static HTTP server and open `/stude
 - Test authorised and unauthorised access before sharing the student route.
 - Keep student data out of GitHub and client-side-only storage.
 - Merge to `main` only with explicit approval after review.
+
+
+## Five-module learning path (preview branch)
+
+The new /students/retail/learning-path/ page is a self-contained second-stage experience. It contains:
+- Retail vocabulary: 6 scored questions.
+- Business grammar: 6 scored questions.
+- Professional communication: 5 scored questions.
+- Retail case study: 3 written prompts with a self-review checklist; it is not automatically graded.
+- Comprehensive assessment: 10 scored questions.
+
+The optional profile selectors default to Not confirmed. They do not alter scores or claim to establish a CEFR level. Confirm the learner's level, responsibilities, retail segment and priorities before adapting the material.
+
+This page keeps answers and written responses in page memory only. It does not use browser storage, cookies, a submission API or an external database. Refreshing or closing the page clears the session. It is a learning prototype, not an authenticated student record system.
