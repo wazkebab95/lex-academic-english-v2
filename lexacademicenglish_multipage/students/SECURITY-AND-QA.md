@@ -95,3 +95,10 @@ The preview-only /students/retail/learning-path/ page is deliberately session-on
 - The profile selectors are optional and session-only. They do not personalise the question bank yet.
 
 This does not secure the existing /students/ routes or legacy submission endpoints. Cloudflare Access and server-side identity checks remain release requirements before the student area is shared.
+
+
+## Repository privacy finding requiring owner action
+
+The current main branch contains an accidentally nested duplicate Retail workbook with a learner's first name in its page content. The five-module feature branch removes that duplicate from its current file tree, but this does not erase the file from main or from Git commit history. Do not treat this branch change as a complete privacy purge. Removing the content from public history would require an owner-approved history rewrite and force-push, followed by cache and access review. No such operation has been performed.
+
+The existing root-level submission function and the separately nested functions/functions/api/submit-homework.js also require deployment-root and authentication review. Do not use either endpoint for confidential learner submissions until the actual Cloudflare Pages project root, route mapping, input handling and server-side identity checks have been verified.
