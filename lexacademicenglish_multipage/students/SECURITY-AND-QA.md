@@ -83,3 +83,15 @@ Do not connect a database or collect real student submissions until the data mod
 ## Release gate
 
 Do not distribute the student route until the access tests pass. Do not merge additional changes into `main` or change Cloudflare production settings without explicit approval.
+
+
+## Five-module learning path — additional privacy boundary
+
+The preview-only /students/retail/learning-path/ page is deliberately session-only:
+- No learner name, email address or employer information is requested.
+- Quiz answers and written case-study responses remain in JavaScript memory while the page is open.
+- No browser local storage, session storage, cookies, submission endpoint or external database is used by this page.
+- Refreshing or closing the page clears answers. Learners must copy any written work they want to keep.
+- The profile selectors are optional and session-only. They do not personalise the question bank yet.
+
+This does not secure the existing /students/ routes or legacy submission endpoints. Cloudflare Access and server-side identity checks remain release requirements before the student area is shared.
