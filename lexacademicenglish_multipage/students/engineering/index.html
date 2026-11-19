@@ -177,6 +177,23 @@
 
       <div id="sec4-list" class="space-y-6"></div>
     </section>
+    <!-- SUBMIT HOMEWORK TO TUTOR -->
+    <section class="bg-white border border-black/10 rounded-2xl p-6 sm:p-8">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="text-[11px] uppercase tracking-[0.16em] text-[#5E5D5A] font-semibold block">Lesson Review</span>
+          <h3 class="font-editorial text-2xl font-medium">Submit Chapter 01 Homework to Fawwaz</h3>
+          <p class="text-xs text-[#5E5D5A] mt-1">Logs your auto-graded score and technical report sentences directly to the studio ledger.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <input id="eng-student-name" type="text" placeholder="Your full name" class="px-3.5 py-2 rounded-full bg-[#FAF9F6] border border-black/20 text-xs focus:outline-none focus:border-[#1C1C1C]" />
+          <button id="eng-submit-hw-btn" type="button" class="px-5 py-2.5 rounded-full bg-[#1C1C1C] text-white text-xs font-semibold uppercase tracking-wider hover:opacity-85 transition">
+            Submit to Fawwaz
+          </button>
+        </div>
+      </div>
+      <p id="eng-submit-hw-status" class="text-xs text-[#5E5D5A] mt-3"></p>
+    </section>
 
   </main>
 
@@ -552,7 +569,46 @@
           btn.textContent = isHidden ? "Hide Model Answer" : "Show Model Answer";
         });
       });
+const engSubmitBtn = document.getElementById("eng-submit-hw-btn");
+      const engSubmitStatus = document.getElementById("eng-submit-hw-status");
 
+      if (engSubmitBtn) {
+        engSubmitBtn.addEventListener("click", async () => {
+          const studentName = (document.getElementById("eng-student-name").value || "-").trim();
+          const writing = JSON.parse(localStorage.getItem("lex_eng_ch1_writing") || "{}");
+          const score = localStorage.getItem("lex_eng_ch1_score") || `${sec1Score + sec2Score + sec3Score}/20`;
+
+          engSubmitBtn.disabled = true;
+          engSubmitBtn.textContent = "Sending...";
+          engSubmitStatus.textContent = "";
+
+          const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyB1hsJnxhZTmzYhibMxQvQaB62UA6grtN8gwBxUTKN3q88AH-jkb6dmPOKowHDYYq1PQ/exec";
+
+          try {
+            await fetch(APPS_SCRIPT_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify({
+                studentName,
+                department: "Electrical & Electronics Engineering",
+                chapter: "Chapter 01",
+                score,
+                answers: [writing[0] || "", writing[1] || "", writing[2] || ""]
+              })
+            });
+
+            engSubmitBtn.textContent = "Submitted to Fawwaz \u2713";
+            engSubmitBtn.classList.remove("bg-[#1C1C1C]");
+            engSubmitBtn.classList.add("bg-emerald-700");
+            engSubmitStatus.textContent = "Logged & emailed for lesson review.";
+          } catch (err) {
+            engSubmitBtn.disabled = false;
+            engSubmitBtn.textContent = "Retry Submission";
+            engSubmitStatus.textContent = "Network error — please try again.";
+          }
+        });
+      }
       // Reset All
       document.getElementById("eng-reset-all").addEventListener("click", () => {
         localStorage.removeItem("lex_eng_ch1_score");
