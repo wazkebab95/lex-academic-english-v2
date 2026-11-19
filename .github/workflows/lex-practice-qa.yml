@@ -1,0 +1,21 @@
+name: Lex Practice curriculum QA
+on:
+  push:
+    branches:
+      - feature/lex-practice-five-module-path
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "lexacademicenglish_multipage/students/retail/learning-path/**"
+      - "tests/retail-learning-path.test.mjs"
+      - ".github/workflows/lex-practice-qa.yml"
+jobs:
+  curriculum-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test tests/retail-learning-path.test.mjs
