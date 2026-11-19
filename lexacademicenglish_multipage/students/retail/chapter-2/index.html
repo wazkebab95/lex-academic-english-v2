@@ -619,6 +619,7 @@
             mode: "no-cors",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({
+              type: "homework_submission",
               studentName,
               department: "Retail Business English",
               chapter: "Chapter 02",
@@ -636,37 +637,16 @@
           submitHwBtn.textContent = "Retry Submission";
           submitHwStatus.textContent = "Network error — please try again.";
         }
-            const res = await fetch("/api/submit-homework", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                studentName,
-                department: "Retail Business English",
-                chapter: "Chapter 02",
-                score,
-                answers: [writing[0] || "", writing[1] || "", writing[2] || ""]
-              })
-            });
+  });
+    }
 
-            if (!res.ok) throw new Error("Submission failed");
-            submitHwBtn.textContent = "Submitted to Fawwaz \u2713";
-            submitHwBtn.classList.remove("bg-[#1C1C1C]");
-            submitHwBtn.classList.add("bg-emerald-700");
-            submitHwStatus.textContent = "Logged & emailed for lesson review.";
-          } catch (err) {
-            submitHwBtn.disabled = false;
-            submitHwBtn.textContent = "Retry Submission";
-            submitHwStatus.textContent = "Network error — please try again.";
-          }
-        });
-      }
-      // Reset All
-      document.getElementById("ch2-reset-all").addEventListener("click", () => {
-        localStorage.removeItem("lex_retail_ch2_score");
-        localStorage.removeItem("lex_retail_ch2_writing");
-        window.location.reload();
-      });
-    })();
+    // Reset All
+    document.getElementById("ch2-reset-all").addEventListener("click", () => {
+      localStorage.removeItem("lex_retail_ch2_score");
+      localStorage.removeItem("lex_retail_ch2_writing");
+      window.location.reload();
+    });
+  })();
   </script>
 </body>
 </html>
