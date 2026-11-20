@@ -1,85 +1,130 @@
-# Lex Practice — Security and QA plan
+# Lex Practice — Security, QA and deployment notes
 
-## Current state
+## Current implementation
 
-The initial student pages are in the repository's `main` branch. The application is still a prototype:
+The Retail programme now has a standalone five-module learning path at:
 
-- There is no login or server-side authorisation in the HTML application.
-- Progress and the case-study response are stored in browser `localStorage` only.
-- A browser's local storage is not a teacher dashboard, not cross-device storage, and not an access-control mechanism.
-- Do not enter or store real student personal data, sensitive work information, or confidential employer data.
+`/students/retail/learning-path/`
 
-## Recommended Cloudflare Access setup
+The learning path contains:
 
-Use Cloudflare Access as the first access gate for the static student area. It is preferable to an unlisted URL because Access checks identity against an allow policy.
+| Module | Format | Scored questions |
+|---|---|---:|
+| Retail vocabulary | Interactive quiz with instant explanations | 6 |
+| Business grammar | Interactive quiz with instant explanations | 6 |
+| Professional communication | Scenario quiz with instant explanations | 5 |
+| Retail case study | Written response and self-review checklist | Not graded |
+| Comprehensive assessment | Mixed interactive quiz | 10 |
+| **Total** | **Four scored modules** | **27** |
 
-### Production custom domain
+The case study is deliberately not represented as an automatically graded result. The combined score uses attempted questions from the four scored modules.
 
-1. In Cloudflare Zero Trust, open **Access controls → Applications** and create a **Self-hosted** application.
-2. Select the custom hostname `lexacademicenglish.co.uk` and set the application path to `/students/*`.
-3. Create an **Allow** policy for only the specific student email address or a tightly controlled identity-provider group. Leave all other visitors denied.
-4. Test both `https://lexacademicenglish.co.uk/students/` and `https://lexacademicenglish.co.uk/students/retail/` while signed out and while signed in as an authorised user.
-5. If the no-trailing-slash route `/students` is reachable separately, add and test an exact path rule for it as well.
-6. If `www.lexacademicenglish.co.uk` serves the site independently rather than redirecting to the apex domain, configure and test the corresponding Access application for that hostname too.
+The learner profile offers optional level and role settings. These are session-only context fields; they do not establish a formal CEFR level or alter the question bank. The learner's actual level, job responsibilities and priorities still need to be confirmed before individual personalisation.
 
-Cloudflare documents path-specific Access applications and more-specific policy precedence in [Application paths](https://developers.cloudflare.com/cloudflare-one/access-controls/policies/app-paths/). Its [self-hosted application guide](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/self-hosted-public-app/) explains identity providers and allow policies.
+### Data handling in the new learning path
 
-### Cloudflare Pages preview domains
+- Answers and written case-study text remain in page memory only.
+- The page does not call an API, submit results, use browser storage or load external scripts/styles.
+- Refreshing or closing the page clears the session.
+- No student name, email address or employer information is requested by this page.
 
-Keep preview testing separate from production access. Cloudflare Pages has a project-level **Enable access policy** setting for protecting the `pages.dev` domain and preview deployments. If you enable it, review the generated policies and confirm that the custom production hostname also has its own Access application; Cloudflare documents this as a required separate step for custom domains.
+The existing Retail foundation page and other legacy student pages remain separate. They have their own form and browser-storage behaviour and must not be assumed to inherit the new page's data-handling properties.
 
-See [Cloudflare Pages known issues — Enable Access on your pages.dev domain](https://developers.cloudflare.com/pages/platform/known-issues/#enable-access-on-your-pagesdev-domain).
+## Deployment and preview
 
-Do not enable a project-wide policy without checking its effect on the public website's `pages.dev` hostname and preview workflow.
+The intended source path is:
 
-## Student-specific records — next phase
+`lexacademicenglish_multipage/students/retail/learning-path/index.html`
 
-Cloudflare Access can restrict who opens the pages, but it does not by itself provide a student database or per-student score ownership.
+The repository does not contain a `wrangler.toml`, `wrangler.json`, `wrangler.jsonc`, package manifest or checked-in Pages build workflow that independently confirms the Cloudflare Pages output directory. Verify the Cloudflare Pages project settings before testing the route. If the configured output directory is `lexacademicenglish_multipage`, the expected route is `/students/retail/learning-path/`.
 
-Before teacher-visible progress or individual student accounts are introduced:
+For each non-production branch:
 
-1. Select an authentication and data backend (for example, Supabase Auth with row-level security, or a Cloudflare-native Workers/D1 design).
-2. Assign each authenticated student a stable user ID.
-3. Enforce record ownership on the server/database, not with JavaScript checks or a hidden URL.
-4. Store only the minimum necessary learner information.
-5. Keep API secrets in platform secrets, never in repository files or browser JavaScript.
-6. Test that one student cannot read or modify another student's work.
-7. Define how long submissions are retained and how they can be corrected or deleted.
+1. Wait for Cloudflare Pages to finish the preview deployment.
+2. Open the preview hostname with `/students/retail/learning-path/` appended.
+3. Confirm the page returns successfully and all styles and controls render.
+4. Test the five modules, feedback, Back/Continue, retry, results and reset.
+5. Test at a narrow mobile viewport and a desktop viewport.
+6. Keep preview access separate from production access.
 
-Do not connect a database or collect real student submissions until the data model, access rules and retention approach have been reviewed.
+A preview URL is not authentication. A route that is difficult to guess is not authentication either.
+
+## Recommended access control
+
+Use Cloudflare Access as the initial identity gate for the student area.
+
+For the stated goal of a private `/students/` area, the natural scope is a self-hosted Access application covering:
+
+`lexacademicenglish.co.uk/students/*`
+
+Create a restrictive Allow policy for the intended student identity and leave all other visitors denied. Also test the no-trailing-slash route `/students` and the `www` hostname if it serves content independently.
+
+**Scope decision required before configuration:** protecting `/students/*` also protects existing IELTS and resource pages beneath that path. If those pages must remain public, use a narrower application such as `/students/retail/*` instead. Do not configure either scope until the intended access boundary is confirmed.
+
+Protect the Cloudflare Pages preview hostname separately. Enabling Access for a `pages.dev` hostname does not automatically secure the production custom domain.
+
+References:
+- [Cloudflare Access application paths](https://developers.cloudflare.com/cloudflare-one/access-controls/policies/app-paths/)
+- [Cloudflare self-hosted applications](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/self-hosted-public-app/)
+- [Cloudflare Pages Access guidance](https://developers.cloudflare.com/pages/platform/known-issues/#enable-access-on-your-pagesdev-domain)
+
+## Submission and student records — not yet ready
+
+Cloudflare Access can gate page access, but it does not create student accounts, teacher-visible progress or per-student data ownership.
+
+The existing `/api/submit-ielts` endpoint is shared by legacy IELTS/Retail flows. Do not apply a blanket authentication requirement to it without first separating the Retail submission route, as doing so may break public IELTS submissions.
+
+Before collecting real student work:
+
+1. Create a dedicated Retail submission endpoint.
+2. Verify the Cloudflare Access JWT on the server for that endpoint; do not rely on front-end checks or an unlisted URL.
+3. Add request-size limits, validation and rate limiting.
+4. Choose a student identity/data backend if cross-device progress or a teacher dashboard is required.
+5. Enforce record ownership on the server/database.
+6. Store only the minimum necessary information and define retention/deletion rules.
+7. Keep API credentials in Cloudflare secrets, never in repository files or browser JavaScript.
+8. Test that one student cannot read or modify another student's records.
+
+Do not collect real student submissions until these controls are implemented and tested.
 
 ## Manual QA checklist
 
 ### Navigation and layout
 
-- [ ] `/students/` loads and links to the Retail Business English programme.
-- [ ] `/students/retail/` loads and the hub link returns to `/students/`.
-- [ ] Layout remains usable on a narrow mobile screen and a desktop screen.
-- [ ] Keyboard focus is visible and module controls are operable.
+- [ ] `/students/retail/` displays a clear link to the five-module learning path.
+- [ ] `/students/retail/learning-path/` loads from the Cloudflare preview.
+- [ ] The learning path's brand link returns to the Retail foundation page.
+- [ ] Layout works at mobile and desktop widths.
+- [ ] Keyboard focus is visible and controls are operable with a keyboard.
+- [ ] No console errors occur during a complete learning session.
 
 ### Learning interactions
 
-- [ ] Vocabulary contains 10 questions.
-- [ ] Business grammar contains 8 questions.
+- [ ] Vocabulary contains 6 questions.
+- [ ] Business grammar contains 6 questions.
 - [ ] Professional communication contains 5 scenarios.
-- [ ] Final assessment contains 10 questions.
-- [ ] Each question accepts one answer and then shows correct/incorrect feedback and an explanation.
-- [ ] Continue, Back, retry and next-module controls work.
-- [ ] Module percentages and completion status update correctly.
-- [ ] Results & completion displays module status and the combined score for completed scored quizzes.
-- [ ] Case-study response can be saved locally, model response can be shown, and completion can be marked.
-- [ ] Case-study completion is not presented as an automatically assessed mark.
+- [ ] Comprehensive assessment contains 10 questions.
+- [ ] Every scored question has a valid answer and a non-empty explanation.
+- [ ] Selecting an answer shows immediate correct/incorrect feedback and its explanation.
+- [ ] Back, Continue, retry and next-module controls work.
+- [ ] Module scores and completion status update correctly.
+- [ ] Results distinguish attempted questions from unanswered questions.
+- [ ] Combined accuracy uses scored quiz questions only.
+- [ ] Case-study completion is self-reviewed and is not presented as a numeric mark.
+- [ ] Reset clears the current in-memory session.
 
 ### Privacy and access
 
-- [ ] A signed-out visitor is blocked from `/students/` and `/students/retail/`.
-- [ ] An explicitly authorised student can open both routes.
+- [ ] No student personal data is included in repository files or page source.
+- [ ] The new learning path makes no network requests and does not persist answers in browser storage.
+- [ ] A signed-out visitor is blocked from the chosen protected student route.
+- [ ] An authorised student can open the protected route.
 - [ ] An unauthorised signed-in account is blocked.
-- [ ] Public homepage and unrelated public pages remain accessible.
-- [ ] Both apex and `www` hostnames are tested if both serve content.
+- [ ] Public homepage and any intentionally public resources remain accessible.
+- [ ] Apex and `www` hostnames are tested if both serve content.
 - [ ] Preview-domain access is tested separately from production.
-- [ ] No real student personal data appears in repository files, page source, URLs, or browser storage.
+- [ ] Retail submissions cannot be made without the intended server-side identity check.
 
 ## Release gate
 
-Do not distribute the student route until the access tests pass. Do not merge additional changes into `main` or change Cloudflare production settings without explicit approval.
+The five-module page is a learning prototype, not a private student account system. Do not distribute it for real student work until the preview tests and access-control tests pass. Do not merge to `main`, change Cloudflare settings, alter DNS or deploy to production without explicit approval.
