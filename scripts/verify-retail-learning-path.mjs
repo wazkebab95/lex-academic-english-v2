@@ -11,7 +11,7 @@ function check(label, fn) {
   checks.push(label);
 }
 
-const jsonTag = html.match(/<script type="application\\/json" id="curriculum-data">([\\s\\S]*?)<\\/script>/i);
+const jsonTag = html.match(/<script type="application\/json" id="curriculum-data">([\s\S]*?)<\/script>/i);
 assert.ok(jsonTag, "curriculum-data JSON script must exist");
 const curriculum = JSON.parse(jsonTag[1]);
 const expected = { vocabulary: 6, grammar: 6, communication: 5, assessment: 10 };
@@ -41,31 +41,31 @@ check("answer keys and explanations are valid", () => {
   }
 });
 check("unique HTML IDs", () => {
-  const ids = [...html.matchAll(/\\bid=["']([^"']+)["']/g)].map(m => m[1]);
+  const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m => m[1]);
   assert.equal(ids.length, new Set(ids).size, "duplicate id attributes found");
 });
 check("all static byId references resolve", () => {
-  const ids = new Set([...html.matchAll(/\\bid=["']([^"']+)["']/g)].map(m => m[1]));
-  for (const match of html.matchAll(/byId\\(["']([^"']+)["']\\)/g)) {
+  const ids = new Set([...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m => m[1]));
+  for (const match of html.matchAll(/byId\(["']([^"']+)["']\)/g)) {
     assert.ok(ids.has(match[1]), "missing DOM id: " + match[1]);
   }
 });
 check("inline scripts parse without execution", () => {
-  const tags = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)];
+  const tags = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
   for (const [, attrs, code] of tags) {
-    if (/\\bsrc\\s*=|application\\/json/i.test(attrs)) continue;
+    if (/\bsrc\s*=|application\/json/i.test(attrs)) continue;
     new vm.Script(code, { filename: file });
   }
 });
 check("no external script or stylesheet dependencies", () => {
-  assert.doesNotMatch(html, /<script\\b[^>]*\\bsrc\\s*=/i);
-  assert.doesNotMatch(html, /<link\\b[^>]*rel=["']stylesheet["'][^>]*href=["']https?:/i);
+  assert.doesNotMatch(html, /<script\b[^>]*\bsrc\s*=/i);
+  assert.doesNotMatch(html, /<link\b[^>]*rel=["']stylesheet["'][^>]*href=["']https?:/i);
 });
 check("no browser storage, network submission or unsafe HTML sinks", () => {
-  assert.doesNotMatch(html, /\\b(?:localStorage|sessionStorage|indexedDB)\\b/i);
-  assert.doesNotMatch(html, /\\b(?:fetch|XMLHttpRequest|WebSocket)\\b/i);
-  assert.doesNotMatch(html, /\\b(?:innerHTML|outerHTML|insertAdjacentHTML)\\b/i);
-  assert.doesNotMatch(html, /\\son[a-z]+\\s*=/i);
+  assert.doesNotMatch(html, /\b(?:localStorage|sessionStorage|indexedDB)\b/i);
+  assert.doesNotMatch(html, /\b(?:fetch|XMLHttpRequest|WebSocket)\b/i);
+  assert.doesNotMatch(html, /\b(?:innerHTML|outerHTML|insertAdjacentHTML)\b/i);
+  assert.doesNotMatch(html, /\son[a-z]+\s*=/i);
 });
 check("progress and feedback accessibility hooks exist", () => {
   assert.match(html, /role=["']progressbar["']/i);
