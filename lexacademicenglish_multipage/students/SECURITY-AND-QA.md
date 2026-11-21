@@ -128,3 +128,13 @@ Do not collect real student submissions until these controls are implemented and
 ## Release gate
 
 The five-module page is a learning prototype, not a private student account system. Do not distribute it for real student work until the preview tests and access-control tests pass. Do not merge to `main`, change Cloudflare settings, alter DNS or deploy to production without explicit approval.
+
+## Automated regression check
+
+Run the dependency-free QA script from the repository root:
+
+`node scripts/verify-retail-learning-path.mjs`
+
+The script checks the five-module structure and question counts, answer-key/explanation integrity, duplicate and unresolved DOM IDs, inline-script syntax (without executing it), external dependency absence, browser-storage/network/unsafe HTML sink absence, and basic accessibility hooks. GitHub Actions runs this check on pull requests that touch the learning path or its test script.
+
+This static check is not a substitute for manual interaction testing on real mobile and desktop browsers or for Cloudflare Access testing.
