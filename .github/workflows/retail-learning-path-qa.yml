@@ -1,6 +1,13 @@
 name: Retail learning-path QA
 
 on:
+  push:
+    branches:
+      - feature/lex-practice-learning-path-integration
+    paths:
+      - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
+      - "scripts/verify-retail-learning-path.mjs"
+      - ".github/workflows/retail-learning-path-qa.yml"
   pull_request:
     paths:
       - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
