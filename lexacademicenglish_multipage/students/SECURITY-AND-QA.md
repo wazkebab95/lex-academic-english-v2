@@ -138,3 +138,8 @@ Run the dependency-free QA script from the repository root:
 The script checks the five-module structure and question counts, answer-key/explanation integrity, duplicate and unresolved DOM IDs, inline-script syntax (without executing it), external dependency absence, browser-storage/network/unsafe HTML sink absence, and basic accessibility hooks. GitHub Actions runs this check on pull requests that touch the learning path or its test script.
 
 This static check is not a substitute for manual interaction testing on real mobile and desktop browsers or for Cloudflare Access testing.
+
+
+## Retail Access configuration runbook
+
+For a detailed manual setup and route-testing checklist, see [docs/LEX-PRACTICE-RETAIL-ACCESS.md](../../../../docs/LEX-PRACTICE-RETAIL-ACCESS.md). This runbook does not change Cloudflare configuration and is not a substitute for server-side API authentication.
