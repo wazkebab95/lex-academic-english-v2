@@ -142,4 +142,4 @@ This static check is not a substitute for manual interaction testing on real mob
 
 ## Retail Access configuration runbook
 
-For a detailed manual setup and route-testing checklist, see [docs/LEX-PRACTICE-RETAIL-ACCESS.md](../../../../docs/LEX-PRACTICE-RETAIL-ACCESS.md). This runbook does not change Cloudflare configuration and is not a substitute for server-side API authentication.
+For a detailed manual setup and route-testing checklist, see [docs/LEX-PRACTICE-RETAIL-ACCESS.md](../../docs/LEX-PRACTICE-RETAIL-ACCESS.md). This runbook does not change Cloudflare configuration and is not a substitute for server-side API authentication.
