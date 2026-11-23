@@ -49,6 +49,16 @@ For each non-production branch:
 
 A preview URL is not authentication. A route that is difficult to guess is not authentication either.
 
+### Printable results report
+
+The results view includes a **Print / Save PDF** action for a learner who wants to keep a copy or bring it to a tutorial.
+
+- It uses the browser's native print dialog; no API call, upload or browser storage is used.
+- The print layout shows the results summary, module scores, completion status and report date.
+- Written case-study responses are explicitly excluded from the printable report.
+- The report contains no student name, email address or employer information.
+- The browser's “Save as PDF” option can be used to create a local copy.
+
 ## Recommended access control
 
 Use Cloudflare Access as the initial identity gate for the student area.
@@ -112,6 +122,7 @@ Do not collect real student submissions until these controls are implemented and
 - [ ] Combined accuracy uses scored quiz questions only.
 - [ ] Case-study completion is self-reviewed and is not presented as a numeric mark.
 - [ ] Reset clears the current in-memory session.
+- [ ] Print / Save PDF opens the browser print dialog and excludes written case-study responses.
 
 ### Privacy and access
 
@@ -135,7 +146,7 @@ Run the dependency-free QA script from the repository root:
 
 `node scripts/verify-retail-learning-path.mjs`
 
-The script checks the five-module structure and question counts, answer-key/explanation integrity, duplicate and unresolved DOM IDs, inline-script syntax (without executing it), external dependency absence, browser-storage/network/unsafe HTML sink absence, and basic accessibility hooks. GitHub Actions runs this check on pull requests that touch the learning path or its test script.
+The script checks the five-module structure and question counts, answer-key/explanation integrity, duplicate and unresolved DOM IDs, inline-script syntax (without executing it), external dependency absence, browser-storage/network/unsafe HTML sink absence, basic accessibility hooks, and the local score-only print report. GitHub Actions runs this check on pull requests that touch the learning path or its test script.
 
 This static check is not a substitute for manual interaction testing on real mobile and desktop browsers or for Cloudflare Access testing.
 
