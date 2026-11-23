@@ -73,5 +73,13 @@ check("progress and feedback accessibility hooks exist", () => {
   assert.match(html, /:focus-visible|focus-visible/i);
 });
 
+check("printable results report stays local and excludes case-study writing", () => {
+  assert.ok(html.includes('id="print-results"'), "print action must exist");
+  assert.ok(html.includes("window.print()"), "print action must use the native print dialog");
+  assert.ok(html.includes("@media print"), "print stylesheet must exist");
+  assert.ok(html.includes('id="report-date"'), "report date must be displayed");
+  assert.ok(html.includes("Written case-study responses are not included."), "case-study writing must be excluded");
+  assert.ok(html.includes("#case-view,#results-back"), "case-study view must be hidden in print layout");
+});
 console.log("Retail learning-path QA passed (" + checks.length + "/" + checks.length + " checks):");
 for (const label of checks) console.log(" - " + label);
