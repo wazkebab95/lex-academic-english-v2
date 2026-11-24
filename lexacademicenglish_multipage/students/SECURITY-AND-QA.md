@@ -23,16 +23,12 @@ The learner profile offers optional level and role settings. These are session-o
 
 ### Data handling in the new learning path
 
-- Quiz answers and written case-study drafts remain in page memory until the learner leaves or resets the page.
-- The page has optional account progress controls. No progress is sent automatically; the learner must choose Load, Save or Delete.
-- The only network destination is the same-origin Retail progress endpoint under /students/retail/api/progress.
-- The progress payload contains selected answer indexes and the case-study self-review flag only.
-- Written case-study responses, profile settings, student name, email address, employer and job title are not sent or stored by this feature.
-- The server derives the record owner from a verified Cloudflare Access JWT and stores the row in a dedicated D1 binding.
-- If Access verification or D1 is not configured, the endpoint fails closed. The page-session work remains local.
-- Refreshing or closing the page clears unsaved work. Saved account progress remains until the learner deletes it or the agreed retention process removes it.
+- Answers and written case-study text remain in page memory only.
+- The page does not call an API, submit results, use browser storage or load external scripts/styles.
+- Refreshing or closing the page clears the session.
+- No student name, email address or employer information is requested by this page.
 
-The existing Retail foundation page and other legacy student pages remain separate. They have their own form and browser-storage behaviour and must not be assumed to inherit the new page's data-handling properties.
+The legacy Retail foundation page has now been changed on this development branch: it no longer asks the learner to type a name or email, no longer saves identity or written drafts in browser storage, and no longer calls the shared IELTS endpoint. Other legacy student pages remain separate and must not be assumed to inherit these data-handling properties.
 
 ## Deployment and preview
 
@@ -67,13 +63,12 @@ The results view includes a **Print / Save PDF** action for a learner who wants 
 
 Use Cloudflare Access as the initial identity gate for the student area.
 
-For the stated goal of a private `/students/` area, the natural scope is a self-hosted Access application covering:
+For the initial pilot, protect the Retail route only, including the exact path and descendants:
 
-`lexacademicenglish.co.uk/students/*`
+`lexacademicenglish.co.uk/students/retail`
+`lexacademicenglish.co.uk/students/retail/*`
 
-Create a restrictive Allow policy for the intended student identity and leave all other visitors denied. Also test the no-trailing-slash route `/students` and the `www` hostname if it serves content independently.
-
-**Scope decision required before configuration:** protecting `/students/*` also protects existing IELTS and resource pages beneath that path. If those pages must remain public, use a narrower application such as `/students/retail/*` instead. Do not configure either scope until the intended access boundary is confirmed.
+This covers the learning path and the dedicated POST endpoint at `/students/retail/submit` without automatically restricting existing IELTS and resource pages. The broader `/students/*` scope remains a separate decision for a later rollout. Also test the `www` hostname if it serves content independently.
 
 Protect the Cloudflare Pages preview hostname separately. Enabling Access for a `pages.dev` hostname does not automatically secure the production custom domain.
 
@@ -81,6 +76,25 @@ References:
 - [Cloudflare Access application paths](https://developers.cloudflare.com/cloudflare-one/access-controls/policies/app-paths/)
 - [Cloudflare self-hosted applications](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/self-hosted-public-app/)
 - [Cloudflare Pages Access guidance](https://developers.cloudflare.com/pages/platform/known-issues/#enable-access-on-your-pagesdev-domain)
+
+## Submission and student records — not yet ready
+
+Cloudflare Access can gate page access, but it does not create student accounts, teacher-visible progress or per-student data ownership.
+
+The existing `/api/submit-ielts` endpoint is shared by legacy IELTS/Retail flows. Do not apply a blanket authentication requirement to it without first separating the Retail submission route, as doing so may break public IELTS submissions.
+
+Before collecting real student work:
+
+1. Create a dedicated Retail submission endpoint.
+2. Verify the Cloudflare Access JWT on the server for that endpoint; do not rely on front-end checks or an unlisted URL.
+3. Add request-size limits, validation and rate limiting.
+4. Choose a student identity/data backend if cross-device progress or a teacher dashboard is required.
+5. Enforce record ownership on the server/database.
+6. Store only the minimum necessary information and define retention/deletion rules.
+7. Keep API credentials in Cloudflare secrets, never in repository files or browser JavaScript.
+8. Test that one student cannot read or modify another student's records.
+
+Do not collect real student submissions until these controls are implemented and tested.
 
 ## Retail progress records — implementation staged, Cloudflare configuration outstanding
 
@@ -113,6 +127,7 @@ Setup instructions are in [docs/LEX-PRACTICE-RETAIL-PROGRESS-SYNC.md](../../docs
 
 The shared /api/submit-ielts endpoint remains unchanged for legacy IELTS forms. Do not apply a blanket Access requirement to that endpoint without first separating and testing its public IELTS use.
 
+
 ## Manual QA checklist
 
 ### Navigation and layout
@@ -143,37 +158,35 @@ The shared /api/submit-ielts endpoint remains unchanged for legacy IELTS forms. 
 ### Privacy and access
 
 - [ ] No student personal data is included in repository files or page source.
-- [ ] The learning path makes no request until the learner explicitly selects Load, Save or Delete.
-- [ ] Progress sync calls only the same-origin Retail endpoint and sends answer indexes plus the case-study review flag; it never sends written responses or profile/personal details.
-- [ ] The API rejects requests without a valid Access JWT and scopes records to the verified subject.
+- [ ] The new learning path makes no automatic network requests and does not persist answers in browser storage.
 - [ ] A signed-out visitor is blocked from the chosen protected student route.
 - [ ] An authorised student can open the protected route.
 - [ ] An unauthorised signed-in account is blocked.
 - [ ] Public homepage and any intentionally public resources remain accessible.
 - [ ] Apex and `www` hostnames are tested if both serve content.
 - [ ] Preview-domain access is tested separately from production.
-- [ ] Retail submissions cannot be made without the intended server-side identity check.
+- [ ] Retail submissions cannot be made without a valid Access JWT and allowlisted email.
+- [ ] The score-consent checkbox is required before submission.
+- [ ] Written case-study text is excluded unless the learner separately opts in.
+- [ ] The Retail form does not save name, email or written drafts in browser storage.
+- [ ] A WAF rate-limit rule is active for POST /students/retail/submit before real use.
 
 ## Release gate
 
 The five-module page is a learning prototype, not a private student account system. Do not distribute it for real student work until the preview tests and access-control tests pass. Do not merge to `main`, change Cloudflare settings, alter DNS or deploy to production without explicit approval.
 
-## Automated regression checks
+## Automated regression check
 
-Run both dependency-free checks from the repository root:
+Run the checks from the repository root:
 
-- node scripts/verify-retail-learning-path.mjs
-- node scripts/verify-retail-progress-api.mjs
+`node scripts/verify-retail-learning-path.mjs`
+`node --test scripts/test-retail-submit.mjs`
 
-The learning-path script checks the five-module structure, question counts, answer/explanation integrity, duplicate and unresolved DOM IDs, inline-script syntax, dependency boundaries, accessibility hooks, print layout and the explicit same-origin progress-sync payload.
+The first script checks the five-module structure and question counts, answer-key/explanation integrity, duplicate and unresolved DOM IDs, inline-script syntax, dependency absence, browser-storage/network/unsafe HTML sink absence, accessibility hooks and the local score-only print report. The second creates signed test JWTs and exercises the Pages Function for missing/invalid signatures, incorrect audiences, allowlist rejection, consent handling, HTML escaping, request limits, origin checks and provider failures. GitHub Actions runs both checks for the Retail development branch and matching pull requests.
 
-The progress API script imports the Pages Function as an ES module, generates temporary RSA keys, mocks the Cloudflare Access JWKS endpoint and uses a mock D1 binding. It checks missing/invalid/expired tokens, audience and signature validation, subject isolation, GET/PUT/DELETE, payload allowlisting, body limits, content type, missing configuration and JWKS failures.
+This static check is not a substitute for manual interaction testing on real mobile and desktop browsers or for Cloudflare Access testing.
 
-These tests do not connect to a real Cloudflare account or database. They are not substitutes for preview browser tests, real Access identity tests, D1 binding tests, or rate-limit verification.
 
-## Retail Access and progress-sync runbooks
+## Retail Access configuration runbook
 
-- [Cloudflare Access setup](../../docs/LEX-PRACTICE-RETAIL-ACCESS.md)
-- [Retail progress sync and D1 setup](../../docs/LEX-PRACTICE-RETAIL-PROGRESS-SYNC.md)
-
-No Cloudflare configuration, DNS, hosting, production deployment or student data was changed as part of this staged implementation.
+For a detailed manual setup and route-testing checklist, see [docs/LEX-PRACTICE-RETAIL-ACCESS.md](../../docs/LEX-PRACTICE-RETAIL-ACCESS.md). This runbook does not change Cloudflare configuration and is not a substitute for server-side API authentication.
