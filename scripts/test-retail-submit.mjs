@@ -60,6 +60,7 @@ const defaultEnv = {
 };
 
 const defaultPayload = {
+  consentToSubmit: true,
   correct: 3,
   total: 4,
   role: "Buying / procurement",
@@ -156,12 +157,19 @@ test("escapes written responses when the learner explicitly opts in", async () =
   const responseText = '<script>alert("x")</script>';
   const result = await invoke({
     token: await makeToken(),
-    payload: { ...defaultPayload, includeWrittenResponse: true, writtenResponse: responseText }
+    payload: { ...defaultPayload, role: '<b>Buyer</b>', includeWrittenResponse: true, writtenResponse: responseText }
   });
   assert.equal(result.status, 200);
   assert.equal(result.body.writtenResponseIncluded, true);
   assert.ok(result.sentEmail.html.includes("&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;"));
+  assert.ok(result.sentEmail.html.includes("&lt;b&gt;Buyer&lt;/b&gt;"));
   assert.ok(!result.sentEmail.html.includes(responseText));
+});
+
+test("requires explicit score-submission consent", async () => {
+  const result = await invoke({ token: await makeToken(), payload: { ...defaultPayload, consentToSubmit: false } });
+  assert.equal(result.status, 400);
+  assert.equal(result.sentEmail, null);
 });
 
 test("rejects invalid scores", async () => {
