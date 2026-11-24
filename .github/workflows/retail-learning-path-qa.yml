@@ -4,9 +4,14 @@ on:
   push:
     branches:
       - feature/lex-practice-learning-path-integration
+      - feature/lex-practice-retail-progress-sync
     paths:
       - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
       - "scripts/verify-retail-learning-path.mjs"
+      - "functions/students/retail/api/progress.js"
+      - "migrations/0001_retail_student_progress.sql"
+      - "scripts/verify-retail-progress-api.mjs"
+      - "docs/LEX-PRACTICE-RETAIL-PROGRESS-SYNC.md"
       - ".github/workflows/retail-learning-path-qa.yml"
   pull_request:
     paths:
@@ -28,3 +33,5 @@ jobs:
           node-version: "20"
       - name: Verify learning-path content and safeguards
         run: node scripts/verify-retail-learning-path.mjs
+      - name: Verify Access-authenticated Retail progress API
+        run: node scripts/verify-retail-progress-api.mjs
