@@ -23,10 +23,14 @@ The learner profile offers optional level and role settings. These are session-o
 
 ### Data handling in the new learning path
 
-- Answers and written case-study text remain in page memory only.
-- The page does not call an API, submit results, use browser storage or load external scripts/styles.
-- Refreshing or closing the page clears the session.
-- No student name, email address or employer information is requested by this page.
+- Quiz answers and written case-study drafts remain in page memory until the learner leaves or resets the page.
+- The page has optional account progress controls. No progress is sent automatically; the learner must choose Load, Save or Delete.
+- The only network destination is the same-origin Retail progress endpoint under /students/retail/api/progress.
+- The progress payload contains selected answer indexes and the case-study self-review flag only.
+- Written case-study responses, profile settings, student name, email address, employer and job title are not sent or stored by this feature.
+- The server derives the record owner from a verified Cloudflare Access JWT and stores the row in a dedicated D1 binding.
+- If Access verification or D1 is not configured, the endpoint fails closed. The page-session work remains local.
+- Refreshing or closing the page clears unsaved work. Saved account progress remains until the learner deletes it or the agreed retention process removes it.
 
 The existing Retail foundation page and other legacy student pages remain separate. They have their own form and browser-storage behaviour and must not be assumed to inherit the new page's data-handling properties.
 
@@ -78,24 +82,36 @@ References:
 - [Cloudflare self-hosted applications](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/self-hosted-public-app/)
 - [Cloudflare Pages Access guidance](https://developers.cloudflare.com/pages/platform/known-issues/#enable-access-on-your-pagesdev-domain)
 
-## Submission and student records — not yet ready
+## Retail progress records — implementation staged, Cloudflare configuration outstanding
 
-Cloudflare Access can gate page access, but it does not create student accounts, teacher-visible progress or per-student data ownership.
+A dedicated Pages Function is now staged at /students/retail/api/progress. It is separate from the shared public /api/submit-ielts endpoint.
 
-The existing `/api/submit-ielts` endpoint is shared by legacy IELTS/Retail flows. Do not apply a blanket authentication requirement to it without first separating the Retail submission route, as doing so may break public IELTS submissions.
+The Retail progress function:
 
-Before collecting real student work:
+1. Accepts GET, PUT and DELETE only.
+2. Verifies the Cloudflare Access JWT signature, issuer, audience, expiry and optional not-before claim.
+3. Derives the record key from the verified JWT subject; it does not trust an email or student ID supplied by the browser.
+4. Uses a fixed course identifier and allowlisted module IDs.
+5. Stores only answer indexes and the case-study self-review flag in a dedicated D1 table.
+6. Rejects written case-study text, profile fields, scores, correctness flags and unexpected payload properties.
+7. Limits JSON writes to 8 KB and uses prepared D1 statements.
+8. Allows an authenticated student to read, update or delete only their own record.
+9. Returns no-store responses and fails closed when Access configuration or the D1 binding is missing.
 
-1. Create a dedicated Retail submission endpoint.
-2. Verify the Cloudflare Access JWT on the server for that endpoint; do not rely on front-end checks or an unlisted URL.
-3. Add request-size limits, validation and rate limiting.
-4. Choose a student identity/data backend if cross-device progress or a teacher dashboard is required.
-5. Enforce record ownership on the server/database.
-6. Store only the minimum necessary information and define retention/deletion rules.
-7. Keep API credentials in Cloudflare secrets, never in repository files or browser JavaScript.
-8. Test that one student cannot read or modify another student's records.
+The page offers explicit Load, Save and Delete actions. It does not send progress in the background. The written case-study responses remain local and are never included in the progress payload.
 
-Do not collect real student submissions until these controls are implemented and tested.
+**Important limitations:**
+
+- Cloudflare Access applications, Pages environment variables and D1 bindings have not been configured.
+- The D1 migration has not been applied to any database.
+- The endpoint has not yet been tested against a real Cloudflare Access application or D1 instance.
+- A teacher dashboard and teacher-side record access are not implemented.
+- Scores are reconstructed in the browser from answer indexes. They are practice results, not authoritative or tamper-proof grades.
+- No automatic retention expiry or rate-limit rule is configured. Agree a retention period and add rate limiting before real student use.
+
+Setup instructions are in [docs/LEX-PRACTICE-RETAIL-PROGRESS-SYNC.md](../../docs/LEX-PRACTICE-RETAIL-PROGRESS-SYNC.md).
+
+The shared /api/submit-ielts endpoint remains unchanged for legacy IELTS forms. Do not apply a blanket Access requirement to that endpoint without first separating and testing its public IELTS use.
 
 ## Manual QA checklist
 
@@ -127,7 +143,9 @@ Do not collect real student submissions until these controls are implemented and
 ### Privacy and access
 
 - [ ] No student personal data is included in repository files or page source.
-- [ ] The new learning path makes no network requests and does not persist answers in browser storage.
+- [ ] The learning path makes no request until the learner explicitly selects Load, Save or Delete.
+- [ ] Progress sync calls only the same-origin Retail endpoint and sends answer indexes plus the case-study review flag; it never sends written responses or profile/personal details.
+- [ ] The API rejects requests without a valid Access JWT and scopes records to the verified subject.
 - [ ] A signed-out visitor is blocked from the chosen protected student route.
 - [ ] An authorised student can open the protected route.
 - [ ] An unauthorised signed-in account is blocked.
@@ -140,17 +158,22 @@ Do not collect real student submissions until these controls are implemented and
 
 The five-module page is a learning prototype, not a private student account system. Do not distribute it for real student work until the preview tests and access-control tests pass. Do not merge to `main`, change Cloudflare settings, alter DNS or deploy to production without explicit approval.
 
-## Automated regression check
+## Automated regression checks
 
-Run the dependency-free QA script from the repository root:
+Run both dependency-free checks from the repository root:
 
-`node scripts/verify-retail-learning-path.mjs`
+- node scripts/verify-retail-learning-path.mjs
+- node scripts/verify-retail-progress-api.mjs
 
-The script checks the five-module structure and question counts, answer-key/explanation integrity, duplicate and unresolved DOM IDs, inline-script syntax (without executing it), external dependency absence, browser-storage/network/unsafe HTML sink absence, basic accessibility hooks, and the local score-only print report. GitHub Actions runs this check on pull requests that touch the learning path or its test script.
+The learning-path script checks the five-module structure, question counts, answer/explanation integrity, duplicate and unresolved DOM IDs, inline-script syntax, dependency boundaries, accessibility hooks, print layout and the explicit same-origin progress-sync payload.
 
-This static check is not a substitute for manual interaction testing on real mobile and desktop browsers or for Cloudflare Access testing.
+The progress API script imports the Pages Function as an ES module, generates temporary RSA keys, mocks the Cloudflare Access JWKS endpoint and uses a mock D1 binding. It checks missing/invalid/expired tokens, audience and signature validation, subject isolation, GET/PUT/DELETE, payload allowlisting, body limits, content type, missing configuration and JWKS failures.
 
+These tests do not connect to a real Cloudflare account or database. They are not substitutes for preview browser tests, real Access identity tests, D1 binding tests, or rate-limit verification.
 
-## Retail Access configuration runbook
+## Retail Access and progress-sync runbooks
 
-For a detailed manual setup and route-testing checklist, see [docs/LEX-PRACTICE-RETAIL-ACCESS.md](../../docs/LEX-PRACTICE-RETAIL-ACCESS.md). This runbook does not change Cloudflare configuration and is not a substitute for server-side API authentication.
+- [Cloudflare Access setup](../../docs/LEX-PRACTICE-RETAIL-ACCESS.md)
+- [Retail progress sync and D1 setup](../../docs/LEX-PRACTICE-RETAIL-PROGRESS-SYNC.md)
+
+No Cloudflare configuration, DNS, hosting, production deployment or student data was changed as part of this staged implementation.
