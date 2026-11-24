@@ -29,7 +29,7 @@ The learner profile offers optional level and role settings. These are session-o
 - Refreshing or closing the page clears the session.
 - No student name, email address or employer information is requested by this page.
 
-The existing Retail foundation page and other legacy student pages remain separate. They have their own form and browser-storage behaviour and must not be assumed to inherit the new page's data-handling properties.
+The Retail foundation assessment is a separate submission flow. It does not store learner identity or written drafts in browser storage. It sends the four-item score to a Retail-specific Pages Function; the learner must consent to score submission and separately opt in before written work is included. The server derives identity from the verified Cloudflare Access JWT and sends the submission only to the configured instructor mailbox. It does not create a student database.
 
 Static HTML pages do not create student accounts or teacher permissions. Browser storage and page memory are not server-side access control or a teacher dashboard.
 
@@ -91,7 +91,7 @@ A preview URL is not authentication. A route that is difficult to guess is not a
 
 ## API and data requirements
 
-Access page protection is not a substitute for server-side API authentication.
+Access page protection is not a substitute for server-side API authentication. The Retail foundation submission endpoint is implemented at `POST /students/retail/submit`; it is separate from the public IELTS endpoint.
 
 Before accepting real student submissions or saving progress:
 
@@ -150,7 +150,11 @@ Cloudflare Access, Pages Functions and D1 require separate configuration and tes
 
 ### API and privacy
 
-- [ ] Missing, invalid, expired, wrong-issuer and wrong-audience tokens are rejected.
+- [ ] The Retail endpoint rejects missing, invalid, expired, malformed temporal, wrong-issuer and wrong-audience tokens.
+- [ ] The Retail endpoint derives learner identity from the signed Access JWT and rejects identities outside its server-side allowlist.
+- [ ] Score consent is required and written work is omitted unless separately authorised by the learner.
+- [ ] The Retail endpoint reports success only after the instructor email provider accepts the message.
+- [ ] The public IELTS submission endpoint remains unchanged.
 - [ ] One student cannot read or modify another student's data.
 - [ ] Oversized and malformed requests are rejected.
 - [ ] Real student data is not used in automated tests or unapproved previews.
@@ -186,4 +190,4 @@ The results view includes a **Print / Save PDF** action for a learner who wants 
 
 ## Retail Access configuration runbook
 
-For the detailed manual setup and route-testing checklist, see [docs/LEX-PRACTICE-RETAIL-ACCESS.md](../../docs/LEX-PRACTICE-RETAIL-ACCESS.md). This runbook does not change Cloudflare configuration and is not a substitute for server-side API authentication.
+For the detailed student-area Access setup, Retail endpoint configuration and route-testing checklist, see [docs/LEX-PRACTICE-RETAIL-ACCESS.md](../../docs/LEX-PRACTICE-RETAIL-ACCESS.md). This runbook does not change Cloudflare configuration and is not a substitute for server-side API authentication.
