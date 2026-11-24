@@ -222,9 +222,9 @@ test("legacy Retail page no longer stores identity or written drafts in browser 
   assert.match(page, /retail-submit-consent/);
   assert.match(page, /retail-writing-consent/);
   assert.doesNotMatch(page, /retail-student-name|retail-student-email/);
-  const scriptTags = [...page.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)];
+  const scriptTags = [...page.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
   for (const [, attributes, source] of scriptTags) {
-    if (/\\bsrc\\s*=|application\\/json/i.test(attributes)) continue;
+    if (/\bsrc\s*=|application\/json/i.test(attributes)) continue;
     new vm.Script(source, { filename: "retail/index.html" });
   }
 });
