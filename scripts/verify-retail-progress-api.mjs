@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { webcrypto } from "node:crypto";
 
-globalThis.crypto = webcrypto;
+assert.ok(globalThis.crypto && globalThis.crypto.subtle, "Node must expose Web Crypto for the API tests");
 
 const source = fs.readFileSync(new URL("../functions/students/retail/api/progress.js", import.meta.url), "utf8");
 const moduleUrl = "data:text/javascript;base64," + Buffer.from(source, "utf8").toString("base64");
