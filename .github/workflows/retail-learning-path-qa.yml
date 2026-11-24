@@ -5,20 +5,33 @@ on:
     branches:
       - feature/lex-practice-learning-path-integration
       - feature/lex-practice-retail-auth-api
+      - feature/lex-practice-retail-progress-sync
     paths:
       - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
       - "lexacademicenglish_multipage/students/retail/index.html"
       - "functions/students/retail/submit.js"
+      - "functions/students/retail/api/progress.js"
+      - "migrations/0001_retail_student_progress.sql"
       - "scripts/verify-retail-learning-path.mjs"
       - "scripts/test-retail-submit.mjs"
+      - "scripts/verify-retail-progress-api.mjs"
+      - "docs/LEX-PRACTICE-RETAIL-PROGRESS-SYNC.md"
+      - "docs/LEX-PRACTICE-RETAIL-ACCESS.md"
+      - "lexacademicenglish_multipage/students/SECURITY-AND-QA.md"
       - ".github/workflows/retail-learning-path-qa.yml"
   pull_request:
     paths:
       - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
       - "lexacademicenglish_multipage/students/retail/index.html"
       - "functions/students/retail/submit.js"
+      - "functions/students/retail/api/progress.js"
+      - "migrations/0001_retail_student_progress.sql"
       - "scripts/verify-retail-learning-path.mjs"
       - "scripts/test-retail-submit.mjs"
+      - "scripts/verify-retail-progress-api.mjs"
+      - "docs/LEX-PRACTICE-RETAIL-PROGRESS-SYNC.md"
+      - "docs/LEX-PRACTICE-RETAIL-ACCESS.md"
+      - "lexacademicenglish_multipage/students/SECURITY-AND-QA.md"
       - ".github/workflows/retail-learning-path-qa.yml"
   workflow_dispatch:
 
@@ -37,3 +50,5 @@ jobs:
         run: node scripts/verify-retail-learning-path.mjs
       - name: Test Access-verified Retail submission endpoint
         run: node --test scripts/test-retail-submit.mjs
+      - name: Verify Access-authenticated Retail progress API
+        run: node scripts/verify-retail-progress-api.mjs

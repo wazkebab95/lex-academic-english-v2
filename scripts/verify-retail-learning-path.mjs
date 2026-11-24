@@ -61,11 +61,30 @@ check("no external script or stylesheet dependencies", () => {
   assert.doesNotMatch(html, /<script\b[^>]*\bsrc\s*=/i);
   assert.doesNotMatch(html, /<link\b[^>]*rel=["']stylesheet["'][^>]*href=["']https?:/i);
 });
-check("no browser storage, network submission or unsafe HTML sinks", () => {
+check("progress sync is limited to the same-origin Retail endpoint", () => {
+  assert.match(html, /fetch\(["']\/students\/retail\/api\/progress["']/);
+  assert.match(html, /credentials:\s*["']same-origin["']/);
+  assert.match(html, /cache:\s*["']no-store["']/);
+  assert.match(html, /response\.headers\.get\(["']Content-Type["']\)/);
+  assert.match(html, /application\\\/json/i);
+  assert.match(html, /check\.checked=state\.caseReviewed/);
+  assert.match(html, /if\(!allChecked\)\{[\s\S]*?state\.caseReviewed=false/);
+  assert.doesNotMatch(html, /fetch\(["']https?:\/\//i);
   assert.doesNotMatch(html, /\b(?:localStorage|sessionStorage|indexedDB)\b/i);
-  assert.doesNotMatch(html, /\b(?:fetch|XMLHttpRequest|WebSocket)\b/i);
+  assert.doesNotMatch(html, /\b(?:XMLHttpRequest|WebSocket)\b/i);
   assert.doesNotMatch(html, /\b(?:innerHTML|outerHTML|insertAdjacentHTML)\b/i);
   assert.doesNotMatch(html, /\son[a-z]+\s*=/i);
+});
+check("account sync sends answer indexes and review status, not learner text or profile data", () => {
+  assert.match(html, /function buildProgressPayload\(/);
+  assert.match(html, /courseId:"retail-business-english"/);
+  assert.match(html, /caseReviewed:state\.caseReviewed/);
+  assert.match(html, /return answer\?answer\.choice:null/);
+  assert.match(html, /id="load-account-progress"/);
+  assert.match(html, /id="save-account-progress"/);
+  assert.match(html, /id="delete-account-progress"/);
+  assert.doesNotMatch(html, /case-priority["']\s*:/);
+  assert.doesNotMatch(html, /studentEmail\s*:/i);
 });
 check("progress and feedback accessibility hooks exist", () => {
   assert.match(html, /role=["']progressbar["']/i);

@@ -96,6 +96,38 @@ Before collecting real student work:
 
 Do not collect real student submissions until these controls are implemented and tested.
 
+## Retail progress records — implementation staged, Cloudflare configuration outstanding
+
+A dedicated Pages Function is now staged at /students/retail/api/progress. It is separate from the shared public /api/submit-ielts endpoint.
+
+The Retail progress function:
+
+1. Accepts GET, PUT and DELETE only.
+2. Verifies the Cloudflare Access JWT signature, issuer, audience, expiry and optional not-before claim.
+3. Derives the record key from the verified JWT subject; it does not trust an email or student ID supplied by the browser.
+4. Uses a fixed course identifier and allowlisted module IDs.
+5. Stores only answer indexes and the case-study self-review flag in a dedicated D1 table.
+6. Rejects written case-study text, profile fields, scores, correctness flags and unexpected payload properties.
+7. Limits JSON writes to 8 KB and uses prepared D1 statements.
+8. Allows an authenticated student to read, update or delete only their own record.
+9. Returns no-store responses and fails closed when Access configuration or the D1 binding is missing.
+
+The page offers explicit Load, Save and Delete actions. It does not send progress in the background. The written case-study responses remain local and are never included in the progress payload.
+
+**Important limitations:**
+
+- Cloudflare Access applications, Pages environment variables and D1 bindings have not been configured.
+- The D1 migration has not been applied to any database.
+- The endpoint has not yet been tested against a real Cloudflare Access application or D1 instance.
+- A teacher dashboard and teacher-side record access are not implemented.
+- Scores are reconstructed in the browser from answer indexes. They are practice results, not authoritative or tamper-proof grades.
+- No automatic retention expiry or rate-limit rule is configured. Agree a retention period and add rate limiting before real student use.
+
+Setup instructions are in [docs/LEX-PRACTICE-RETAIL-PROGRESS-SYNC.md](../../docs/LEX-PRACTICE-RETAIL-PROGRESS-SYNC.md).
+
+The shared /api/submit-ielts endpoint remains unchanged for legacy IELTS forms. Do not apply a blanket Access requirement to that endpoint without first separating and testing its public IELTS use.
+
+
 ## Manual QA checklist
 
 ### Navigation and layout
@@ -126,7 +158,7 @@ Do not collect real student submissions until these controls are implemented and
 ### Privacy and access
 
 - [ ] No student personal data is included in repository files or page source.
-- [ ] The new learning path makes no network requests and does not persist answers in browser storage.
+- [ ] The new learning path makes no automatic network requests and does not persist answers in browser storage.
 - [ ] A signed-out visitor is blocked from the chosen protected student route.
 - [ ] An authorised student can open the protected route.
 - [ ] An unauthorised signed-in account is blocked.
