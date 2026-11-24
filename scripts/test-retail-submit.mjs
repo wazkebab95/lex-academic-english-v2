@@ -1,9 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { webcrypto } from "node:crypto";
-import { onRequestPost } from "../functions/students/retail/submit.js";
+import { readFileSync } from "node:fs";
 
 globalThis.crypto ||= webcrypto;
+const functionSource = readFileSync("functions/students/retail/submit.js", "utf8");
+const { onRequestPost } = await import("data:text/javascript;base64," + Buffer.from(functionSource).toString("base64"));
 
 const teamOrigin = "https://lex-team.cloudflareaccess.com";
 const audience = "retail-learning-path-aud";
