@@ -175,7 +175,7 @@
         </div>
         <div class="p-6 rounded-2xl bg-white/75 backdrop-blur-sm border border-[#2A5A84]/15">
           <p class="font-editorial text-xl leading-snug text-[#1C1C1C] mb-3">
-            “Automated post-submission coaching diagnostics delivered directly to your inbox within 15 minutes.”
+            “Tutor-reviewed feedback on submitted work, arranged through your agreed learning plan.”
           </p>
           <span class="text-[11px] uppercase tracking-widest font-bold text-[#2A5A84]">Module 05 · Executive Assessment</span>
         </div>
@@ -185,22 +185,24 @@
 
   <!-- Band 3: Interactive 5-Module Retail Studio Workspace -->
   <main id="retail-workspace" class="max-w-5xl mx-auto px-6 sm:px-10 pt-14 pb-24">
-    <!-- Learner Identity Strip -->
-    <section class="workspace-card mb-8 border-[#2A5A84]/15">
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+    <!-- Learner Submission Preferences -->
+    <section class="workspace-card mb-8 border-[#2A5A84]/15" aria-labelledby="retail-submission-title">
+      <h2 id="retail-submission-title" class="font-editorial text-xl font-medium mb-4">Assessment submission preferences</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
-          <label class="block text-[11px] uppercase tracking-wider font-semibold text-[#5E5D5A] mb-1.5">Student Name</label>
-          <input id="retail-student-name" type="text" required placeholder="Full Name" class="studio-input" />
+          <label for="retail-student-role" class="block text-[11px] uppercase tracking-wider font-semibold text-[#5E5D5A] mb-1.5">Optional retail focus / role</label>
+          <input id="retail-student-role" type="text" maxlength="120" placeholder="e.g. Store operations / Buying" class="studio-input" />
         </div>
-        <div>
-          <label class="block text-[11px] uppercase tracking-wider font-semibold text-[#5E5D5A] mb-1.5">Registered Email</label>
-          <input id="retail-student-email" type="email" required placeholder="student@domain.com" class="studio-input" />
-        </div>
-        <div>
-          <label class="block text-[11px] uppercase tracking-wider font-semibold text-[#5E5D5A] mb-1.5">Department / Role</label>
-          <input id="retail-student-role" type="text" placeholder="e.g., Store Operations / Buying" class="studio-input" />
-        </div>
+        <label class="flex items-start gap-3 text-sm leading-relaxed">
+          <input id="retail-submit-consent" type="checkbox" class="mt-1 accent-[#2A5A84]" />
+          <span>I agree to send my quiz score and optional retail focus to my tutor for assessment review.</span>
+        </label>
+        <label class="flex items-start gap-3 text-sm leading-relaxed sm:col-span-2">
+          <input id="retail-writing-consent" type="checkbox" class="mt-1 accent-[#2A5A84]" />
+          <span>I also agree to include my written response in the tutor's assessment email. Leave this unticked to send the score only.</span>
+        </label>
       </div>
+      <p class="text-xs text-[#5E5D5A] mt-4">The submission identity is taken from the verified student sign-in, not from a name or email field. Nothing is saved in this browser. Submissions are accepted only after the Retail Cloudflare Access policy and server-side verification are configured. Written work is excluded unless you explicitly opt in above.</p>
     </section>
 
     <!-- Quick Jump Pills -->
@@ -244,7 +246,7 @@
 
     <!-- Action Bar -->
     <div class="flex flex-wrap items-center justify-between gap-4">
-      <button id="retail-clear-btn" type="button" class="btn-outline-studio">Clear Local Draft</button>
+      <button id="retail-clear-btn" type="button" class="btn-outline-studio">Clear Written Response</button>
       <button id="retail-submit-btn" type="button" class="btn-slate px-8 py-3.5">
         Submit Fex Retail Assessment →
       </button>
@@ -267,32 +269,19 @@
       document.getElementById('studio-drawer')?.classList.toggle('hidden');
     });
 
-    // Hydrate Identity & Saved Drafts (Compatible with both lex_ and fex_ keys)
-    const nameEl = document.getElementById('retail-student-name');
-    const emailEl = document.getElementById('retail-student-email');
+    // Student identity is derived from the verified Cloudflare Access session on the server.
     const roleEl = document.getElementById('retail-student-role');
     const essayEl = document.getElementById('retail-writing-response');
     const wordCounterEl = document.getElementById('retail-word-counter');
-
-    nameEl.value = localStorage.getItem('fex_student_name') || localStorage.getItem('lex_student_name') || '';
-    emailEl.value = localStorage.getItem('fex_student_email') || localStorage.getItem('lex_student_email') || '';
-    roleEl.value = localStorage.getItem('fex_retail_role') || localStorage.getItem('lex_retail_role') || '';
-
-    const savedDraft = localStorage.getItem('fex_retail_draft') || localStorage.getItem('lex_retail_draft');
-    if (savedDraft) {
-      essayEl.value = savedDraft;
-      updateWordCount();
-    }
+    const submitConsentEl = document.getElementById('retail-submit-consent');
+    const writingConsentEl = document.getElementById('retail-writing-consent');
 
     function updateWordCount() {
       const count = essayEl.value.trim() ? essayEl.value.trim().split(/\s+/).length : 0;
       wordCounterEl.textContent = `${count} words (Target: 120–180)`;
     }
 
-    essayEl.addEventListener('input', () => {
-      localStorage.setItem('fex_retail_draft', essayEl.value);
-      updateWordCount();
-    });
+    essayEl.addEventListener('input', updateWordCount);
 
     // 4 Diagnostic Modules
     const retailModules = [
@@ -359,25 +348,40 @@
       const section = document.createElement('section');
       section.id = mod.anchor;
       section.className = 'workspace-card border-[#2A5A84]/15';
-      section.innerHTML = `
-        <div class="pb-4 mb-5 border-b border-black/10">
-          <span class="text-[11px] uppercase tracking-widest text-[#2A5A84] font-bold">${mod.badge}</span>
-          <h2 class="font-editorial text-2xl sm:text-3xl font-medium mt-0.5">${mod.title}</h2>
-        </div>
-        <p class="text-sm text-[#5E5D5A] mb-4 leading-relaxed">${mod.context}</p>
-        <p class="font-medium text-sm sm:text-[15px] mb-4">${mod.prompt}</p>
-        <div class="space-y-2.5 text-sm">
-          ${mod.options
-            .map(
-              (opt, idx) => `
-              <label class="flex items-start gap-3 p-3.5 rounded-xl bg-[#F7F9FB] border border-black/10 cursor-pointer hover:border-[#2A5A84]">
-                <input type="radio" name="${mod.id}" value="${idx}" class="mt-0.5 accent-[#2A5A84]" />
-                <span>${opt}</span>
-              </label>`
-            )
-            .join('')}
-        </div>
-      `;
+      const heading = document.createElement('div');
+      heading.className = 'pb-4 mb-5 border-b border-black/10';
+      const badge = document.createElement('span');
+      badge.className = 'text-[11px] uppercase tracking-widest text-[#2A5A84] font-bold';
+      badge.textContent = mod.badge;
+      const title = document.createElement('h2');
+      title.className = 'font-editorial text-2xl sm:text-3xl font-medium mt-0.5';
+      title.textContent = mod.title;
+      heading.append(badge, title);
+
+      const context = document.createElement('p');
+      context.className = 'text-sm text-[#5E5D5A] mb-4 leading-relaxed';
+      context.textContent = mod.context;
+      const prompt = document.createElement('p');
+      prompt.className = 'font-medium text-sm sm:text-[15px] mb-4';
+      prompt.textContent = mod.prompt;
+      const options = document.createElement('div');
+      options.className = 'space-y-2.5 text-sm';
+
+      mod.options.forEach((optionText, idx) => {
+        const label = document.createElement('label');
+        label.className = 'flex items-start gap-3 p-3.5 rounded-xl bg-[#F7F9FB] border border-black/10 cursor-pointer hover:border-[#2A5A84]';
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = mod.id;
+        input.value = String(idx);
+        input.className = 'mt-0.5 accent-[#2A5A84]';
+        const text = document.createElement('span');
+        text.textContent = optionText;
+        label.append(input, text);
+        options.appendChild(label);
+      });
+
+      section.append(heading, context, prompt, options);
       modulesContainer.appendChild(section);
     });
 
@@ -387,90 +391,78 @@
       document.getElementById('retail-header-badge').textContent = `${answered} / ${retailModules.length} Diagnostic Items Completed`;
     });
 
-    // Clear Draft
+    // Clear the in-memory written response. No browser storage is used.
     document.getElementById('retail-clear-btn').addEventListener('click', () => {
-      localStorage.removeItem('fex_retail_draft');
-      localStorage.removeItem('lex_retail_draft');
       essayEl.value = '';
       updateWordCount();
+      essayEl.focus();
     });
 
-    // Submit to /api/submit-ielts Endpoint
+    function showSubmissionStatus(title, message, isError) {
+      const statusBox = document.getElementById('retail-status-box');
+      statusBox.classList.remove('hidden');
+      statusBox.setAttribute('role', 'status');
+      statusBox.setAttribute('aria-live', 'polite');
+      statusBox.replaceChildren();
+
+      const heading = document.createElement('p');
+      heading.className = 'text-xs uppercase tracking-widest font-bold mb-1 ' + (isError ? 'text-red-700' : 'text-[#2A5A84]');
+      heading.textContent = title;
+      const detail = document.createElement('p');
+      detail.className = 'text-sm text-[#5E5D5A]';
+      detail.textContent = message;
+      statusBox.append(heading, detail);
+    }
+
+    // Submit only to the Retail-specific endpoint, which verifies the Access JWT.
     document.getElementById('retail-submit-btn').addEventListener('click', async () => {
-      const studentName = nameEl.value.trim();
-      const studentEmail = emailEl.value.trim();
       const studentRole = roleEl.value.trim();
       const responseText = essayEl.value.trim();
-      const statusBox = document.getElementById('retail-status-box');
+      const includeWrittenResponse = writingConsentEl.checked;
 
-      if (!studentName || !studentEmail) {
-        statusBox.classList.remove('hidden');
-        statusBox.innerHTML = '<p class="text-sm font-semibold text-red-700">Please enter your name and registered email address before submitting.</p>';
+      if (!submitConsentEl.checked) {
+        showSubmissionStatus('Submission not sent', 'Please confirm that you agree to send your quiz score to your tutor.', true);
+        return;
+      }
+      if (includeWrittenResponse && !responseText) {
+        showSubmissionStatus('Submission not sent', 'Your written response is empty. Add your response or untick the written-work consent box.', true);
         return;
       }
 
       let score = 0;
       const missedModules = [];
-      retailModules.forEach((m) => {
-        const selected = document.querySelector(`input[name="${m.id}"]:checked`);
-        if (selected && Number(selected.value) === m.correct) {
-          score++;
-        } else {
-          missedModules.push(m.title);
-        }
+      retailModules.forEach((module) => {
+        const selected = document.querySelector(`input[name="${module.id}"]:checked`);
+        if (selected && Number(selected.value) === module.correct) score++;
+        else missedModules.push(module.title);
       });
-
-      const scoreText = `${score} / ${retailModules.length}`;
-      const wordCount = responseText ? responseText.split(/\s+/).length : 0;
-      const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-
-      localStorage.setItem('fex_student_name', studentName);
-      localStorage.setItem('fex_student_email', studentEmail);
-      localStorage.setItem('lex_student_name', studentName);
-      localStorage.setItem('lex_student_email', studentEmail);
-      if (studentRole) localStorage.setItem('fex_retail_role', studentRole);
-      localStorage.setItem('lex_ielts_last_score', `Fex Retail ${scoreText}`);
-      localStorage.setItem('lex_ielts_last_date', today);
 
       const btn = document.getElementById('retail-submit-btn');
       btn.disabled = true;
-      btn.textContent = 'Submitting Assessment...';
+      btn.textContent = 'Submitting securely...';
 
       try {
-        const res = await fetch('/api/submit-ielts', {
+        const response = await fetch('/students/retail/submit', {
           method: 'POST',
+          credentials: 'same-origin',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name: studentName,
-            email: studentEmail,
-            module: `Fex Retail Business English${studentRole ? ' (' + studentRole + ')' : ''}`,
-            score: scoreText,
-            wordCount: wordCount,
+            consentToSubmit: true,
+            correct: score,
+            total: retailModules.length,
+            role: studentRole,
             missedTopics: missedModules.join(', ') || 'None — Full Marks',
-            essay: responseText
+            includeWrittenResponse,
+            writtenResponse: includeWrittenResponse ? responseText : ''
           })
         });
-
-        statusBox.classList.remove('hidden');
-        if (res.ok) {
-          statusBox.innerHTML = `
-            <p class="text-xs uppercase tracking-widest text-[#2A5A84] font-bold mb-1">Assessment Logged · Score ${scoreText}</p>
-            <h3 class="font-editorial text-2xl font-medium mb-2">Fex Retail Module Complete</h3>
-            <p class="text-sm text-[#5E5D5A]">
-              Thank you, <strong>${studentName}</strong>. Your module score (${scoreText}) and executive escalation brief (${wordCount} words) have been recorded. Detailed British English feedback will arrive at <strong>${studentEmail}</strong> within 15 minutes.
-            </p>
-          `;
-        } else {
-          throw new Error('Non-200 status');
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || 'The submission could not be verified or delivered. Please try again later.');
         }
-      } catch (e) {
-        statusBox.classList.remove('hidden');
-        statusBox.innerHTML = `
-          <p class="text-xs uppercase tracking-widest font-bold text-[#2A5A84] mb-1">Local Session Recorded · Score ${scoreText}</p>
-          <p class="text-sm text-[#5E5D5A]">
-            Your score (${scoreText}) has been saved locally. Modules to review: <strong>${missedModules.join(', ') || 'None — Full Marks'}</strong>.
-          </p>
-        `;
+        showSubmissionStatus('Assessment sent', result.message || 'Your assessment has been sent to your tutor.', false);
+      } catch (error) {
+        showSubmissionStatus('Submission not sent', error.message || 'The assessment could not be delivered. Your work has not been saved by this page.', true);
       } finally {
         btn.disabled = false;
         btn.textContent = 'Submit Fex Retail Assessment →';
