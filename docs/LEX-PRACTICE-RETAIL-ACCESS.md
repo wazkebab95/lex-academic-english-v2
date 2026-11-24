@@ -1,22 +1,24 @@
 # Lex Practice Retail pilot — Cloudflare Access setup runbook
 
-**Purpose:** protect the Retail student pilot without accidentally restricting the public homepage or all IELTS/resource pages. This is a manual change guide; no Cloudflare settings have been changed.
+**Purpose:** document the Cloudflare Access boundary for the full Fex Practice student area and the protected Retail submission endpoint, while keeping the public homepage and non-student routes public. This is a manual change guide; no Cloudflare settings have been changed.
 
-## Recommended initial scope
+## Agreed production scope
 
-Protect the entire Retail area, including the legacy foundation page and the new five-module path:
+Protect the **entire `/students/` area**, including IELTS, Retail, learning paths and student resources:
 
-- Hostname: lexacademicenglish.co.uk
-- Exact path: /students/retail
-- Descendant paths: /students/retail/*
+- Hostname: `lexacademicenglish.co.uk`
+- Exact parent path: `/students`
+- Descendant paths: `/students/*`
 
-Do **not** protect all /students/* for the initial pilot unless you intend to restrict existing IELTS and resource pages as well. Access path wildcards do not cover their parent path, so test both the exact path and trailing-slash/nested paths. If the Access UI cannot express the exact and descendant paths cleanly in one application, create two applications with the same restrictive policy.
+Do not protect the public homepage or routes outside `/students/`. Access path wildcards may not cover the exact parent route, so test `/students`, `/students/` and nested paths independently. If the Access UI cannot express the exact and descendant paths cleanly in one application, create two applications with the same restrictive student policy.
+
+The future teacher workspace will use a more-specific teacher-only application for `/students/teacher` and `/students/teacher/*`, with server-side teacher authorisation.
 
 ## A. Create the production Access applications
 
 1. In Cloudflare, open **Zero Trust → Access → Applications** (label names may vary).
 2. Create a **Self-hosted** application for the exact hostname and path /students/retail.
-3. Add a second path application for /students/retail/* if needed to cover descendants.
+3. Add a second path application for /students/* if needed to cover descendants.
 4. Set an **Allow** policy that includes only the intended student's verified email address (or a tightly managed identity group).
 5. Use a suitable identity provider, such as email OTP or an already configured Google/Microsoft identity. If available, require MFA for that identity.
 6. Do not add a **Bypass** or public policy. Ensure unmatched visitors are denied.
@@ -39,33 +41,54 @@ Use a clean browser/private window and test the matrix below. Do not use real le
 | URL | Signed out | Unauthorised account | Intended student |
 |---|---|---|---|
 | https://lexacademicenglish.co.uk/ | Public homepage loads | Public homepage loads | Public homepage loads |
-| /students/retail (no slash) | Access login/deny | Denied | Allowed |
+| /students (no slash) | Access login/deny | Denied | Allowed |
+| /students/ | Access login/deny | Denied | Allowed |
 | /students/retail/ | Access login/deny | Denied | Allowed |
 | /students/retail/learning-path/ | Access login/deny | Denied | Allowed |
-| /students/retail/learning-path/index.html | Access login/deny | Denied | Allowed |
-| /students/ and IELTS/resource paths | Confirm intended existing behaviour | Confirm intended existing behaviour | Confirm intended existing behaviour |
+| /students/retail/submit | Access login/deny | Denied | Allowed only with a valid Access session |
+| IELTS and other student resources | Access login/deny | Denied | Allowed |
 | Preview hostname | Teacher-only | Denied | Denied unless deliberately authorised |
 
 Also test the apex and www hostnames, redirects, browser refreshes, direct deep links, and a second device. Capture the result of the test without recording student work or credentials.
 
 **Release gate:** do not distribute the pilot link until the unauthorised and signed-out tests are denied and the intended identity can access every required route.
 
-## D. Access is not API authentication
+## D. Retail submission endpoint and server-side identity
 
-Protecting static pages does not make a submission endpoint or another origin private. Before collecting student work or providing teacher-visible results:
+Protecting a page is not a substitute for authenticating its API. The Retail foundation form posts to:
 
-- Create a dedicated Retail submission endpoint rather than reusing the public IELTS endpoint.
-- Validate the Cloudflare Access JWT server-side, including signature, issuer and the endpoint's audience (AUD); do not trust client-side checks or email text supplied by a form.
-- Enforce size limits, validation and rate limits; keep secrets in Cloudflare environment secrets.
-- Enforce student record ownership server-side if accounts or stored progress are added.
-- Define retention and deletion rules and collect only necessary information.
+`POST /students/retail/submit`
+
+The Pages Function is implemented in `functions/students/retail/submit.js`. It verifies the Cloudflare Access JWT signature against the team's JWKS and checks the exact issuer, the configured Access application audience, expiry, not-before and issued-at claims. It derives the learner email from the verified token and checks it against the server-side `RETAIL_ALLOWED_EMAILS` allowlist. Browser-supplied identity fields are not trusted.
+
+The endpoint requires explicit consent to submit the score, includes written work only when the learner separately opts in, validates the four-item score, limits request bodies to 16 KB, checks the Origin header when present and HTML-escapes learner-provided text. It sends the submission to the configured instructor mailbox through Resend. It does not write to Google Sheets or create a student database.
+
+### Pages environment variables and secrets
+
+Configure these in **Workers & Pages → lex-academic-english-v2 → Settings → Variables and Secrets** for the intended environment:
+
+| Variable / secret | Purpose |
+|---|---|
+| `CF_ACCESS_TEAM_DOMAIN` | Cloudflare Access team origin, e.g. `https://your-team.cloudflareaccess.com` |
+| `RETAIL_ACCESS_AUD` | Audience value for the Access application protecting the student area |
+| `RETAIL_ALLOWED_EMAILS` | Comma-separated exact email allowlist for the Retail pilot |
+| `RESEND_API_KEY` | Resend API key; store as a secret |
+| `INSTRUCTOR_EMAIL` | Tutor mailbox that receives submissions |
+
+Keep the audience, allowlist and Resend API key as secrets. Never commit real student addresses, credentials or API keys. Confirm that the Access application covering `/students/` supplies the audience configured in `RETAIL_ACCESS_AUD`.
+
+A Cloudflare WAF rate-limiting rule is still required for POST requests to `/students/retail/submit`. The endpoint does not configure this rule itself. Use a conservative threshold and test legitimate retries.
+
+Run automated tests with `node --test scripts/test-retail-submit.mjs`. They generate signed test JWTs locally and mock the JWKS and Resend services; they do not contact Cloudflare or send real email.
+
+Do not submit real learner work until the Access policy, Pages variables/secrets, instructor mailbox and WAF rate limit have been configured and verified in a restricted preview. The public IELTS endpoint `/api/submit-ielts` remains separate and unchanged.
 
 ## E. Rollback
 
 If a policy blocks the homepage, an unrelated student resource, or the intended student:
 
-1. Remove or disable only the newly created Retail path application/policy.
-2. Re-test the homepage and existing resource routes.
+1. Adjust or disable only the student-area Access application/policy that caused the issue.
+2. Re-test the public homepage and the intended student routes.
 3. Recreate the policy with corrected path coverage and precedence.
 4. Do not change DNS or Pages hosting as a rollback measure.
 
