@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alumni Outcomes & International Placements | Fex Studio</title>
-  <meta name="description" content="Explore where Fex Studio alumni have progressed to universities and international careers across Italy, the UK, the USA, Germany, Lithuania, Australia, Belgium, Ireland, and the Netherlands." />
+  <title>Alumni Outcomes & International Placements | Fex Academic English</title>
+  <meta name="description" content="Explore the international university pathways and academic outcomes of Fex Academic English learners." />
+
+  <link rel="stylesheet" href="/assets/halcyon-theme.css" />
 
   <!-- Leaflet Core (Zero API Key, Reliable Tile Rendering) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
@@ -307,14 +309,62 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.45);
       cursor: pointer;
     }
+
+    /* Shared Halcyon editorial system — page-specific refinements */
+    :root {
+      --bg-paper: var(--canvas);
+      --bg-card: rgba(255,255,255,.72);
+      --ink-primary: var(--ink);
+      --ink-body: #454E59;
+      --ink-muted: var(--ink-muted);
+      --border-subtle: var(--hairline);
+      --border-strong: rgba(19,41,75,.38);
+      --accent-blue: #DCEAF4;
+      --accent-blue-strong: #8FAFC8;
+    }
+    body.halcyon-body { font-family: var(--font-sans); background: var(--canvas); color: var(--ink); }
+    .fex-nav { background: rgba(250,249,246,.92); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid var(--hairline); padding: 1.1rem 1.5rem; }
+    .fex-brand, h1, .fex-stat-num, .fex-detail-panel h2, .fex-ledger-header h2, .fex-cta-box h3 { font-family: var(--font-serif); }
+    .fex-brand { font-size: 1.55rem; font-weight: 600; letter-spacing: .01em; color: var(--navy); }
+    .fex-nav-links { gap: 1.6rem; font-family: var(--font-sans); font-size: 10px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }
+    .fex-nav-links a { color: var(--ink-muted); }
+    .fex-nav-links a:hover, .fex-nav-links a.active { color: var(--navy); }
+    .fex-container { max-width: 1180px; padding-top: 4.25rem; }
+    .fex-eyebrow, .fex-detail-tag { color: var(--navy); letter-spacing: .2em; font-weight: 600; }
+    h1 { color: var(--ink); font-size: clamp(2.7rem,5vw,4.3rem); line-height: 1.02; letter-spacing: -.025em; }
+    .fex-lead { color: var(--ink-muted); font-size: 1rem; line-height: 1.8; }
+    .fex-summary-strip { border-top-color: var(--navy); border-bottom-color: var(--hairline); }
+    .fex-stat-num { color: var(--navy); font-size: 2.25rem; }
+    .fex-filter-btn { border-color: rgba(19,41,75,.16); border-radius: 999px; background: rgba(255,255,255,.65); color: var(--navy); font-family: var(--font-sans); font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: .65rem 1.1rem; }
+    .fex-filter-btn.active, .fex-filter-btn:hover { background: var(--accent-blue); color: var(--navy); border-color: var(--accent-blue-strong); }
+    #fex-placement-map { border-color: var(--hairline); background: #E8EFF4; }
+    .leaflet-tile-pane { filter: grayscale(55%) saturate(72%) contrast(94%) brightness(106%); }
+    .fex-detail-panel, .fex-ledger-box { background: rgba(255,255,255,.68); border: 1px solid var(--hairline); border-radius: 2px; box-shadow: 0 12px 32px -25px rgba(19,41,75,.22); }
+    .fex-detail-panel h2, .fex-ledger-header h2, .fex-cta-box h3 { color: var(--navy); }
+    .fex-detail-badge { background: var(--accent-blue); color: var(--navy); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; }
+    .fex-detail-footer { border-top-color: var(--hairline); color: var(--ink-muted); }
+    .fex-ledger-header { border-bottom-color: var(--hairline); }
+    .fex-roll-item { border-bottom-color: var(--hairline); }
+    .fex-roll-item strong { color: var(--ink); font-weight: 600; }
+    .fex-roll-item span { color: var(--ink-muted); }
+    .fex-cta-box { background: linear-gradient(115deg, rgba(220,234,244,.62), rgba(255,255,255,.76)); border: 1px solid rgba(143,175,200,.55); padding: 2.5rem; }
+    .fex-cta-btn { background: var(--navy); color: #fff; border-radius: 999px; font-family: var(--font-sans); font-size: 10px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; padding: .9rem 1.5rem; }
+    .fex-cta-btn:hover { background: var(--navy-deep); opacity: 1; }
+    .fex-pin { background: var(--navy); border: 2.5px solid #fff; box-shadow: 0 2px 8px rgba(19,41,75,.28); }
+    @media (max-width: 700px) {
+      .fex-nav-links { gap: .8rem; font-size: 9px; }
+      .fex-container { padding: 2.5rem 1.1rem 3.5rem; }
+      .fex-cta-box { padding: 1.5rem; }
+    }
+
   </style>
 </head>
-<body>
+<body class="halcyon-body">
 
   <!-- Top Navigation -->
   <nav class="fex-nav">
     <div class="fex-nav-inner">
-      <a href="/" class="fex-brand">FEX STUDIO</a>
+      <a href="/" class="fex-brand">Fex Academic English</a>
       <div class="fex-nav-links">
         <a href="/">Home</a>
         <a href="/about">About</a>
@@ -330,7 +380,7 @@
     <span class="fex-eyebrow">VERIFIED TRACK RECORD & GLOBAL MOBILITY</span>
     <h1>International Placements & Alumni Outcomes</h1>
     <p class="fex-lead">
-      A geographical record of Fex Studio candidates who achieved their target English proficiency requirements and progressed to higher education and international careers across Europe, the UK, the United States, and Australia.
+      A geographical record of Fex Academic English candidates who achieved their target English proficiency requirements and progressed to higher education and international careers across Europe, the UK, the United States, and Australia.
     </p>
 
     <!-- Summary Metrics -->
@@ -404,7 +454,7 @@
         alumni: "Nur, Ozdemir, Aydin, Sert, Uge & Cavusoglu",
         countLabel: "6 Alumni Placed • Italy",
         pathway: "Italian Higher Education & University Admissions",
-        notes: "Six Fex Studio alumni fulfilled English proficiency requirements and enrolled in international university degree programmes in Italy."
+        notes: "Six Fex Academic English learners fulfilled English proficiency requirements and enrolled in international university degree programmes in Italy."
       },
       {
         location: "United Kingdom",
@@ -455,7 +505,7 @@
         location: "Brussels, Belgium",
         coords: [50.8503, 4.3517],
         region: "europe",
-        alumni: "Fex Studio Alumni Cohort",
+        alumni: "Fex Academic English Alumni Cohort",
         countLabel: "European Hub • Belgium",
         pathway: "Belgian Academic & Institutional Mobility",
         notes: "Coached learners for English-taught university programmes and professional relocation in Brussels."
