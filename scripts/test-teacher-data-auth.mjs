@@ -23,7 +23,7 @@ function base64url(value) {
   const bytes = typeof value === "string" ? encoder.encode(value) : new Uint8Array(value);
   let binary = "";
   for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+  return btoa(binary).replace(/=/g, "").replace(/\\+/g, "-").replace(/\\//g, "_");
 }
 
 async function makeToken(overrides = {}) {
@@ -97,6 +97,33 @@ test("fails closed when the teacher audience or allowlist is missing", async () 
 
 test("rejects an incorrect Access audience", async () => {
   const result = await invoke({ claims: { aud: ["wrong-audience"] } });
+  assert.equal(result.status, 401);
+  assert.ok(!result.calls.some(url => url.startsWith("https://script.example.test/")));
+});
+
+test("rejects an incorrect issuer", async () => {
+  const result = await invoke({ claims: { iss: "https://attacker.example" } });
+  assert.equal(result.status, 401);
+  assert.ok(!result.calls.some(url => url.startsWith("https://script.example.test/")));
+});
+
+test("rejects expired tokens", async () => {
+  const result = await invoke({ claims: { exp: Math.floor(Date.now() / 1000) - 1 } });
+  assert.equal(result.status, 401);
+  assert.ok(!result.calls.some(url => url.startsWith("https://script.example.test/")));
+});
+
+test("rejects tokens with a future not-before time", async () => {
+  const result = await invoke({ claims: { nbf: Math.floor(Date.now() / 1000) + 120 } });
+  assert.equal(result.status, 401);
+  assert.ok(!result.calls.some(url => url.startsWith("https://script.example.test/")));
+});
+
+test("rejects tampered JWT signatures", async () => {
+  const token = await makeToken();
+  const replacement = token.endsWith("A") ? "B" : "A";
+  const tampered = token.slice(0, -1) + replacement;
+  const result = await invoke({ token: tampered });
   assert.equal(result.status, 401);
   assert.ok(!result.calls.some(url => url.startsWith("https://script.example.test/")));
 });
