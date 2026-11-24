@@ -4,14 +4,21 @@ on:
   push:
     branches:
       - feature/lex-practice-learning-path-integration
+      - feature/lex-practice-retail-auth-api
     paths:
       - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
+      - "lexacademicenglish_multipage/students/retail/index.html"
+      - "functions/students/retail/submit.js"
       - "scripts/verify-retail-learning-path.mjs"
+      - "scripts/test-retail-submit.mjs"
       - ".github/workflows/retail-learning-path-qa.yml"
   pull_request:
     paths:
       - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
+      - "lexacademicenglish_multipage/students/retail/index.html"
+      - "functions/students/retail/submit.js"
       - "scripts/verify-retail-learning-path.mjs"
+      - "scripts/test-retail-submit.mjs"
       - ".github/workflows/retail-learning-path-qa.yml"
   workflow_dispatch:
 
@@ -28,3 +35,5 @@ jobs:
           node-version: "20"
       - name: Verify learning-path content and safeguards
         run: node scripts/verify-retail-learning-path.mjs
+      - name: Test Access-verified Retail submission endpoint
+        run: node --test scripts/test-retail-submit.mjs

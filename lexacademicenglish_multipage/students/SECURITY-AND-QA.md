@@ -28,7 +28,7 @@ The learner profile offers optional level and role settings. These are session-o
 - Refreshing or closing the page clears the session.
 - No student name, email address or employer information is requested by this page.
 
-The existing Retail foundation page and other legacy student pages remain separate. They have their own form and browser-storage behaviour and must not be assumed to inherit the new page's data-handling properties.
+The legacy Retail foundation page has now been changed on this development branch: it no longer asks the learner to type a name or email, no longer saves identity or written drafts in browser storage, and no longer calls the shared IELTS endpoint. Other legacy student pages remain separate and must not be assumed to inherit these data-handling properties.
 
 ## Deployment and preview
 
@@ -63,13 +63,12 @@ The results view includes a **Print / Save PDF** action for a learner who wants 
 
 Use Cloudflare Access as the initial identity gate for the student area.
 
-For the stated goal of a private `/students/` area, the natural scope is a self-hosted Access application covering:
+For the initial pilot, protect the Retail route only, including the exact path and descendants:
 
-`lexacademicenglish.co.uk/students/*`
+`lexacademicenglish.co.uk/students/retail`
+`lexacademicenglish.co.uk/students/retail/*`
 
-Create a restrictive Allow policy for the intended student identity and leave all other visitors denied. Also test the no-trailing-slash route `/students` and the `www` hostname if it serves content independently.
-
-**Scope decision required before configuration:** protecting `/students/*` also protects existing IELTS and resource pages beneath that path. If those pages must remain public, use a narrower application such as `/students/retail/*` instead. Do not configure either scope until the intended access boundary is confirmed.
+This covers the learning path and the dedicated POST endpoint at `/students/retail/submit` without automatically restricting existing IELTS and resource pages. The broader `/students/*` scope remains a separate decision for a later rollout. Also test the `www` hostname if it serves content independently.
 
 Protect the Cloudflare Pages preview hostname separately. Enabling Access for a `pages.dev` hostname does not automatically secure the production custom domain.
 
@@ -134,7 +133,11 @@ Do not collect real student submissions until these controls are implemented and
 - [ ] Public homepage and any intentionally public resources remain accessible.
 - [ ] Apex and `www` hostnames are tested if both serve content.
 - [ ] Preview-domain access is tested separately from production.
-- [ ] Retail submissions cannot be made without the intended server-side identity check.
+- [ ] Retail submissions cannot be made without a valid Access JWT and allowlisted email.
+- [ ] The score-consent checkbox is required before submission.
+- [ ] Written case-study text is excluded unless the learner separately opts in.
+- [ ] The Retail form does not save name, email or written drafts in browser storage.
+- [ ] A WAF rate-limit rule is active for POST /students/retail/submit before real use.
 
 ## Release gate
 
@@ -142,11 +145,12 @@ The five-module page is a learning prototype, not a private student account syst
 
 ## Automated regression check
 
-Run the dependency-free QA script from the repository root:
+Run the checks from the repository root:
 
 `node scripts/verify-retail-learning-path.mjs`
+`node --test scripts/test-retail-submit.mjs`
 
-The script checks the five-module structure and question counts, answer-key/explanation integrity, duplicate and unresolved DOM IDs, inline-script syntax (without executing it), external dependency absence, browser-storage/network/unsafe HTML sink absence, basic accessibility hooks, and the local score-only print report. GitHub Actions runs this check on pull requests that touch the learning path or its test script.
+The first script checks the five-module structure and question counts, answer-key/explanation integrity, duplicate and unresolved DOM IDs, inline-script syntax, dependency absence, browser-storage/network/unsafe HTML sink absence, accessibility hooks and the local score-only print report. The second creates signed test JWTs and exercises the Pages Function for missing/invalid signatures, incorrect audiences, allowlist rejection, consent handling, HTML escaping, request limits, origin checks and provider failures. GitHub Actions runs both checks for the Retail development branch and matching pull requests.
 
 This static check is not a substitute for manual interaction testing on real mobile and desktop browsers or for Cloudflare Access testing.
 
