@@ -6,12 +6,9 @@
   <title>Alumni Outcomes & International Placements | Fex Studio</title>
   <meta name="description" content="Explore where Fex Studio alumni have progressed to universities and international careers across Italy, the UK, the USA, Germany, Lithuania, Australia, Belgium, Ireland, and the Netherlands." />
 
-  <!-- Leaflet & MarkerCluster (Zero API Key, Cloudflare Pages Ready) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.js"></script>
+  <!-- Leaflet Core (Zero API Key, Reliable Tile Rendering) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
   <style>
     :root {
@@ -172,8 +169,13 @@
       height: 470px;
       width: 100%;
       border: 1px solid #d4d4d8;
-      background: #f4f4f5;
+      background: #e4e4e7;
       z-index: 1;
+    }
+
+    /* Editorial Monochrome Filter for OpenStreetMap Tiles */
+    .leaflet-tile-pane {
+      filter: grayscale(100%) contrast(92%) brightness(103%);
     }
 
     .fex-detail-panel {
@@ -297,285 +299,9 @@
     }
     .fex-cta-btn:hover { opacity: 0.9; }
 
-    /* Custom Map Markers */
+    /* Custom Map Pin */
     .fex-pin {
       background: #18181b;
-      border: 2px solid #ffffff;
+      border: 2.5px solid #ffffff;
       border-radius: 50%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
-    }
-    .fex-cluster {
-      background: #18181b;
-      color: #ffffff;
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      font-weight: 700;
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Top Navigation -->
-  <nav class="fex-nav">
-    <div class="fex-nav-inner">
-      <a href="/" class="fex-brand">FEX STUDIO</a>
-      <div class="fex-nav-links">
-        <a href="/">Home</a>
-        <a href="/outcomes" class="active">Outcomes</a>
-        <a href="/#services">Consultancy</a>
-        <a href="/#contact">Book Diagnostic</a>
-      </div>
-    </div>
-  </nav>
-
-  <main class="fex-container">
-    <span class="fex-eyebrow">VERIFIED TRACK RECORD & GLOBAL MOBILITY</span>
-    <h1>International Placements & Alumni Outcomes</h1>
-    <p class="fex-lead">
-      A geographical record of Fex Studio candidates who achieved their target English proficiency requirements and progressed to higher education and international careers across Europe, the UK, the United States, and Australia.
-    </p>
-
-    <!-- Summary Metrics -->
-    <div class="fex-summary-strip">
-      <div>
-        <span class="fex-stat-num">9</span>
-        <span class="fex-stat-label">Destination Countries across 3 Continents</span>
-      </div>
-      <div>
-        <span class="fex-stat-num">100%</span>
-        <span class="fex-stat-label">Target Admission Criteria Fulfilled</span>
-      </div>
-      <div>
-        <span class="fex-stat-num">5+ Yrs</span>
-        <span class="fex-stat-label">Cross-Border Linguistic Practice</span>
-      </div>
-    </div>
-
-    <!-- Filter Controls -->
-    <div class="fex-filter-bar">
-      <div class="fex-filter-buttons">
-        <button class="fex-filter-btn active" onclick="filterPlacements('all', this)">Global View</button>
-        <button class="fex-filter-btn" onclick="filterPlacements('europe', this)">UK & Europe</button>
-        <button class="fex-filter-btn" onclick="filterPlacements('americas-oceania', this)">USA & Australia</button>
-      </div>
-      <span class="fex-zoom-hint">Scroll or pinch map to zoom into cities</span>
-    </div>
-
-    <!-- Interactive Map + Detail Panel -->
-    <div class="fex-map-layout">
-      <div id="fex-placement-map"></div>
-
-      <aside class="fex-detail-panel">
-        <div>
-          <span class="fex-detail-tag" id="detail-region">GLOBAL TRACK RECORD</span>
-          <h2 id="detail-title">Select a Pin to Inspect Placement</h2>
-          <div class="fex-detail-badge" id="detail-status">Target Achieved • International Admission</div>
-          <p id="detail-desc">
-            Zoom into clusters across Italy, the UK, Belgium, Europe, the United States, and Australia. Click any marker to view the placed alumni cohort and academic pathway.
-          </p>
-        </div>
-        <div class="fex-detail-footer" id="detail-pathway">Italy • UK • USA • Germany • Lithuania • Australia • Belgium • Ireland • Netherlands</div>
-      </aside>
-    </div>
-
-    <!-- Verified Alumni Cohort Ledger -->
-    <section class="fex-ledger-box">
-      <div class="fex-ledger-header">
-        <h2>Verified Alumni Placement Ledger</h2>
-        <span>Target Achieved • Overseas Enrolment</span>
-      </div>
-      <div class="fex-roll-grid" id="fex-alumni-grid"></div>
-    </section>
-
-    <!-- Conversion Footer Callout -->
-    <section class="fex-cta-box">
-      <div>
-        <h3>Preparing for International University Admission?</h3>
-        <p>Book a 15-minute diagnostic session with Fawwaz Izeddin to map out your IELTS and academic English timeline.</p>
-      </div>
-      <a href="/#contact" class="fex-cta-btn">Schedule Diagnostic Call</a>
-    </section>
-  </main>
-
-  <script>
-    const placements = [
-      {
-        location: "Italy",
-        coords: [45.4642, 9.1900],
-        region: "europe",
-        alumni: "Serra N., Yigit O., Yagiz A., Yusuf S., Irem U. & Berrak C.",
-        countLabel: "6 Alumni Placed • Italy",
-        pathway: "Italian Higher Education & University Admissions",
-        notes: "Six Fex Studio alumni fulfilled English proficiency requirements and enrolled in international university degree programmes in Italy."
-      },
-      {
-        location: "United Kingdom",
-        coords: [51.5074, -0.1278],
-        region: "europe",
-        alumni: "Koray T., Aybike A., Irmak S., Zeynep E. & Ismet Efe A.",
-        countLabel: "5 Alumni Placed • United Kingdom",
-        pathway: "UK University & Postgraduate Admissions",
-        notes: "Five Fex Studio alumni achieved their required academic targets for higher education admission across the United Kingdom."
-      },
-      {
-        location: "United States",
-        coords: [40.7128, -74.0060],
-        region: "americas-oceania",
-        alumni: "Guliz A.",
-        countLabel: "Verified Placement • USA",
-        pathway: "US Academic & International Mobility Track",
-        notes: "Fulfilled English proficiency and academic communication requirements for study in the United States."
-      },
-      {
-        location: "Lithuania",
-        coords: [54.6872, 25.2797],
-        region: "europe",
-        alumni: "Nazar Sultan A.",
-        countLabel: "Verified Placement • Lithuania",
-        pathway: "European English-Taught Degree Pathway",
-        notes: "Completed structured IELTS Academic preparation and secured university enrolment in Lithuania."
-      },
-      {
-        location: "Germany",
-        coords: [52.5200, 13.4050],
-        region: "europe",
-        alumni: "Ogulcan M.",
-        countLabel: "Verified Placement • Germany",
-        pathway: "German Higher Education & Technical Track",
-        notes: "Achieved required certification and academic fluency for university admission in Germany."
-      },
-      {
-        location: "Australia",
-        coords: [-37.8136, 144.9631],
-        region: "americas-oceania",
-        alumni: "Alwafi",
-        countLabel: "Verified Placement • Australia",
-        pathway: "Australian Academic & International Track",
-        notes: "Successfully met English language requirements for international admission and relocation to Australia."
-      },
-      {
-        location: "Brussels, Belgium",
-        coords: [50.8503, 4.3517],
-        region: "europe",
-        alumni: "Fex Studio Alumni Cohort",
-        countLabel: "European Hub • Belgium",
-        pathway: "Belgian Academic & Institutional Mobility",
-        notes: "Coached learners for English-taught university programmes and professional relocation in Brussels."
-      },
-      {
-        location: "Ghent, Belgium",
-        coords: [51.0543, 3.7174],
-        region: "europe",
-        alumni: "Fex Studio Alumni Cohort",
-        countLabel: "European Hub • Belgium",
-        pathway: "Higher Education Track",
-        notes: "Academic writing and speaking coaching for international degree admission in Ghent."
-      },
-      {
-        location: "Dublin, Ireland",
-        coords: [53.3498, -6.2603],
-        region: "europe",
-        alumni: "Fex Studio Alumni Cohort",
-        countLabel: "European Hub • Ireland",
-        pathway: "Academic & Professional Relocation",
-        notes: "Prepared learners for higher education and workplace fluency in Ireland."
-      },
-      {
-        location: "Amsterdam, The Netherlands",
-        coords: [52.3676, 4.9041],
-        region: "europe",
-        alumni: "Fex Studio Alumni Cohort",
-        countLabel: "European Hub • The Netherlands",
-        pathway: "Dutch English-Taught Programmes",
-        notes: "Targeted academic writing and seminar fluency coaching for university entry in the Netherlands."
-      }
-    ];
-
-    const alumniCohort = [
-      { name: "Serra N.", destination: "Italy" },
-      { name: "Yigit O.", destination: "Italy" },
-      { name: "Yagiz A.", destination: "Italy" },
-      { name: "Yusuf S.", destination: "Italy" },
-      { name: "Irem U.", destination: "Italy" },
-      { name: "Berrak C.", destination: "Italy" },
-      { name: "Koray T.", destination: "United Kingdom" },
-      { name: "Aybike A.", destination: "United Kingdom" },
-      { name: "Irmak S.", destination: "United Kingdom" },
-      { name: "Zeynep E.", destination: "United Kingdom" },
-      { name: "Ismet Efe A.", destination: "United Kingdom" },
-      { name: "Guliz A.", destination: "United States" },
-      { name: "Nazar Sultan A.", destination: "Lithuania" },
-      { name: "Ogulcan M.", destination: "Germany" },
-      { name: "Alwafi", destination: "Australia" }
-    ];
-
-    const rollGrid = document.getElementById('fex-alumni-grid');
-    alumniCohort.forEach(student => {
-      const item = document.createElement('div');
-      item.className = 'fex-roll-item';
-      item.innerHTML = `<strong>${student.name}</strong><span>${student.destination}</span>`;
-      rollGrid.appendChild(item);
-    });
-
-    const map = L.map('fex-placement-map', { scrollWheelZoom: true, worldCopyJump: true });
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '© OpenStreetMap © CARTO',
-      subdomains: 'abcd',
-      maxZoom: 18
-    }).addTo(map);
-
-    const pinIcon = L.divIcon({ className: 'fex-pin', iconSize: [14, 14] });
-
-    const clusterGroup = L.markerClusterGroup({
-      maxClusterRadius: 35,
-      iconCreateFunction: function(cluster) {
-        return L.divIcon({
-          html: cluster.getChildCount(),
-          className: 'fex-cluster',
-          iconSize: [28, 28]
-        });
-      }
-    });
-    map.addLayer(clusterGroup);
-
-    function renderMarkers(filter) {
-      clusterGroup.clearLayers();
-      const filtered = placements.filter(p => filter === 'all' || p.region === filter);
-
-      filtered.forEach(p => {
-        const marker = L.marker(p.coords, { icon: pinIcon })
-          .bindPopup(`<strong>${p.location}</strong><br>${p.alumni}`);
-
-        marker.on('click', () => {
-          map.flyTo(p.coords, 6, { duration: 0.8 });
-          document.getElementById('detail-region').textContent = p.location.toUpperCase();
-          document.getElementById('detail-title').textContent = p.alumni;
-          document.getElementById('detail-status').textContent = p.countLabel;
-          document.getElementById('detail-desc').textContent = p.notes;
-          document.getElementById('detail-pathway').textContent = p.pathway;
-        });
-
-        clusterGroup.addLayer(marker);
-      });
-
-      if (clusterGroup.getLayers().length > 0) {
-        map.fitBounds(clusterGroup.getBounds().pad(0.2));
-      }
-    }
-
-    function filterPlacements(region, btn) {
-      document.querySelectorAll('.fex-filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderMarkers(region);
-    }
-
-    renderMarkers('all');
-  </script>
-</body>
-</html>
+      box-shadow: 0 2px
