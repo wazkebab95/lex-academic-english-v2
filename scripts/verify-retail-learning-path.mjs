@@ -68,6 +68,7 @@ check("progress sync is limited to the same-origin Retail endpoint", () => {
   assert.match(html, /response\.headers\.get\(["']Content-Type["']\)/);
   assert.match(html, /application\\\/json/i);
   assert.match(html, /check\.checked=state\.caseReviewed/);
+  assert.match(html, /if\(!allChecked\)\{[\s\S]*?state\.caseReviewed=false/);
   assert.doesNotMatch(html, /fetch\(["']https?:\/\//i);
   assert.doesNotMatch(html, /\b(?:localStorage|sessionStorage|indexedDB)\b/i);
   assert.doesNotMatch(html, /\b(?:XMLHttpRequest|WebSocket)\b/i);
