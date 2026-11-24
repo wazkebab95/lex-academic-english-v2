@@ -405,6 +405,7 @@
         <button class="fex-filter-btn active" onclick="filterPlacements('all', this)">Global View</button>
         <button class="fex-filter-btn" onclick="filterPlacements('europe', this)">UK & Europe</button>
         <button class="fex-filter-btn" onclick="filterPlacements('americas-oceania', this)">USA & Australia</button>
+        <button class="fex-filter-btn" onclick="filterPlacements('asia', this)">Asia</button>
       </div>
       <span class="fex-zoom-hint">Scroll or pinch map to zoom into cities</span>
     </div>
@@ -426,11 +427,11 @@
       </aside>
     </div>
 
-    <!-- Verified Alumni Cohort Ledger (Last Names Only) -->
+    <!-- Student & Alumni Location Ledger -->
     <section class="fex-ledger-box">
       <div class="fex-ledger-header">
-        <h2>Verified Alumni Placement Ledger</h2>
-        <span>Target Achieved • Overseas Enrolment</span>
+        <h2>Student & Alumni Location Register</h2>
+        <span>IELTS Learners • Alumni • International Locations</span>
       </div>
       <div class="fex-roll-grid" id="fex-alumni-grid"></div>
     </section>
@@ -536,6 +537,15 @@
         countLabel: "European Hub • The Netherlands",
         pathway: "Dutch English-Taught Programmes",
         notes: "Targeted academic writing and seminar fluency coaching for university entry in the Netherlands."
+      },
+      {
+        location: "China",
+        coords: [35.8617, 104.1954],
+        region: "asia",
+        alumni: "Ugur",
+        countLabel: "IELTS Learner • China",
+        pathway: "IELTS Academic Preparation",
+        notes: "Ugur is an IELTS learner based in China."
       }
     ];
 
@@ -554,7 +564,8 @@
       { name: "Aras", destination: "United States" },
       { name: "Aslan", destination: "Lithuania" },
       { name: "Mercan", destination: "Germany" },
-      { name: "Alwafi", destination: "Australia" }
+      { name: "Alwafi", destination: "Australia" },
+      { name: "Ugur", destination: "China" }
     ];
 
     const rollGrid = document.getElementById('fex-alumni-grid');
