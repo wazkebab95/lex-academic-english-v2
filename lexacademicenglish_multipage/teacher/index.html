@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instructor Ledger — Fex Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-canvas: #FAF9F6;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F2EFE9;
+      --ink-primary: #1A1A1A;
+      --ink-secondary: #525252;
+      --ink-muted: #767676;
+      --accent-blue: #3B5B8C;
+      --accent-blue-soft: #EBF0F7;
+      --border-hairline: #E5E2DC;
+      --status-green: #2E6F40;
+      --status-green-bg: #EAF4EC;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--ink-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-hairline);
+      background: var(--bg-canvas);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.15rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--ink-primary);
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.65rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-tag {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent-blue);
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      background: var(--accent-blue-soft);
+      border-radius: 2px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .nav-link {
+      color: var(--ink-secondary);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .nav-link:hover { color: var(--ink-primary); }
+
+    .btn {
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.55rem 1rem;
+      border-radius: 3px;
+      border: 1px solid var(--ink-primary);
+      background: var(--ink-primary);
+      color: #FFFFFF;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover { background: #333333; }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--ink-primary);
+      border-color: var(--border-hairline);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--ink-primary);
+      background: var(--bg-subtle);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    .editorial-header {
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+
+    .editorial-header h1 {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .editorial-sub {
+      color: var(--ink-secondary);
+      font-size: 0.92rem;
+      margin-top: 0.35rem;
+    }
+
+    .meta-pill {
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
+      padding: 0.4rem 0.85rem;
+      border-radius: 3px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.25rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      padding: 1.35rem 1.5rem;
+      border-radius: 3px;
+    }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--ink-muted);
+      margin-bottom: 0.45rem;
+    }
+
+    .kpi-value {
+      font-family: var(--font-serif);
+      font-size: 2.15rem;
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--ink-primary);
+    }
+
+    .kpi-foot {
+      font-size: 0.78rem;
+      color: var(--accent-blue);
+      margin-top: 0.4rem;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-hairline);
+      margin-bottom: 1.5rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--ink-secondary);
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-surface);
+      border-color: var(--border-hairline);
+      color: var(--ink-primary);
+    }
+
+    .search-input {
+      padding: 0.5rem 0.85rem;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
+      border-radius: 3px;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      min-width: 260px;
+      color: var(--ink-primary);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+    }
+
+    .ledger-wrap {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 3px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    th {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+      font-weight: 600;
+      padding: 0.9rem 1.15rem;
+      border-bottom: 1px solid var(--border-hairline);
+      background: var(--bg-subtle);
+    }
+
+    td {
+      padding: 1rem 1.15rem;
+      border-bottom: 1px solid var(--border-hairline);
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #FCFBFA; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 2px;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-writing {
+      background: var(--accent-blue-soft);
+      color: var(--accent-blue);
+    }
+
+    .badge-ielts {
+      background: var(--status-green-bg);
+      color: var(--status-green);
+    }
+
+    .student-name { font-weight: 600; color: var(--ink-primary); }
+    .student-email { font-size: 0.78rem; color: var(--ink-muted); }
+
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 26, 26, 0.35);
+      display: none;
+      justify-content: flex-end;
+      z-index: 50;
+    }
+
+    .drawer-backdrop.open { display: flex; }
+
+    .drawer {
+      width: 100%;
+      max-width: 640px;
+      background: var(--bg-canvas);
+      height: 100%;
+      overflow-y: auto;
+      padding: 2rem;
+      border-left: 1px solid var(--border-hairline);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-hairline);
+      padding-bottom: 1rem;
+    }
+
+    .drawer-title {
+      font-family: var(--font-serif);
+      font-size: 1.75rem;
+      line-height: 1.2;
+    }
+
+    .essay-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      padding: 1.5rem;
+      border-radius: 3px;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      color: var(--ink-primary);
+    }
+
+    .empty-state {
+      padding: 3rem 1.5rem;
+      text-align: center;
+      color: var(--ink-muted);
+      font-size: 0.92rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-inner">
+      <a href="/" class="brand">
+        <span class="brand-title">Fex Studio</span>
+        <span class="brand-tag">Instructor Ledger</span>
+      </a>
+      <div class="nav-actions">
+        <a href="/students/writing/" class="nav-link">Writing Lab →</a>
+        <a href="/outcomes.html" class="nav-link">Outcomes</a>
+        <button id="refreshBtn" class="btn btn-outline" type="button">Sync Ledger</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="editorial-header">
+      <div>
+        <h1>Academic Activity & Writing Ledger</h1>
+        <p class="editorial-sub">Live synchronisation with Google Sheets · lexacademicenglish.co.uk</p>
+      </div>
+      <div id="syncStatus" class="meta-pill">Connecting to ledger…</div>
+    </section>
+
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Logged Entries</div>
+        <div class="kpi-value" id="kpiTotal">—</div>
+        <div class="kpi-foot">Combined IELTS & Writing</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Writing Submissions</div>
+        <div class="kpi-value" id="kpiWriting">—</div>
+        <div class="kpi-foot">Task 1 & Task 2 scripts</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Practice & Diagnostic Logs</div>
+        <div class="kpi-value" id="kpiIelts">—</div>
+        <div class="kpi-foot">Portal assessments</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg. Writing Length</div>
+        <div class="kpi-value" id="kpiAvgWords">—</div>
+        <div class="kpi-foot">Words per submission</div>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="tabs" role="tablist">
+        <button class="tab-btn active" data-filter="all" type="button">All Activity</button>
+        <button class="tab-btn" data-filter="writing" type="button">Writing Lab</button>
+        <button class="tab-btn" data-filter="ielts" type="button">IELTS & Portal</button>
+      </div>
+      <input
+        type="search"
+        id="searchInput"
+        class="search-input"
+        placeholder="Filter by student, email, or prompt..."
+      />
+    </section>
+
+    <section class="ledger-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Student</th>
+            <th>Stream</th>
+            <th>Task / Module</th>
+            <th>Metric</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="ledgerBody">
+          <tr>
+            <td colspan="6" class="empty-state">Loading student records from Google Sheets…</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true">
+    <aside class="drawer">
+      <div class="drawer-header">
+        <div>
+          <span id="drawerTag" class="badge badge-writing">Task 2</span>
+          <h2 id="drawerTitle" class="drawer-title" style="margin-top:0.5rem;">Student Submission</h2>
+          <p id="drawerMeta" class="student-email" style="margin-top:0.25rem;"></p>
+        </div>
+        <button id="closeDrawerBtn" class="btn btn-outline" type="button">Close</button>
+      </div>
+      <div id="drawerPrompt" style="font-size:0.88rem; color:var(--ink-secondary); background:var(--bg-subtle); padding:1rem; border-radius:3px;"></div>
+      <div id="drawerEssay" class="essay-box"></div>
+      <div style="display:flex; gap:0.75rem; justify-content:flex-end;">
+        <button id="copyEssayBtn" class="btn" type="button">Copy Script for Marking</button>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    let allRecords = [];
+    let activeFilter = 'all';
+
+    const ledgerBody = document.getElementById('ledgerBody');
+    const searchInput = document.getElementById('searchInput');
+    const syncStatus = document.getElementById('syncStatus');
+
+    function formatDate(isoStr) {
+      if (!isoStr) return '—';
+      const d = new Date(isoStr);
+      if (isNaN(d.getTime())) return String(isoStr);
+      return d.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function normaliseRecords(data) {
+      const writing = (data.writingSubmissions || []).map(item => ({
+        stream: 'writing',
+        timestamp: item['Timestamp'] || '',
+        id: item['Submission ID'] || '',
+        studentName: item['Student Name'] || 'Anonymous',
+        studentEmail: item['Student Email'] || '',
+        title: `${item['Task Type'] || 'Writing'}: ${item['Prompt Title'] || 'Untitled Prompt'}`,
+        promptTitle: item['Prompt Title'] || '',
+        taskType: item['Task Type'] || 'Writing',
+        metric: `${item['Word Count'] || 0} words (${item['Time Spent'] || 'Untimed'})`,
+        wordCount: Number(item['Word Count'] || 0),
+        fullText: item['Essay Text'] || ''
+      }));
+
+      const ielts = (data.ieltsResults || []).map(item => {
+        const ts = item['Timestamp'] || '';
+        const name = item['Student Name'] || 'Student';
+        const email = item['Student Email'] || '';
+        const category = item['Category'] || item['Diagnostic Focus'] || 'Portal Assessment';
+        const rawScore = item['Raw Score'] || '';
+        const band = item['Band Estimate'] || '';
+        const timeTaken = item['Time Taken'] || '';
+        const metricParts = [rawScore, band, timeTaken].filter(Boolean);
+
+        const bodySections = [];
+        if (item['Diagnostic Focus']) bodySections.push(`Diagnostic Focus:\n${item['Diagnostic Focus']}`);
+        if (item['Automated Feedback & Advice']) bodySections.push(`Automated Feedback:\n${item['Automated Feedback & Advice']}`);
+        if (item['Detailed Responses']) bodySections.push(`Detailed Responses:\n${item['Detailed Responses']}`);
+        if (item['Instructor Extra Note']) bodySections.push(`Instructor Note:\n${item['Instructor Extra Note']}`);
+
+        return {
+          stream: 'ielts',
+          timestamp: ts,
+          id: `ROW-${item._row || ''}`,
+          studentName: name,
+          studentEmail: email,
+          title: category,
+          promptTitle: category,
+          taskType: band || 'Assessment',
+          metric: metricParts.join(' · ') || 'Logged',
+          wordCount: 0,
+          fullText: bodySections.join('\n\n---\n\n') || 'No additional details recorded.'
+        };
+      });
+
+      return [...writing, ...ielts].sort((a, b) => {
+        const da = new Date(a.timestamp).getTime() || 0;
+        const db = new Date(b.timestamp).getTime() || 0;
+        return db - da;
+      });
+    }
+
+    function updateKPIs(records) {
+      const writing = records.filter(r => r.stream === 'writing');
+      const ielts = records.filter(r => r.stream === 'ielts');
+      const totalWords = writing.reduce((sum, r) => sum + r.wordCount, 0);
+      const avgWords = writing.length ? Math.round(totalWords / writing.length) : 0;
+
+      document.getElementById('kpiTotal').textContent = records.length;
+      document.getElementById('kpiWriting').textContent = writing.length;
+      document.getElementById('kpiIelts').textContent = ielts.length;
+      document.getElementById('kpiAvgWords').textContent = writing.length ? `${avgWords}w` : '—';
+    }
+
+    function renderTable() {
+      const query = searchInput.value.trim().toLowerCase();
+      const filtered = allRecords.filter(rec => {
+        const matchesTab = activeFilter === 'all' || rec.stream === activeFilter;
+        const matchesQuery =
+          !query ||
+          rec.studentName.toLowerCase().includes(query) ||
+          rec.studentEmail.toLowerCase().includes(query) ||
+          rec.title.toLowerCase().includes(query);
+        return matchesTab && matchesQuery;
+      });
+
+      if (!filtered.length) {
+        ledgerBody.innerHTML = `<tr><td colspan="6" class="empty-state">No matching records found.</td></tr>`;
+        return;
+      }
+
+      ledgerBody.innerHTML = filtered
+        .map(
+          (rec, idx) => `
+          <tr>
+            <td style="white-space:nowrap; font-size:0.82rem; color:var(--ink-secondary);">
+              ${formatDate(rec.timestamp)}
+            </td>
+            <td>
+              <div class="student-name">${rec.studentName}</div>
+              <div class="student-email">${rec.studentEmail || '—'}</div>
+            </td>
+            <td>
+              <span class="badge ${rec.stream === 'writing' ? 'badge-writing' : 'badge-ielts'}">
+                ${rec.stream === 'writing' ? 'Writing Lab' : 'IELTS Portal'}
+              </span>
+            </td>
+            <td style="max-width:320px;">${rec.title}</td>
+            <td style="font-weight:500;">${rec.metric}</td>
+            <td>
+              <button class="btn btn-outline" type="button" onclick="openDrawer(${idx})">
+                Inspect
+              </button>
+            </td>
+          </tr>
+        `
+        )
+        .join('');
+
+      window.__filteredRecords = filtered;
+    }
+
+    function openDrawer(filteredIdx) {
+      const rec = window.__filteredRecords[filteredIdx];
+      if (!rec) return;
+
+      document.getElementById('drawerTag').textContent = rec.taskType;
+      document.getElementById('drawerTitle').textContent = `${rec.studentName} (${rec.id})`;
+      document.getElementById('drawerMeta').textContent = `${rec.studentEmail} · ${formatDate(rec.timestamp)} · ${rec.metric}`;
+      document.getElementById('drawerPrompt').textContent = rec.title;
+      document.getElementById('drawerEssay').textContent = rec.fullText || 'No text body recorded.';
+      document.getElementById('drawerBackdrop').classList.add('open');
+    }
+
+    document.getElementById('closeDrawerBtn').addEventListener('click', () => {
+      document.getElementById('drawerBackdrop').classList.remove('open');
+    });
+
+    document.getElementById('drawerBackdrop').addEventListener('click', (e) => {
+      if (e.target.id === 'drawerBackdrop') {
+        document.getElementById('drawerBackdrop').classList.remove('open');
+      }
+    });
+
+    document.getElementById('copyEssayBtn').addEventListener('click', async () => {
+      const text = document.getElementById('drawerEssay').textContent;
+      await navigator.clipboard.writeText(text);
+      const btn = document.getElementById('copyEssayBtn');
+      btn.textContent = 'Copied to Clipboard';
+      setTimeout(() => (btn.textContent = 'Copy Script for Marking'), 1800);
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.dataset.filter;
+        renderTable();
+      });
+    });
+
+    searchInput.addEventListener('input', renderTable);
+
+    async function loadLedger() {
+      syncStatus.textContent = 'Syncing with Google Sheets…';
+      try {
+        const res = await fetch('/api/teacher-data');
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || 'Error loading ledger');
+
+        allRecords = normaliseRecords(data);
+        updateKPIs(allRecords);
+        renderTable();
+
+        const timeLabel = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        syncStatus.textContent = `Synced at ${timeLabel} · ${data.instructor}`;
+      } catch (err) {
+        syncStatus.textContent = `Sync error: ${err.message}`;
+        ledgerBody.innerHTML = `<tr><td colspan="6" class="empty-state">Could not connect to Google Sheets: ${err.message}</td></tr>`;
+      }
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', loadLedger);
+    loadLedger();
+  </script>
+</body>
+</html>
