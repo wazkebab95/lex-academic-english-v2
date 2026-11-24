@@ -1,0 +1,30 @@
+name: Retail learning-path QA
+
+on:
+  push:
+    branches:
+      - feature/lex-practice-learning-path-integration
+    paths:
+      - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
+      - "scripts/verify-retail-learning-path.mjs"
+      - ".github/workflows/retail-learning-path-qa.yml"
+  pull_request:
+    paths:
+      - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
+      - "scripts/verify-retail-learning-path.mjs"
+      - ".github/workflows/retail-learning-path-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Verify learning-path content and safeguards
+        run: node scripts/verify-retail-learning-path.mjs

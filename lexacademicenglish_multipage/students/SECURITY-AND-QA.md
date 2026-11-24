@@ -2,12 +2,38 @@
 
 ## Current state
 
-The student pages are a prototype and the repository contains multiple staged Retail learning-path changes.
+The Retail programme includes a standalone five-module learning path at:
 
-- Static HTML pages do not create student accounts or teacher permissions.
-- Browser storage and page memory are not server-side access control or a teacher dashboard.
-- Do not enter real student personal data, sensitive work information or confidential employer data into an unapproved preview.
-- Cloudflare Access, Pages Functions and D1 require separate configuration and testing; code in a branch does not mean those services are configured.
+`/students/retail/learning-path/`
+
+The learning path contains:
+
+| Module | Format | Scored questions |
+|---|---|---:|
+| Retail vocabulary | Interactive quiz with instant explanations | 6 |
+| Business grammar | Interactive quiz with instant explanations | 6 |
+| Professional communication | Scenario quiz with instant explanations | 5 |
+| Retail case study | Written response and self-review checklist | Not graded |
+| Comprehensive assessment | Mixed interactive quiz | 10 |
+| **Total** | **Four scored modules** | **27** |
+
+The case study is deliberately not represented as an automatically graded result. Combined accuracy uses attempted questions from the four scored modules only.
+
+The learner profile offers optional level and role settings. These are session-only context fields; they do not establish a formal CEFR level or alter the question bank. The learner's actual level, job responsibilities and priorities still need to be confirmed before individual personalisation.
+
+### Data handling in the new learning path
+
+- Answers, profile settings and written case-study text remain in page memory only.
+- The page does not call an API, submit results or use browser storage.
+- The page does not load external scripts or styles.
+- Refreshing or closing the page clears the session.
+- No student name, email address or employer information is requested by this page.
+
+The existing Retail foundation page and other legacy student pages remain separate. They have their own form and browser-storage behaviour and must not be assumed to inherit the new page's data-handling properties.
+
+Static HTML pages do not create student accounts or teacher permissions. Browser storage and page memory are not server-side access control or a teacher dashboard.
+
+Do not enter real student personal data, sensitive work information or confidential employer data into an unapproved preview.
 
 ## Agreed access boundary
 
@@ -26,12 +52,14 @@ The implementation guide is [Fex Practice — full student-area Cloudflare Acces
 ## Identity and role separation
 
 ### Student access
+
 - Use an approved identity provider and an explicit student allowlist or tightly managed group.
 - Do not use broad domain-wide access unless every identity in that domain is intended to be a student.
 - No Bypass/public policy for student routes; unmatched visitors must be denied.
 - Keep preview access separate from production access.
 
 ### Teacher access
+
 - Reserve `/students/teacher` and `/students/teacher/*` for a future teacher workspace.
 - When implemented, protect those exact and descendant paths with a more-specific teacher Access application and a teacher-only identity policy.
 - Verify teacher authority server-side for every teacher API request. Access authentication proves identity, not teaching authority.
@@ -42,13 +70,31 @@ The teacher dashboard design contract is documented separately. The teacher UI, 
 
 ## Cloudflare Pages preview
 
+The intended source path is:
+
+`lexacademicenglish_multipage/students/retail/learning-path/index.html`
+
+The repository does not contain a `wrangler.toml`, `wrangler.json`, `wrangler.jsonc`, package manifest or checked-in Pages build workflow that independently confirms the Cloudflare Pages output directory. Verify the Cloudflare Pages project settings before testing the route. If the configured output directory is `lexacademicenglish_multipage`, the expected route is `/students/retail/learning-path/`.
+
+For each non-production branch:
+
+1. Wait for Cloudflare Pages to finish the preview deployment.
+2. Open the preview hostname with `/students/retail/learning-path/` appended.
+3. Confirm the page returns successfully and all styles and controls render.
+4. Test the five modules, feedback, Back/Continue, retry, results and reset.
+5. Test at a narrow mobile viewport and a desktop viewport.
+6. Keep preview access separate from production access.
+
 Preview deployments and `pages.dev` hostnames are separate from the production custom domain. Protect and test them separately. Do not assume a production Access application secures previews, or vice versa. Restrict previews to maintainers/testers until student testing is deliberately approved.
+
+A preview URL is not authentication. A route that is difficult to guess is not authentication either.
 
 ## API and data requirements
 
 Access page protection is not a substitute for server-side API authentication.
 
 Before accepting real student submissions or saving progress:
+
 1. Verify the Access JWT signature, exact issuer, expected audience, expiry and not-before where present on every private API request.
 2. Derive identity from the verified JWT; never trust identity fields supplied by the browser.
 3. Enforce student record ownership server-side and test that one student cannot read or change another student's records.
@@ -58,9 +104,12 @@ Before accepting real student submissions or saving progress:
 7. Define consent, data minimisation, retention and deletion before collecting real student work.
 8. Do not alter the public IELTS submission endpoint without a separate compatibility review.
 
+Cloudflare Access, Pages Functions and D1 require separate configuration and testing; code in a branch does not mean those services are configured.
+
 ## Manual QA checklist
 
 ### Public and student route access
+
 - [ ] Public homepage remains accessible while signed out.
 - [ ] `/students` is blocked when signed out and allowed for an approved student.
 - [ ] `/students/` is blocked when signed out and allowed for an approved student.
@@ -71,18 +120,36 @@ Before accepting real student submissions or saving progress:
 - [ ] Routes outside `/students/` preserve their intended public behaviour.
 - [ ] Preview and production hostnames have separate, tested policies.
 
+### Learning experience
+
+- [ ] `/students/retail/` displays a clear link to the five-module learning path.
+- [ ] `/students/retail/learning-path/` loads from the Cloudflare preview.
+- [ ] The learning path's brand link returns to the Retail foundation page.
+- [ ] Vocabulary contains 6 questions.
+- [ ] Business grammar contains 6 questions.
+- [ ] Professional communication contains 5 scenarios.
+- [ ] Comprehensive assessment contains 10 questions.
+- [ ] Every scored question has a valid answer and a non-empty explanation.
+- [ ] Selecting an answer shows immediate correct/incorrect feedback and its explanation.
+- [ ] Back, Continue, retry and next-module controls work.
+- [ ] Module scores and completion status update correctly.
+- [ ] Results distinguish attempted questions from unanswered questions.
+- [ ] Combined accuracy uses scored quiz questions only.
+- [ ] Case-study completion is self-reviewed and is not presented as a numeric mark.
+- [ ] Reset clears the current in-memory session.
+- [ ] Layout works at mobile and desktop widths.
+- [ ] Keyboard focus is visible and controls are operable with a keyboard.
+- [ ] No console errors occur during a complete learning session.
+
 ### Teacher boundary
+
 - [ ] Student identities cannot access the teacher route or teacher APIs.
 - [ ] Only approved teacher identities can access teacher routes once implemented.
 - [ ] Teacher API authorisation is checked server-side on every request.
 - [ ] A client-supplied role, email or student identifier cannot grant access.
 
-### Learning experience
-- [ ] All learning modules, navigation, answer feedback, scoring and reset behaviour work.
-- [ ] Case-study completion is not represented as an automatically assessed mark.
-- [ ] Mobile, desktop, keyboard navigation and error/empty states are tested.
-
 ### API and privacy
+
 - [ ] Missing, invalid, expired, wrong-issuer and wrong-audience tokens are rejected.
 - [ ] One student cannot read or modify another student's data.
 - [ ] Oversized and malformed requests are rejected.
@@ -93,3 +160,15 @@ Before accepting real student submissions or saving progress:
 ## Release gate
 
 Do not distribute student links or collect real student work until the preview route matrix, API identity checks and data-isolation tests pass. Do not merge release changes, alter production Cloudflare settings, change DNS/hosting or deploy to production without explicit approval.
+
+## Automated regression check
+
+Run the dependency-free QA script from the repository root:
+
+`node scripts/verify-retail-learning-path.mjs`
+
+The script checks the five-module structure and question counts, answer-key/explanation integrity, duplicate and unresolved DOM IDs, inline-script syntax (without executing it), external dependency absence, browser-storage/network/unsafe HTML sink absence, and basic accessibility hooks.
+
+GitHub Actions runs this check on pull requests that touch the learning path or its test script.
+
+This static check is not a substitute for manual interaction testing on real mobile and desktop browsers or for Cloudflare Access testing.
