@@ -172,3 +172,18 @@ The script checks the five-module structure and question counts, answer-key/expl
 GitHub Actions runs this check on pull requests that touch the learning path or its test script.
 
 This static check is not a substitute for manual interaction testing on real mobile and desktop browsers or for Cloudflare Access testing.
+
+
+## Printable results report
+
+The results view includes a **Print / Save PDF** action for a learner who wants to keep a copy or bring it to a tutorial.
+
+- It uses the browser's native print dialog; no API call, upload or browser storage is used.
+- The print layout shows the results summary, module scores, completion status and report date.
+- Written case-study responses are explicitly excluded from the printable report.
+- The report contains no student name, email address or employer information.
+- The browser's “Save as PDF” option can be used to create a local copy.
+
+## Retail Access configuration runbook
+
+For the detailed manual setup and route-testing checklist, see [docs/LEX-PRACTICE-RETAIL-ACCESS.md](../../docs/LEX-PRACTICE-RETAIL-ACCESS.md). This runbook does not change Cloudflare configuration and is not a substitute for server-side API authentication.
