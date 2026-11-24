@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IELTS Academic Writing Studio — Fex Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-canvas: #FAF9F6;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F2EFE9;
+      --ink-primary: #1A1A1A;
+      --ink-secondary: #4A4A4A;
+      --ink-muted: #767676;
+      --accent-blue: #3B5B8C;
+      --accent-blue-soft: #EBF0F7;
+      --border-hairline: #E5E2DC;
+      --status-green: #2E6F40;
+      --status-green-bg: #EAF4EC;
+      --status-warn: #8A5A00;
+      --status-warn-bg: #FDF5E6;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg-canvas);
+      color: var(--ink-primary);
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-hairline);
+      background: var(--bg-canvas);
+    }
+
+    .nav-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 1.1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      text-decoration: none;
+      color: var(--ink-primary);
+      display: flex;
+      align-items: baseline;
+      gap: 0.7rem;
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+
+    .brand-tag {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent-blue);
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      background: var(--accent-blue-soft);
+      border-radius: 2px;
+    }
+
+    .studio-grid {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .studio-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 3px;
+      padding: 1.5rem;
+    }
+
+    .panel-title {
+      font-family: var(--font-serif);
+      font-size: 1.55rem;
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .task-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .task-btn {
+      padding: 0.6rem;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-canvas);
+      font-family: var(--font-sans);
+      font-size: 0.84rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 3px;
+      color: var(--ink-secondary);
+    }
+
+    .task-btn.active {
+      background: var(--ink-primary);
+      color: #FFFFFF;
+      border-color: var(--ink-primary);
+    }
+
+    label {
+      display: block;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    select, input[type="text"], input[type="email"] {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-canvas);
+      border-radius: 3px;
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      color: var(--ink-primary);
+      margin-bottom: 1.1rem;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      background: #FFFFFF;
+    }
+
+    .prompt-card {
+      background: var(--bg-subtle);
+      border-left: 3px solid var(--accent-blue);
+      padding: 1rem 1.1rem;
+      font-size: 0.9rem;
+      color: var(--ink-primary);
+      margin-bottom: 1.25rem;
+      line-height: 1.65;
+    }
+
+    .rubric-note {
+      font-size: 0.8rem;
+      color: var(--ink-secondary);
+      border-top: 1px solid var(--border-hairline);
+      padding-top: 1rem;
+    }
+
+    .rubric-note li {
+      margin-left: 1.1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    /* Editor Column */
+    .editor-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .metrics-strip {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.84rem;
+    }
+
+    .word-pill {
+      padding: 0.25rem 0.65rem;
+      border-radius: 2px;
+      font-weight: 600;
+      background: var(--status-warn-bg);
+      color: var(--status-warn);
+    }
+
+    .word-pill.target-met {
+      background: var(--status-green-bg);
+      color: var(--status-green);
+    }
+
+    .timer-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-variant-numeric: tabular-nums;
+      font-size: 0.85rem;
+    }
+
+    .btn-sm {
+      padding: 0.35rem 0.7rem;
+      font-size: 0.78rem;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-canvas);
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .btn-sm:hover { border-color: var(--ink-primary); }
+
+    .candidate-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .candidate-row { grid-template-columns: 1fr; }
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 410px;
+      padding: 1.25rem;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-canvas);
+      border-radius: 3px;
+      font-family: var(--font-sans);
+      font-size: 0.98rem;
+      line-height: 1.8;
+      color: var(--ink-primary);
+      resize: vertical;
+    }
+
+    .editor-footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1.15rem;
+    }
+
+    .autosave-note {
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+    }
+
+    .submit-btn {
+      background: var(--ink-primary);
+      color: #FFFFFF;
+      border: 1px solid var(--ink-primary);
+      padding: 0.75rem 1.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .status-banner {
+      margin-top: 1rem;
+      padding: 0.9rem 1.1rem;
+      border-radius: 3px;
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    .status-banner.success {
+      display: block;
+      background: var(--status-green-bg);
+      color: var(--status-green);
+      border: 1px solid #C6E2CC;
+    }
+
+    .status-banner.error {
+      display: block;
+      background: #FDECEA;
+      color: #992B2B;
+      border: 1px solid #F5C6C2;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-inner">
+      <a href="/" class="brand">
+        <span class="brand-title">Fex Studio</span>
+        <span class="brand-tag">Academic Writing Lab</span>
+      </a>
+      <a href="/" style="font-size:0.85rem; color:var(--ink-secondary); text-decoration:none;">
+        ← Back to Portal
+      </a>
+    </div>
+  </header>
+
+  <main class="studio-grid">
+    <!-- Left Column: Prompt & Band Descriptors -->
+    <aside class="panel">
+      <h1 class="panel-title">IELTS Writing Task</h1>
+      <p style="font-size:0.84rem; color:var(--ink-secondary); margin-bottom:1.1rem;">
+        Select an examination task below. Your script is logged directly to your instructor ledger and emailed upon submission.
+      </p>
+
+      <div class="task-switch">
+        <button type="button" class="task-btn active" data-task="Task 1">Task 1 (150w)</button>
+        <button type="button" class="task-btn" data-task="Task 2">Task 2 (250w)</button>
+      </div>
+
+      <label for="promptSelect">Examination Prompt</label>
+      <select id="promptSelect"></select>
+
+      <div id="promptText" class="prompt-card"></div>
+
+      <div class="rubric-note">
+        <strong style="display:block; margin-bottom:0.4rem; color:var(--ink-primary);">Examiner Assessment Criteria</strong>
+        <ul>
+          <li><strong>Task Achievement / Response:</strong> Clear overview (Task 1) or fully developed position (Task 2).</li>
+          <li><strong>Coherence & Cohesion:</strong> Logical paragraphing and varied cohesive devices.</li>
+          <li><strong>Lexical Resource:</strong> Precise academic collocations and low-frequency vocabulary.</li>
+          <li><strong>Grammatical Range:</strong> Error-free complex clauses and accurate punctuation.</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Right Column: Candidate Editor -->
+    <section class="panel">
+      <div class="editor-topbar">
+        <div class="metrics-strip">
+          <span id="wordBadge" class="word-pill">0 / 150 words</span>
+          <span id="paraCount" style="color:var(--ink-muted);">0 paragraphs</span>
+        </div>
+
+        <div class="timer-box">
+          <span id="timerDisplay" style="font-weight:600;">20:00</span>
+          <button type="button" id="toggleTimerBtn" class="btn-sm">Start Timer</button>
+          <button type="button" id="resetTimerBtn" class="btn-sm">Reset</button>
+        </div>
+      </div>
+
+      <form id="writingForm">
+        <div class="candidate-row">
+          <div>
+            <label for="studentName">Candidate Full Name</label>
+            <input type="text" id="studentName" required placeholder="e.g. Emre Yılmaz" />
+          </div>
+          <div>
+            <label for="studentEmail">Email Address (for receipt)</label>
+            <input type="email" id="studentEmail" required placeholder="candidate@example.com" />
+          </div>
+        </div>
+
+        <label for="essayText">Your Response</label>
+        <textarea
+          id="essayText"
+          required
+          spellcheck="false"
+          placeholder="Begin drafting your response here. Spellcheck is disabled to simulate official computer-delivered IELTS conditions..."
+        ></textarea>
+
+        <div class="editor-footer">
+          <span id="autosaveStatus" class="autosave-note">Draft saved locally in browser.</span>
+          <button type="submit" id="submitBtn" class="submit-btn">Submit Script for Review</button>
+        </div>
+
+        <div id="statusBanner" class="status-banner"></div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const PROMPTS = {
+      'Task 1': [
+        {
+          title: 'Renewable Electricity Generation in Four European Nations (2005–2025)',
+          body: 'The line graph compares the percentage of total electricity generated from renewable sources in Germany, Spain, Sweden, and the United Kingdom between 2005 and 2025. Summarise the information by selecting and reporting the main features, and make comparisons where relevant. Write at least 150 words.'
+        },
+        {
+          title: 'Urban Water Purification & Desalination Process',
+          body: 'The diagram illustrates the stages involved in converting seawater into potable municipal water using reverse osmosis. Summarise the information by selecting and reporting the main features, and make comparisons where relevant. Write at least 150 words.'
+        },
+        {
+          title: 'University Library Floor Plan Redevelopment',
+          body: 'The two plans show the layout of a university library in 2010 and its redesigned configuration in 2026 following digital modernisation. Summarise the information by selecting and reporting the main features, and make comparisons where relevant. Write at least 150 words.'
+        }
+      ],
+      'Task 2': [
+        {
+          title: 'Automation & High-Skilled Employment',
+          body: 'Rapid advances in artificial intelligence are increasingly automating analytical and white-collar professions rather than manual labour alone. To what extent do you agree or disagree that governments should tax automated systems to fund universal retraining programmes? Write at least 250 words.'
+        },
+        {
+          title: 'Public Funding for Pure Scientific Research vs. Immediate Social Needs',
+          body: 'Some people argue that governments should allocate funding exclusively to scientific research with immediate practical benefits, while others believe pure theoretical research is equally vital. Discuss both views and give your own opinion. Write at least 250 words.'
+        },
+        {
+          title: 'High-Density Vertical Cities vs. Suburban Expansion',
+          body: 'As urban populations continue to expand, many cities are prioritising high-density vertical housing over suburban development. What are the primary advantages and disadvantages of this trend? Write at least 250 words.'
+        }
+      ]
+    };
+
+    let currentTask = 'Task 1';
+    let targetWords = 150;
+    let defaultSeconds = 20 * 60;
+    let remainingSeconds = defaultSeconds;
+    let timerInterval = null;
+    let elapsedSeconds = 0;
+
+    const promptSelect = document.getElementById('promptSelect');
+    const promptText = document.getElementById('promptText');
+    const essayText = document.getElementById('essayText');
+    const wordBadge = document.getElementById('wordBadge');
+    const paraCount = document.getElementById('paraCount');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const toggleTimerBtn = document.getElementById('toggleTimerBtn');
+    const statusBanner = document.getElementById('statusBanner');
+
+    function populatePrompts(task) {
+      promptSelect.innerHTML = PROMPTS[task]
+        .map((p, idx) => `<option value="${idx}">${p.title}</option>`)
+        .join('');
+      renderSelectedPrompt();
+    }
+
+    function renderSelectedPrompt() {
+      const item = PROMPTS[currentTask][Number(promptSelect.value) || 0];
+      promptText.textContent = item.body;
+    }
+
+    function updateWordMetrics() {
+      const raw = essayText.value.trim();
+      const words = raw ? raw.split(/\s+/).filter(Boolean).length : 0;
+      const paras = raw ? raw.split(/\n+/).filter(p => p.trim().length > 0).length : 0;
+
+      wordBadge.textContent = `${words} / ${targetWords} words`;
+      wordBadge.classList.toggle('target-met', words >= targetWords);
+      paraCount.textContent = `${paras} paragraph${paras === 1 ? '' : 's'}`;
+
+      localStorage.setItem(
+        'fex_writing_draft_v1',
+        JSON.stringify({
+          task: currentTask,
+          promptIdx: promptSelect.value,
+          studentName: document.getElementById('studentName').value,
+          studentEmail: document.getElementById('studentEmail').value,
+          essayText: essayText.value
+        })
+      );
+    }
+
+    function formatTimer(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      toggleTimerBtn.textContent = 'Start Timer';
+      defaultSeconds = currentTask === 'Task 1' ? 20 * 60 : 40 * 60;
+      remainingSeconds = defaultSeconds;
+      elapsedSeconds = 0;
+      timerDisplay.textContent = formatTimer(remainingSeconds);
+    }
+
+    toggleTimerBtn.addEventListener('click', () => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        toggleTimerBtn.textContent = 'Resume Timer';
+      } else {
+        toggleTimerBtn.textContent = 'Pause';
+        timerInterval = setInterval(() => {
+          elapsedSeconds += 1;
+          if (remainingSeconds > 0) {
+            remainingSeconds -= 1;
+            timerDisplay.textContent = formatTimer(remainingSeconds);
+          }
+        }, 1000);
+      }
+    });
+
+    document.getElementById('resetTimerBtn').addEventListener('click', resetTimer);
+
+    document.querySelectorAll('.task-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.task-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTask = btn.dataset.task;
+        targetWords = currentTask === 'Task 1' ? 150 : 250;
+        populatePrompts(currentTask);
+        resetTimer();
+        updateWordMetrics();
+      });
+    });
+
+    promptSelect.addEventListener('change', renderSelectedPrompt);
+    essayText.addEventListener('input', updateWordMetrics);
+
+    // Restore autosaved draft if present
+    (function restoreDraft() {
+      try {
+        const saved = JSON.parse(localStorage.getItem('fex_writing_draft_v1') || 'null');
+        if (saved) {
+          if (saved.task && PROMPTS[saved.task]) {
+            currentTask = saved.task;
+            targetWords = currentTask === 'Task 1' ? 150 : 250;
+            document.querySelectorAll('.task-btn').forEach(b => {
+              b.classList.toggle('active', b.dataset.task === currentTask);
+            });
+          }
+          populatePrompts(currentTask);
+          if (saved.promptIdx) promptSelect.value = saved.promptIdx;
+          renderSelectedPrompt();
+          if (saved.studentName) document.getElementById('studentName').value = saved.studentName;
+          if (saved.studentEmail) document.getElementById('studentEmail').value = saved.studentEmail;
+          if (saved.essayText) essayText.value = saved.essayText;
+        } else {
+          populatePrompts(currentTask);
+        }
+      } catch {
+        populatePrompts(currentTask);
+      }
+      resetTimer();
+      updateWordMetrics();
+    })();
+
+    document.getElementById('writingForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting Script…';
+      statusBanner.className = 'status-banner';
+
+      const selectedPrompt = PROMPTS[currentTask][Number(promptSelect.value) || 0];
+      const timeSpent =
+        elapsedSeconds > 0
+          ? `${Math.floor(elapsedSeconds / 60)}m ${elapsedSeconds % 60}s`
+          : 'Untimed';
+
+      try {
+        const res = await fetch('/api/submit-writing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studentName: document.getElementById('studentName').value.trim(),
+            studentEmail: document.getElementById('studentEmail').value.trim(),
+            taskType: currentTask,
+            promptTitle: selectedPrompt.title,
+            essayText: essayText.value.trim(),
+            timeSpent
+          })
+        });
+
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || 'Submission error');
+
+        statusBanner.className = 'status-banner success';
+        statusBanner.textContent = `Submitted successfully (Reference: ${data.submissionId} · ${data.wordCount} words). A copy has been dispatched to your email and logged in the Fex Studio ledger.`;
+        localStorage.removeItem('fex_writing_draft_v1');
+      } catch (err) {
+        statusBanner.className = 'status-banner error';
+        statusBanner.textContent = `Submission failed: ${err.message}`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Script for Review';
+      }
+    });
+  </script>
+</body>
+</html>
