@@ -298,7 +298,10 @@
       options.body=JSON.stringify(payload);
     }
     var response=await fetch("/students/retail/api/progress",options);
-    var data=await response.json().catch(function(){return {};});
+    var responseType=response.headers.get("Content-Type")||"";
+    if(!/application\/json/i.test(responseType))throw new Error("The progress endpoint did not return JSON. Complete the Cloudflare Access sign-in and try again.");
+    var data;
+    try{data=await response.json();}catch(error){throw new Error("The progress endpoint returned an unreadable response. Please try again.");}
     if(!response.ok){
       if(response.status===401)throw new Error("Cloudflare Access did not authenticate this request. Sign in with the authorised student account.");
       if(response.status===503)throw new Error("Account sync is not configured yet. Your current page-session work has not been uploaded.");
@@ -321,6 +324,7 @@
     });
     state.answers=restored;
     state.caseReviewed=progress.caseReviewed===true;
+    document.querySelectorAll(".case-check").forEach(function(check){check.checked=state.caseReviewed;});
     updateProgress();
     renderOverview();
   }
