@@ -259,7 +259,16 @@
     byId("case-complete").textContent=state.caseReviewed?"Review marked complete":"Mark case study reviewed";
     byId("case-complete").disabled=!state.caseReviewed&&!Array.from(document.querySelectorAll(".case-check")).every(function(c){return c.checked;});
   }
-  document.querySelectorAll(".case-check").forEach(function(check){check.addEventListener("change",function(){byId("case-complete").disabled=!Array.from(document.querySelectorAll(".case-check")).every(function(c){return c.checked;});});});
+  document.querySelectorAll(".case-check").forEach(function(check){check.addEventListener("change",function(){
+    var allChecked=Array.from(document.querySelectorAll(".case-check")).every(function(c){return c.checked;});
+    if(!allChecked){
+      state.caseReviewed=false;
+      byId("case-status").textContent="Review checklist again";
+      byId("case-complete").textContent="Mark case study reviewed";
+    }
+    byId("case-complete").disabled=!allChecked;
+    updateProgress();
+  });});
   byId("case-complete").addEventListener("click",function(){if(!Array.from(document.querySelectorAll(".case-check")).every(function(c){return c.checked;}))return;state.caseReviewed=true;byId("case-status").textContent="Self-review completed";byId("live-status").textContent="Case study marked as self-reviewed. No automatic mark was assigned.";updateProgress();});
   function renderResults(){
     showView("results-view");
