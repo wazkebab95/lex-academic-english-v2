@@ -52,13 +52,26 @@ Also test the apex and www hostnames, redirects, browser refreshes, direct deep 
 
 ## D. Access is not API authentication
 
-Protecting static pages does not make a submission endpoint or another origin private. Before collecting student work or providing teacher-visible results:
+Protecting static pages does not by itself authenticate an API request. The staged Retail progress route is:
 
-- Create a dedicated Retail submission endpoint rather than reusing the public IELTS endpoint.
-- Validate the Cloudflare Access JWT server-side, including signature, issuer and the endpoint's audience (AUD); do not trust client-side checks or email text supplied by a form.
-- Enforce size limits, validation and rate limits; keep secrets in Cloudflare environment secrets.
-- Enforce student record ownership server-side if accounts or stored progress are added.
-- Define retention and deletion rules and collect only necessary information.
+- Page: /students/retail/learning-path/
+- API: /students/retail/api/progress
+- Pages Function: functions/students/retail/api/progress.js
+
+The API verifies the Cloudflare Access JWT signature, issuer, audience, expiry and optional not-before claim on the server. It derives the record owner from the verified token subject, not from request JSON. The Access application for /students/retail/* must cover this nested API path, and the exact parent /students/retail must also be protected.
+
+The API stores only answer indexes and the case-study self-review flag in a dedicated D1 table. It does not accept written responses, names, email addresses, employer information, profile selections or client-supplied scores. The learner can load, save or delete their own record. A teacher dashboard is not yet implemented.
+
+Before enabling real student progress storage:
+
+- Configure the dedicated D1 binding named RETAIL_PROGRESS_DB.
+- Set ACCESS_TEAM_DOMAIN and ACCESS_AUD for the exact preview or production Access application.
+- Apply migrations/0001_retail_student_progress.sql to the dedicated database.
+- Add a Cloudflare rate-limit rule for the progress route.
+- Define retention and deletion policy; the first version has no automatic expiry.
+- Test signed-out, unauthorised, authorised and second-student isolation cases against the actual Cloudflare deployment.
+
+See docs/LEX-PRACTICE-RETAIL-PROGRESS-SYNC.md for the setup sequence. No Access application, D1 database, binding or environment variable has been configured by this code change.
 
 ## E. Rollback
 
