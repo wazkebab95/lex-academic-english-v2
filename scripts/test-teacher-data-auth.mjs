@@ -121,9 +121,11 @@ test("rejects tokens with a future not-before time", async () => {
 
 test("rejects tampered JWT signatures", async () => {
   const token = await makeToken();
-  const replacement = token.endsWith("A") ? "B" : "A";
-  const tampered = token.slice(0, -1) + replacement;
-  const result = await invoke({ token: tampered });
+  const parts = token.split(".");
+  const signature = Buffer.from(parts[2].replace(/-/g, "+").replace(/_/g, "/"), "base64");
+  signature[0] ^= 0x01;
+  parts[2] = base64url(signature);
+  const result = await invoke({ token: parts.join(".") });
   assert.equal(result.status, 401);
   assert.ok(!result.calls.some(url => url.startsWith("https://script.example.test/")));
 });
