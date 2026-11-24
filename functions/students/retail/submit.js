@@ -35,7 +35,12 @@ function decodeJsonSegment(value) {
 function normaliseTeamOrigin(value) {
   const input = String(value || "").trim();
   if (!input) throw new HttpError(503, "Retail authentication is not configured.");
-  const url = new URL(/^https:\/\//i.test(input) ? input : "https://" + input);
+  let url;
+  try {
+    url = new URL(/^https:\/\//i.test(input) ? input : "https://" + input);
+  } catch {
+    throw new HttpError(503, "Retail authentication is not configured.");
+  }
   if (url.protocol !== "https:" || url.pathname !== "/" || url.search || url.hash || url.username || url.password) {
     throw new HttpError(503, "Retail authentication is not configured.");
   }
@@ -95,7 +100,9 @@ async function verifyAccessIdentity(request, env) {
   const jwk = Array.isArray(jwks.keys)
     ? jwks.keys.find(key => key.kid === header.kid && key.kty === "RSA")
     : null;
-  if (!jwk) throw new HttpError(401, "The student sign-in could not be verified.");
+  if (!jwk || (jwk.use && jwk.use !== "sig") || (jwk.alg && jwk.alg !== "RS256")) {
+    throw new HttpError(401, "The student sign-in could not be verified.");
+  }
 
   let validSignature = false;
   try {
@@ -176,6 +183,10 @@ export async function onRequestPost({ request, env }) {
     }
 
     const identity = await verifyAccessIdentity(request, env);
+
+    if (payload.consentToSubmit !== true) {
+      throw new HttpError(400, "Confirm that you agree to send the assessment score to your tutor.");
+    }
 
     const correct = payload.correct;
     const total = payload.total;
