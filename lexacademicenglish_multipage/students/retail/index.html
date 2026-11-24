@@ -175,7 +175,7 @@
         </div>
         <div class="p-6 rounded-2xl bg-white/75 backdrop-blur-sm border border-[#2A5A84]/15">
           <p class="font-editorial text-xl leading-snug text-[#1C1C1C] mb-3">
-            “Automated post-submission coaching diagnostics delivered directly to your inbox within 15 minutes.”
+            “Tutor-reviewed feedback on submitted work, arranged through your agreed learning plan.”
           </p>
           <span class="text-[11px] uppercase tracking-widest font-bold text-[#2A5A84]">Module 05 · Executive Assessment</span>
         </div>
@@ -246,7 +246,7 @@
 
     <!-- Action Bar -->
     <div class="flex flex-wrap items-center justify-between gap-4">
-      <button id="retail-clear-btn" type="button" class="btn-outline-studio">Clear Local Draft</button>
+      <button id="retail-clear-btn" type="button" class="btn-outline-studio">Clear Written Response</button>
       <button id="retail-submit-btn" type="button" class="btn-slate px-8 py-3.5">
         Submit Fex Retail Assessment →
       </button>
@@ -277,7 +277,7 @@
     const writingConsentEl = document.getElementById('retail-writing-consent');
 
     function updateWordCount() {
-      const count = essayEl.value.trim() ? essayEl.value.trim().split(/\\s+/).length : 0;
+      const count = essayEl.value.trim() ? essayEl.value.trim().split(/\s+/).length : 0;
       wordCounterEl.textContent = `${count} words (Target: 120–180)`;
     }
 
