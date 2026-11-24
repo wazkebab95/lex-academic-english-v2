@@ -245,9 +245,10 @@ await check("unsupported HTTP methods are rejected", async () => {
 });
 
 await check("JWKS retrieval failures fail closed", async () => {
-  const token = await makeToken();
+  const unavailableIssuer = "https://unavailable.cloudflareaccess.com";
+  const token = await makeToken({ iss: unavailableIssuer });
   const result = await call("GET", token, undefined, {
-    env: { ACCESS_TEAM_DOMAIN: "https://unavailable.cloudflareaccess.com" }
+    env: { ACCESS_TEAM_DOMAIN: unavailableIssuer }
   });
   assert.equal(result.response.status, 503);
 });
