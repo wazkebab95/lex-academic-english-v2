@@ -183,7 +183,7 @@
           category: taskMeta.title,
           prompt: taskMeta.prompt,
           essay: essayText,
-          submissionId: crypto.randomUUID(),
+          submissionId: pendingSubmissionId || (pendingSubmissionId = crypto.randomUUID()),
           score: `${words} words`,
           bandEstimate: 'Pending Instructor Review',
           timeTaken
@@ -195,6 +195,7 @@
         return;
       }
 
+      pendingSubmissionId = null;
       LexIelts.recordCompletion('writing', `Submitted · ${words} words`);
 
       document.getElementById('workspace-view').style.display = 'none';
