@@ -34,3 +34,10 @@ test("dashboard does not invent course completion or review states", () => {
   assert.doesNotMatch(page, /Needs review|Completed modules|Average progress/);
   assert.match(page, /summary derived from recorded learner activity/i);
 });
+
+
+test("failed refresh preserves the last successful sync state and records", () => {
+  assert.ok(page.includes("dataset.lastSynced"));
+  assert.ok(page.includes("last successfully loaded records remain visible"));
+  assert.ok(page.includes("Refresh failed · showing last successful data"));
+});
