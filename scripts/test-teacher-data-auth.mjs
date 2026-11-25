@@ -47,7 +47,7 @@ const env = {
   GOOGLE_SHEET_WEBHOOK_URL: "https://script.example.test/exec"
 };
 
-async function invoke({ token, claims, settings = {}, upstreamStatus = 200, identityHeader } = {}) {
+async function invoke({ token, claims, settings = {}, upstreamStatus = 200, upstreamResponses, identityHeader } = {}) {
   const originalFetch = globalThis.fetch;
   const calls = [];
   globalThis.fetch = async (input) => {
@@ -57,11 +57,15 @@ async function invoke({ token, claims, settings = {}, upstreamStatus = 200, iden
       return new Response(JSON.stringify({ keys: [publicJwk] }), { status: 200 });
     }
     if (url.startsWith("https://script.example.test/exec")) {
+      const next = upstreamResponses?.shift();
+      if (next instanceof Error) throw next;
+      if (next === "invalid-json") return new Response("<html>temporary error</html>", { status: 200 });
+      if (next === "invalid-shape") return new Response(JSON.stringify({ ok: true }), { status: 200 });
       return new Response(JSON.stringify({
         generatedAt: "2026-01-01T00:00:00.000Z",
         ieltsResults: [],
         writingSubmissions: []
-      }), { status: upstreamStatus });
+      }), { status: next?.status || upstreamStatus });
     }
     throw new Error("Unexpected outbound request");
   };
@@ -157,4 +161,29 @@ test("does not expose upstream failure details", async () => {
   const result = await invoke({ upstreamStatus: 503 });
   assert.equal(result.status, 502);
   assert.deepEqual(result.body, { ok: false, error: "Teacher data is temporarily unavailable." });
+});
+
+
+test("retries a transient Google Sheets 503 and then succeeds", async () => {
+  const result = await invoke({ upstreamResponses: [{ status: 503 }, { status: 200 }] });
+  assert.equal(result.status, 200);
+  assert.equal(result.calls.filter(url => url.startsWith("https://script.example.test/")).length, 2);
+});
+
+test("retries a temporary network failure and then succeeds", async () => {
+  const result = await invoke({ upstreamResponses: [new Error("network unavailable"), { status: 200 }] });
+  assert.equal(result.status, 200);
+  assert.equal(result.calls.filter(url => url.startsWith("https://script.example.test/")).length, 2);
+});
+
+test("retries malformed or incomplete Google Sheets payloads", async () => {
+  const result = await invoke({ upstreamResponses: ["invalid-json", "invalid-shape", { status: 200 }] });
+  assert.equal(result.status, 200);
+  assert.equal(result.calls.filter(url => url.startsWith("https://script.example.test/")).length, 3);
+});
+
+test("stops after three failed Google Sheets attempts", async () => {
+  const result = await invoke({ upstreamResponses: [{ status: 503 }, { status: 503 }, { status: 503 }] });
+  assert.equal(result.status, 502);
+  assert.equal(result.calls.filter(url => url.startsWith("https://script.example.test/")).length, 3);
 });

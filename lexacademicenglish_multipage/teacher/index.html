@@ -187,9 +187,15 @@
         el('kpiWriting').textContent=state.records.filter(r=>r.stream==='writing').length;el('kpiAssessments').textContent=state.records.filter(r=>r.stream==='assessment').length;
         const synced=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
         el('syncStatus').textContent='Synced '+synced+' · '+text(data.instructor,'Teacher account');
+        el('syncStatus').dataset.lastSynced=synced;
         if(!state.records.length){el('notice').textContent='Your secure connection is working, but no learner activity was returned by the connected data source.';el('notice').className='notice show info';}
         render();
-      }catch(error){showError(error.message||'A network error prevented the dashboard from loading.');el('syncStatus').textContent='Dashboard unavailable';}
+      }catch(error){
+        const message=error.message||'A network error prevented the dashboard from loading.';
+        const hasLoaded=Boolean(el('syncStatus').dataset.lastSynced);
+        showError(hasLoaded?message+' The last successfully loaded records remain visible.':message);
+        el('syncStatus').textContent=hasLoaded?'Refresh failed · showing last successful data':'Dashboard unavailable';
+      }
       finally{refresh.disabled=false;refresh.textContent='Refresh data';}
     }
     document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>setView(tab.dataset.view)));

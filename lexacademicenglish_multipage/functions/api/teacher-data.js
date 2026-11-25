@@ -147,6 +147,59 @@ async function verifyTeacherIdentity(request, env) {
   return { email };
 }
 
+async function fetchTeacherSheetData(webhookUrl) {
+  const maxAttempts = 3;
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    try {
+      const response = await fetch(webhookUrl, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+        signal: controller.signal
+      });
+
+      if (!response.ok) {
+        if (response.status !== 429 && response.status < 500) {
+          throw new AuthError(502, "Teacher data is temporarily unavailable.");
+        }
+        lastError = new Error("Temporary Google Sheets response: " + response.status);
+      } else {
+        let data;
+        try {
+          data = await response.json();
+        } catch {
+          lastError = new Error("Google Sheets returned unreadable data.");
+        }
+        if (data !== undefined) {
+          if (
+            !data || typeof data !== "object" || Array.isArray(data) ||
+            !Array.isArray(data.ieltsResults) ||
+            !Array.isArray(data.writingSubmissions)
+          ) {
+            lastError = new Error("Google Sheets returned an invalid dashboard payload.");
+          } else {
+            return data;
+          }
+        }
+      }
+    } catch (error) {
+      if (error instanceof AuthError) throw error;
+      lastError = error;
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    if (attempt < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 200 * (2 ** (attempt - 1))));
+    }
+  }
+
+  throw new AuthError(502, "Teacher data is temporarily unavailable.");
+}
+
 export async function onRequestGet({ request, env }) {
   try {
     const identity = await verifyTeacherIdentity(request, env);
@@ -163,23 +216,7 @@ export async function onRequestGet({ request, env }) {
     }
     webhookUrl.searchParams.set("action", "teacher_dashboard");
 
-    let sheetResponse;
-    try {
-      sheetResponse = await fetch(webhookUrl.toString(), {
-        method: "GET",
-        headers: { Accept: "application/json" }
-      });
-    } catch {
-      throw new AuthError(502, "Teacher data is temporarily unavailable.");
-    }
-    if (!sheetResponse.ok) throw new AuthError(502, "Teacher data is temporarily unavailable.");
-
-    let data;
-    try {
-      data = await sheetResponse.json();
-    } catch {
-      throw new AuthError(502, "Teacher data is temporarily unavailable.");
-    }
+    const data = await fetchTeacherSheetData(webhookUrl.toString());
 
     let learnerProgress = [];
     let vocabularyReviews = [];
