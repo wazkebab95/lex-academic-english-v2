@@ -175,19 +175,24 @@
         </div>
       `;
 
+      let submission;
       try {
-        await LexIelts.submitAssessment({
+        submission = await LexIelts.submitAssessment({
           studentName,
           studentEmail,
           category: taskMeta.title,
+          prompt: taskMeta.prompt,
+          essay: essayText,
+          submissionId: crypto.randomUUID(),
           score: `${words} words`,
           bandEstimate: 'Pending Instructor Review',
-          timeTaken,
-          detailsHtml,
-          detailsPlain: `[${words} words] ${essayText}`
+          timeTaken
         });
       } catch (e) {
-        console.warn('Webhook warning:', e);
+        const resEl = document.getElementById('results-view');
+        resEl.style.display = 'block';
+        resEl.textContent = `Your response has not been confirmed as saved. ${e.message}`;
+        return;
       }
 
       LexIelts.recordCompletion('writing', `Submitted · ${words} words`);
@@ -199,7 +204,7 @@
         <div class="diagnostic-banner">
           <strong>Essay Submitted & Logged</strong><br />
           Candidate: ${studentName}  ·  Task: <strong>${taskMeta.title}</strong>  ·  Word Count: <strong>${words} words</strong>  ·  Time: ${timeTaken}<br />
-          <span style="font-size: 13px;">A timestamped copy of your script has been sent to <strong>${studentEmail}</strong> and delivered to your instructor for Band descriptor feedback.</span>
+          <span style="font-size: 13px;">Your response is stored in your private Fex learner record. Reference: <strong>${submission.submissionId}</strong>. Your instructor can review it in the Teacher Dashboard.</span>
         </div>
         <div class="question-card">
           <div class="q-header"><span>SUBMITTED SCRIPT</span><span>${words} WORDS</span></div>
