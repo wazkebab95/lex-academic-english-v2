@@ -197,7 +197,7 @@ async function fetchTeacherSheetData(webhookUrl) {
     }
   }
 
-  throw new AuthError(502, "Teacher data is temporarily unavailable. Please try refreshing again shortly.");
+  throw new AuthError(502, "Teacher data is temporarily unavailable.");
 }
 
 export async function onRequestGet({ request, env }) {
