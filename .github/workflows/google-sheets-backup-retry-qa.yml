@@ -1,0 +1,24 @@
+name: Google Sheets backup retry QA
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "functions/api/retry-google-sheets-backups.js"
+      - "lexacademicenglish_multipage/functions/api/retry-google-sheets-backups.js"
+      - "migrations/0004_fex_backup_retry_state.sql"
+      - "apps-script/Code.gs"
+      - "scripts/test-google-sheets-backup-retry.mjs"
+      - ".github/workflows/fex-google-sheets-backup-retry.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Test retry infrastructure safeguards
+        run: node --test scripts/test-google-sheets-backup-retry.mjs
