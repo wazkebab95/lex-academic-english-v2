@@ -43,7 +43,8 @@ function fakeDb() {
             if (!exists) submissions.set(id,{submission_id:id,learner_id:statement.values[1],submission_type:statement.values[3],prompt:statement.values[5],response_text:statement.values[6],metadata_json:statement.values[11],backup_status:"pending"});
             return { meta:{changes:exists?0:1} };
           }
-          if (sql.includes("UPDATE student_submissions SET backup_status")) { const row=submissions.get(statement.values[3]); if(row){row.backup_status=statement.values[0];row.backup_synced_at=statement.values[1];row.backup_error=statement.values[2];} }\n          return { meta:{changes:1} };
+          if (sql.includes("UPDATE student_submissions SET backup_status")) { const row=submissions.get(statement.values[3]); if(row){row.backup_status=statement.values[0];row.backup_synced_at=statement.values[1];row.backup_error=statement.values[2];} }
+          return { meta:{changes:1} };
         },
         async first() {
           calls.push(sql);
@@ -85,7 +86,8 @@ test("rejects a supplied email that differs from the verified Access identity", 
 });
 test("stores the complete writing response in the learner-scoped D1 record", async () => {
   const db=fakeDb();
-  const sheetCalls=[];\n  const r=await invoke({db,sheetCalls,settings:{GOOGLE_SHEET_WEBHOOK_URL:"https://script.google.test/exec"},payload:{type:"writing",submissionId:"submission-1234",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"A writing prompt",essayText:"This is the full student response.",timeSpent:"12m 4s"}});
+  const sheetCalls=[];
+  const r=await invoke({db,sheetCalls,settings:{GOOGLE_SHEET_WEBHOOK_URL:"https://script.google.test/exec"},payload:{type:"writing",submissionId:"submission-1234",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"A writing prompt",essayText:"This is the full student response.",timeSpent:"12m 4s"}});
   assert.equal(r.status,200); assert.equal(r.body.recorded,true); assert.equal(r.body.submissionId,"submission-1234"); assert.equal(r.body.backupStatus,"synced"); assert.equal(sheetCalls.length,1); assert.equal(sheetCalls[0].action,"log_writing"); assert.equal(sheetCalls[0].submissionId,"submission-1234");
   const saved=db.submissions.get("submission-1234");
   assert.ok(saved); assert.equal(saved.submission_type,"writing"); assert.equal(saved.response_text,"This is the full student response."); assert.equal(saved.backup_status,"synced");
@@ -111,7 +113,11 @@ test("migration defines durable submission content and learner-scoped indexes", 
   assert.match(sql,/CREATE TABLE IF NOT EXISTS student_submissions/);
   assert.match(sql,/response_text TEXT NOT NULL/);
   assert.match(sql,/REFERENCES learners\(learner_id\)/);
-  assert.match(sql,/idx_student_submissions_learner/);\n  const backup=readFileSync("migrations/0003_fex_google_sheets_backup.sql","utf8");\n  assert.match(backup,/backup_status/);\n  assert.match(backup,/backup_synced_at/);\n  assert.match(backup,/backup_error/);
+  assert.match(sql,/idx_student_submissions_learner/);
+  const backup=readFileSync("migrations/0003_fex_google_sheets_backup.sql","utf8");
+  assert.match(backup,/backup_status/);
+  assert.match(backup,/backup_synced_at/);
+  assert.match(backup,/backup_error/);
 });
 
 test("Writing and IELTS pages use the protected D1 endpoint and their scripts parse", () => {
@@ -137,11 +143,14 @@ test("Writing and IELTS pages use the protected D1 endpoint and their scripts pa
 
 test("keeps the D1 record when the Google Sheets backup is unavailable", async () => {
   const db=fakeDb();
-  const sheetCalls=[];\n  const r=await invoke({db,sheetCalls,settings:{GOOGLE_SHEET_WEBHOOK_URL:"https://script.google.test/exec"},sheetStatus:503,
+  const sheetCalls=[];
+  const r=await invoke({db,sheetCalls,settings:{GOOGLE_SHEET_WEBHOOK_URL:"https://script.google.test/exec"},sheetStatus:503,
     payload:{type:"ielts",submissionId:"ielts-12345678",studentName:"Learner",studentEmail:email,category:"IELTS diagnostic",prompt:"Question set",essay:"A complete IELTS response."}});
   assert.equal(r.status,200);
   assert.equal(r.body.recorded,true);
-  assert.equal(r.body.backupStatus,"failed");\n  assert.equal(sheetCalls[0].submissionId,"ielts-12345678");\n  assert.match(sheetCalls[0].details,/A complete IELTS response/);
+  assert.equal(r.body.backupStatus,"failed");
+  assert.equal(sheetCalls[0].submissionId,"ielts-12345678");
+  assert.match(sheetCalls[0].details,/A complete IELTS response/);
   assert.equal(db.submissions.get("ielts-12345678").response_text,"A complete IELTS response.");
   assert.equal(db.submissions.get("ielts-12345678").backup_status,"failed");
 });
