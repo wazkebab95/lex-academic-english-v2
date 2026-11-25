@@ -31,7 +31,7 @@ test("teacher dashboard exposes a separate individual progress view and feedback
 });
 
 test("teacher dashboard inline JavaScript parses",()=>{
- const scripts=[...page.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match=>match[1]).filter(code=>code.trim());
+ const scripts=[...dashboard.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match=>match[1]).filter(code=>code.trim());
   assert.ok(scripts.length>0);
   for(const code of scripts)new vm.Script(code,{filename:"teacher-dashboard-inline.js"});
 });
