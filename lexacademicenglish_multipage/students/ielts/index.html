@@ -235,7 +235,52 @@
     // Word Counter
     const essayBox = document.getElementById('essay-response');
     const wordCounter = document.getElementById('word-counter');
+    const draftKey = 'fex_ielts_submission_draft_v1';
+    const submissionKey = 'fex_ielts_pending_submission_id';
+    function saveIeltsDraft() {
+      try {
+        const answers = {};
+        questions.forEach(q => {
+          const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+          if (selected) answers[q.id] = selected.value;
+        });
+        sessionStorage.setItem(draftKey, JSON.stringify({
+          studentName: nameInput.value,
+          studentEmail: emailInput.value,
+          targetBand: document.getElementById('target-band').value,
+          essay: essayBox.value,
+          answers
+        }));
+      } catch (error) {
+        console.warn('IELTS draft could not be saved in this browser session.', error);
+      }
+    }
+    try {
+      const savedDraft = JSON.parse(sessionStorage.getItem(draftKey) || 'null');
+      if (savedDraft) {
+        if (savedDraft.studentName) nameInput.value = savedDraft.studentName;
+        if (savedDraft.studentEmail) emailInput.value = savedDraft.studentEmail;
+        if (savedDraft.targetBand) document.getElementById('target-band').value = savedDraft.targetBand;
+        if (typeof savedDraft.essay === 'string') essayBox.value = savedDraft.essay;
+        questions.forEach(q => {
+          const value = savedDraft.answers && savedDraft.answers[q.id];
+          if (value !== undefined) {
+            const option = document.querySelector(`input[name="${q.id}"][value="${value}"]`);
+            if (option) option.checked = true;
+          }
+        });
+      }
+      pendingSubmissionId = sessionStorage.getItem(submissionKey) || null;
+    } catch (error) {
+      console.warn('IELTS draft could not be restored in this browser session.', error);
+    }
+    [nameInput, emailInput, document.getElementById('target-band')].forEach(field => {
+      field.addEventListener('input', saveIeltsDraft);
+      field.addEventListener('change', saveIeltsDraft);
+    });
+    document.querySelectorAll('#diagnostic-questions input').forEach(input => input.addEventListener('change', saveIeltsDraft));
     essayBox.addEventListener('input', () => {
+      saveIeltsDraft();
       const words = essayBox.value.trim() ? essayBox.value.trim().split(/\s+/).length : 0;
       wordCounter.textContent = `${words} words (Target: 250+)`;
     });
@@ -251,6 +296,12 @@
       if (!studentName || !studentEmail) {
         statusBox.classList.remove('hidden');
         statusBox.innerHTML = '<p class="text-sm font-semibold text-red-700">Please enter your name and registered email address before submitting.</p>';
+        return;
+      }
+      if (!essayText) {
+        statusBox.classList.remove('hidden');
+        statusBox.innerHTML = '<p class="text-sm font-semibold text-red-700">Please write your IELTS response before submitting. Your diagnostic answers have not been sent yet.</p>';
+        essayBox.focus();
         return;
       }
 
@@ -282,6 +333,11 @@
       const btn = document.getElementById('submit-workspace-btn');
       btn.disabled = true;
       btn.textContent = 'Logging Submission...';
+      try {
+        sessionStorage.setItem(submissionKey, pendingSubmissionId || crypto.randomUUID());
+        pendingSubmissionId = sessionStorage.getItem(submissionKey);
+        saveIeltsDraft();
+      } catch { /* Submission still proceeds if session storage is unavailable. */ }
 
       try {
         const response = await fetch('/students/api/submissions', {
@@ -304,7 +360,13 @@
         });
 
         statusBox.classList.remove('hidden');
-        const result = await response.json();
+        let result;
+        const responseText = await response.text();
+        try {
+          result = JSON.parse(responseText);
+        } catch {
+          throw new Error(`The submission service returned an unexpected response (HTTP ${response.status}). Your answers remain in this page; please try again shortly.`);
+        }
         if (response.ok && result.ok) {
           statusBox.innerHTML = `
             <p class="text-xs uppercase tracking-widest text-emerald-700 font-bold mb-1">Submission Recorded · Score ${scoreText}</p>
@@ -314,16 +376,20 @@
             </p>
           `;
           pendingSubmissionId = null;
+          try {
+            sessionStorage.removeItem(submissionKey);
+            sessionStorage.removeItem(draftKey);
+          } catch { /* Session storage may be unavailable. */ }
         } else {
           throw new Error(result.error || 'Your submission could not be saved.');
         }
       } catch (err) {
         statusBox.classList.remove('hidden');
+        const safeMessage = String(err && err.message ? err.message : 'An unexpected submission error occurred.');
         statusBox.innerHTML = `
           <p class="text-xs uppercase tracking-widest font-bold mb-1">Submission Not Confirmed · Score ${scoreText}</p>
-          <p class="text-sm text-[#5E5D5A]">
-            Your response has not been confirmed as saved. Please retry after checking your connection.
-          </p>
+          <p class="text-sm text-[#5E5D5A]">${safeMessage.replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}</p>
+          <p class="text-sm text-[#5E5D5A] mt-2">Your answers and essay remain on this page. Do not close or refresh it until the submission is confirmed.</p>
         `;
       } finally {
         btn.disabled = false;
