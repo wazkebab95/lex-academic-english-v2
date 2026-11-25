@@ -34,3 +34,7 @@ The current student Access hostname pattern `www.lexacademicenglish.co.uk/studen
 - The five-module Retail answer key is versioned in the API. If curriculum questions or answer order change, update the API answer key and regression tests in the same change.
 - Student progress is a learning record, not a certified result. The teacher should review written work separately.
 - No D1 database, Cloudflare binding, Access policy, production secret or live deployment has been created or changed by this PR.
+
+## Visual design requirement
+
+All new student and teacher progress screens must extend the existing Fex Practice visual system rather than introduce a new theme. Preserve the existing Inter body typography and established heading typography, the current navy/blue/gold palette, paper and white surfaces, border and shadow treatments, rounded controls, spacing scale, navigation patterns and responsive behaviour. Reuse the existing page templates and CSS tokens from the Retail learning path and teacher dashboard wherever possible. Any new component must look native to the existing platform; do not introduce replacement fonts, unrelated colours, a new header/footer system or a redesign.
