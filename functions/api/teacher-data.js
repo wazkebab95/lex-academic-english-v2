@@ -183,9 +183,9 @@ export async function onRequestGet({ request, env }) {
         try {
           const legacyUrl = new URL(env.GOOGLE_SHEET_WEBHOOK_URL);
           legacyUrl.searchParams.set("action", "teacher_dashboard");
-          for (let attempt = 0; attempt < 3 && !legacyData; attempt++) {
+          for (let attempt = 0; attempt < 2 && !legacyData; attempt++) {
             const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 6000);
+            const timeout = setTimeout(() => controller.abort(), 2500);
             try {
               const legacyResponse = await fetch(legacyUrl.toString(), {
                 method: "GET", headers: { Accept: "application/json" }, signal: controller.signal
@@ -197,7 +197,7 @@ export async function onRequestGet({ request, env }) {
               }
             } catch { /* D1 remains authoritative if the legacy archive is unavailable. */ }
             finally { clearTimeout(timeout); }
-            if (!legacyData && attempt < 2) await new Promise(resolve => setTimeout(resolve, 200 * (2 ** attempt)));
+            if (!legacyData && attempt < 1) await new Promise(resolve => setTimeout(resolve, 150));
           }
         } catch { /* An invalid legacy URL must not interrupt D1 dashboard reads. */ }
       }
