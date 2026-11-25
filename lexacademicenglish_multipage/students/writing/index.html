@@ -427,6 +427,7 @@
       ]
     };
 
+    let pendingSubmissionId = null;
     let currentTask = 'Task 1';
     let targetWords = 150;
     let defaultSeconds = 20 * 60;
@@ -543,7 +544,7 @@
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
             type: 'writing',
-            submissionId: crypto.randomUUID(),
+            submissionId: pendingSubmissionId || (pendingSubmissionId = crypto.randomUUID()),
             studentName: document.getElementById('studentName').value.trim(),
             studentEmail: document.getElementById('studentEmail').value.trim(),
             taskType: currentTask,
@@ -558,6 +559,7 @@
 
         statusBanner.className = 'status-banner success';
         statusBanner.textContent = `Your script has been saved to your private Fex record (Reference: ${data.submissionId} · ${data.wordCount} words). ${data.instructorNotified ? 'Your instructor has also been notified by email.' : 'Your instructor can review it directly in the Teacher Dashboard.'}`;
+        pendingSubmissionId = null;
         essayText.value = '';
         updateWordMetrics();
       } catch (err) {
