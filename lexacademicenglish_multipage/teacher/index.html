@@ -186,7 +186,8 @@
         el('kpiStudents').textContent=state.learners.length;el('kpiTotal').textContent=state.records.length;
         el('kpiWriting').textContent=state.records.filter(r=>r.stream==='writing').length;el('kpiAssessments').textContent=state.records.filter(r=>r.stream==='assessment').length;
         const synced=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-        const sourceLabel=data.dataSource==='fex_d1'?'Fex database':data.dataSource==='legacy_sheets'?'Legacy Google Sheets':'Teacher records';\n        el('syncStatus').textContent='Loaded '+synced+' · '+sourceLabel+' · '+text(data.instructor,'Teacher account');
+        const sourceLabel=data.dataSource==='fex_d1'?'Fex database':data.dataSource==='legacy_sheets'?'Legacy Google Sheets':'Teacher records';
+        el('syncStatus').textContent='Loaded '+synced+' · '+sourceLabel+' · '+text(data.instructor,'Teacher account');
         if(!state.records.length){el('notice').textContent='Your secure connection is working, but no learner activity was returned by the connected data source.';el('notice').className='notice show info';}
         render();
       }catch(error){showError(error.message||'A network error prevented the dashboard from loading.');el('syncStatus').textContent='Dashboard unavailable';}
