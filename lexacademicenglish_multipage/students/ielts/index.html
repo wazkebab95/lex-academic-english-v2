@@ -49,7 +49,7 @@
         Diagnostic & Writing Studio
       </h1>
       <p class="text-sm sm:text-base text-[#5E5D5A] max-w-2xl leading-relaxed">
-        Complete Part 1 (Syntactic & Lexical Diagnostic) and Part 2 (Timed Writing Submission). Your responses are logged automatically and a tailored British English review is dispatched to your inbox within 15 minutes.
+        Complete Part 1 (Syntactic & Lexical Diagnostic) and Part 2 (Timed Writing Submission). Your responses are saved securely to your private Fex learner record for your instructor to review.
       </p>
     </div>
 
@@ -239,7 +239,7 @@
       wordCounter.textContent = `${words} words (Target: 250+)`;
     });
 
-    // Submit to Cloudflare Pages Function (/api/submit-ielts)
+    // Submit directly to the authenticated Fex learner record
     document.getElementById('submit-workspace-btn').addEventListener('click', async () => {
       const studentName = nameInput.value.trim();
       const studentEmail = emailInput.value.trim();
@@ -280,38 +280,43 @@
       btn.textContent = 'Logging Submission...';
 
       try {
-        const response = await fetch('/api/submit-ielts', {
+        const response = await fetch('/students/api/submissions', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
-            name: studentName,
-            email: studentEmail,
-            module: `IELTS Studio (${targetBand})`,
+            type: 'ielts',
+            submissionId: crypto.randomUUID(),
+            studentName,
+            studentEmail,
+            category: `IELTS Studio (${targetBand})`,
             score: scoreText,
-            wordCount: wordCount,
-            missedTopics: missedTopics.join(', ') || 'None — Full Marks',
+            bandEstimate: 'Diagnostic score',
+            timeTaken: 'Untimed',
+            prompt: 'Some policymakers argue that public funding should prioritise scientific research over the arts and humanities. To what extent do you agree or disagree with this view?',
             essay: essayText
           })
         });
 
         statusBox.classList.remove('hidden');
-        if (response.ok) {
+        const result = await response.json();
+        if (response.ok && result.ok) {
           statusBox.innerHTML = `
             <p class="text-xs uppercase tracking-widest text-emerald-700 font-bold mb-1">Submission Recorded · Score ${scoreText}</p>
-            <h3 class="font-editorial text-2xl font-medium mb-2">Diagnostic Logged & Feedback Queued</h3>
+            <h3 class="font-editorial text-2xl font-medium mb-2">Diagnostic Saved to Your Learner Record</h3>
             <p class="text-sm text-[#5E5D5A]">
-              Thank you, <strong>${studentName}</strong>. Your diagnostic score (${scoreText}) and writing response (${wordCount} words) have been recorded. A personalised British English feedback report will arrive at <strong>${studentEmail}</strong> within 15 minutes.
+              Thank you, <strong>${studentName}</strong>. Your diagnostic score (${scoreText}) and writing response (${wordCount} words) have been recorded. Your instructor can now review your response directly in the Teacher Dashboard. Reference: <strong>${result.submissionId}</strong>.
             </p>
           `;
         } else {
-          throw new Error('Endpoint returned non-200');
+          throw new Error(result.error || 'Your submission could not be saved.');
         }
       } catch (err) {
         statusBox.classList.remove('hidden');
         statusBox.innerHTML = `
-          <p class="text-xs uppercase tracking-widest font-bold mb-1">Local Diagnostic Saved · Score ${scoreText}</p>
+          <p class="text-xs uppercase tracking-widest font-bold mb-1">Submission Not Confirmed · Score ${scoreText}</p>
           <p class="text-sm text-[#5E5D5A]">
-            Your diagnostic score (${scoreText}) has been saved to this browser session. Focus areas identified: <strong>${missedTopics.join(', ') || 'None — Full Marks'}</strong>.
+            Your response has not been confirmed as saved. Please retry after checking your connection.
           </p>
         `;
       } finally {
