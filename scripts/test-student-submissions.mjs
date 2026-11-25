@@ -113,19 +113,23 @@ test("migration defines durable submission content and learner-scoped indexes", 
   assert.match(sql,/idx_student_submissions_learner/);
 });
 
-test("Writing and IELTS pages call the protected D1 submission endpoint and their scripts parse", () => {
-  const pages = [
+test("Writing and IELTS pages use the protected D1 endpoint and their scripts parse", () => {
+  const directPages = [
     "lexacademicenglish_multipage/students/writing/index.html",
-    "lexacademicenglish_multipage/students/ielts/index.html",
-    "lexacademicenglish_multipage/students/ielts/writing/index.html"
+    "lexacademicenglish_multipage/students/ielts/index.html"
   ];
-  for (const path of pages) {
+  for (const path of directPages) {
     const page = readFileSync(path, "utf8");
     assert.match(page, /\/students\/api\/submissions/);
     const scripts = [...page.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match => match[1]).filter(code => code.trim());
     for (const code of scripts) new vm.Script(code, { filename: path });
   }
-  const ielts = readFileSync(pages[1], "utf8");
+  const legacyIelts = readFileSync("lexacademicenglish_multipage/students/ielts/writing/index.html", "utf8");
+  const engine = readFileSync("lexacademicenglish_multipage/students/ielts/assets/ielts-engine.js", "utf8");
+  assert.match(legacyIelts, /LexIelts\.submitAssessment/);
+  assert.match(engine, /\/students\/api\/submissions/);
+  new vm.Script(engine, { filename: "ielts-engine.js" });
+  const ielts = readFileSync(directPages[1], "utf8");
   assert.match(ielts, /diagnosticAnswers/);
   assert.match(source, /diagnosticAnswers/);
 });
