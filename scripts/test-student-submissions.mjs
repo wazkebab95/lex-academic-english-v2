@@ -122,7 +122,7 @@ test("Writing and IELTS pages call the protected D1 submission endpoint and thei
   for (const path of pages) {
     const page = readFileSync(path, "utf8");
     assert.match(page, /\/students\/api\/submissions/);
-    const scripts = [...page.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)].map(match => match[1]).filter(code => code.trim());
+    const scripts = [...page.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match => match[1]).filter(code => code.trim());
     for (const code of scripts) new vm.Script(code, { filename: path });
   }
   const ielts = readFileSync(pages[1], "utf8");
