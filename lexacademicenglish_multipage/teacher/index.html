@@ -70,8 +70,8 @@
       const writing=(Array.isArray(data.writingSubmissions)?data.writingSubmissions:[]).map(item=>({
         stream:'writing',timestamp:item['Timestamp']||'',id:item['Submission ID']||'',name:text(item['Student Name'],'Learner'),email:item['Student Email']||'',
         title:text(item['Task Type'],'Writing')+': '+text(item['Prompt Title'],'Untitled task'),task:text(item['Task Type'],'Writing'),
-        metric:text(item['Word Count'],'0')+' words · '+text(item['Time Spent'],'Untimed')+' · Sheets backup: '+(item['Backup Status']||'pending'),content:text(item['Essay Text'],'No written response was recorded.'),
-        prompt:text(item['Prompt Title'],'No prompt title recorded.')
+        metric:text(item['Word Count'],'0')+' words · '+text(item['Time Spent'],'Untimed')+' · Sheets backup: '+(item['Backup Status']||'legacy'),content:text(item['Essay Text'],'No written response was recorded.'),
+        prompt:text(item['Prompt Title'],'No prompt title recorded.'),backupStatus:item['Backup Status']||'legacy',backupError:item['Backup Error']||''
       }));
       const assessments=(Array.isArray(data.ieltsResults)?data.ieltsResults:[]).map(item=>{
         const sections=[];
@@ -79,9 +79,9 @@
         if(item['Automated Feedback & Advice'])sections.push('Automated feedback:\n'+item['Automated Feedback & Advice']);
         if(item['Detailed Responses'])sections.push('Recorded responses:\n'+item['Detailed Responses']);
         if(item['Instructor Extra Note'])sections.push('Instructor note:\n'+item['Instructor Extra Note']);
-        return {stream:'assessment',timestamp:item['Timestamp']||'',id:'ROW-'+text(item._row,''),name:text(item['Student Name'],'Learner'),email:item['Student Email']||'',
+        return {stream:'assessment',timestamp:item['Timestamp']||'',id:item['Submission ID']||'ROW-'+text(item._row,''),name:text(item['Student Name'],'Learner'),email:item['Student Email']||'',
           title:text(item['Category']||item['Diagnostic Focus'],'Portal assessment'),task:text(item['Band Estimate'],'Assessment'),
-          metric:[item['Raw Score'],item['Band Estimate'],item['Time Taken'],'Sheets backup: '+(item['Backup Status']||'pending')].filter(Boolean).join(' · ')||'Recorded',
+          metric:[item['Raw Score'],item['Band Estimate'],item['Time Taken'],'Sheets backup: '+(item['Backup Status']||'legacy')].filter(Boolean).join(' · ')||'Recorded',
           content:sections.join('\n\n—\n\n')||'No additional assessment details were recorded.',prompt:text(item['Category']||item['Diagnostic Focus'],'Portal assessment'),backupStatus:item['Backup Status']||'pending',backupError:item['Backup Error']||''};
       });
       return [...writing,...assessments].sort((a,b)=>(new Date(b.timestamp).getTime()||0)-(new Date(a.timestamp).getTime()||0));
