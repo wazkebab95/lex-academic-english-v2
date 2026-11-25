@@ -1,0 +1,112 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { webcrypto } from "node:crypto";
+import { readFileSync } from "node:fs";
+
+globalThis.crypto ||= webcrypto;
+const source = readFileSync("functions/students/api/submissions.js", "utf8");
+const { onRequestPost } = await import("data:text/javascript;base64," + Buffer.from(source).toString("base64"));
+const issuer = "https://teamsiuuu.cloudflareaccess.com";
+const audience = "student-access-test-audience";
+const email = "learner@example.test";
+const encoder = new TextEncoder();
+const pair = await webcrypto.subtle.generateKey(
+  { name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([1,0,1]), hash: "SHA-256" },
+  true, ["sign", "verify"]
+);
+const jwk = await webcrypto.subtle.exportKey("jwk", pair.publicKey);
+Object.assign(jwk, { kid: "submission-test-key", alg: "RS256", use: "sig" });
+function b64(value) {
+  const bytes = typeof value === "string" ? encoder.encode(value) : new Uint8Array(value);
+  let binary = ""; for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+}
+async function token(claimOverrides = {}) {
+  const now = Math.floor(Date.now()/1000);
+  const header = b64(JSON.stringify({alg:"RS256",kid:"submission-test-key"}));
+  const claims = b64(JSON.stringify({iss:issuer,aud:[audience],email,exp:now+3600,nbf:now-5,iat:now,...claimOverrides}));
+  const unsigned = header + "." + claims;
+  const signature = await webcrypto.subtle.sign({name:"RSASSA-PKCS1-v1_5"},pair.privateKey,encoder.encode(unsigned));
+  return unsigned + "." + b64(signature);
+}
+function fakeDb() {
+  const submissions = new Map(); const calls = [];
+  return {
+    submissions, calls,
+    prepare(sql) {
+      const statement = { values: [], bind(...values) { this.values = values; return this; },
+        async run() {
+          calls.push(sql);
+          if (sql.includes("INSERT OR IGNORE INTO student_submissions")) {
+            const id = statement.values[0]; const exists = submissions.has(id);
+            if (!exists) submissions.set(id,{submission_id:id,learner_id:statement.values[1],submission_type:statement.values[3]});
+            return { meta:{changes:exists?0:1} };
+          }
+          return { meta:{changes:1} };
+        },
+        async first() {
+          calls.push(sql);
+          if (sql.includes("FROM student_submissions WHERE submission_id")) return submissions.get(statement.values[0]) || null;
+          return null;
+        }
+      };
+      return statement;
+    }
+  };
+}
+async function invoke({ jwt, db, payload, settings = {}, origin = "https://lexacademicenglish.co.uk" } = {}) {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async url => {
+    if (String(url) === issuer + "/cdn-cgi/access/certs") return new Response(JSON.stringify({keys:[jwk]}),{status:200});
+    throw new Error("Unexpected outbound request");
+  };
+  try {
+    const headers = {"Cf-Access-Jwt-Assertion":jwt || await token()};
+    if (payload !== undefined) headers["Content-Type"]="application/json";
+    if (origin) headers.Origin=origin;
+    const request = new Request("https://lexacademicenglish.co.uk/students/api/submissions",{
+      method:"POST",headers,body:payload===undefined?undefined:JSON.stringify(payload)
+    });
+    const response = await onRequestPost({request,env:{CF_ACCESS_TEAM_DOMAIN:issuer,RETAIL_ACCESS_AUD:audience,FEX_DB:db,...settings}});
+    return {status:response.status,body:await response.json()};
+  } finally { globalThis.fetch=originalFetch; }
+}
+
+test("requires a valid Cloudflare Access student identity", async () => {
+  const r=await invoke({db:fakeDb(),payload:{type:"writing"}});
+  assert.equal(r.status,401);
+});
+test("rejects a supplied email that differs from the verified Access identity", async () => {
+  const r=await invoke({db:fakeDb(),payload:{type:"writing",studentName:"Learner",studentEmail:"other@example.test",taskType:"Task 2",promptTitle:"Prompt",essayText:"A sufficiently long answer."}});
+  assert.equal(r.status,400);
+});
+test("stores the complete writing response in the learner-scoped D1 record", async () => {
+  const db=fakeDb();
+  const r=await invoke({db,payload:{type:"writing",submissionId:"submission-1234",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"A writing prompt",essayText:"This is the full student response.",timeSpent:"12m 4s"}});
+  assert.equal(r.status,200); assert.equal(r.body.recorded,true); assert.equal(r.body.submissionId,"submission-1234");
+  const saved=db.submissions.get("submission-1234");
+  assert.ok(saved); assert.equal(saved.submission_type,"writing");
+  assert.ok(db.calls.some(sql=>sql.includes("INSERT OR IGNORE INTO student_submissions")));
+});
+test("uses submission references idempotently and rejects cross-learner reference reuse", async () => {
+  const db=fakeDb();
+  const payload={type:"writing",submissionId:"submission-1234",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Prompt",essayText:"Response text"};
+  const first=await invoke({db,payload}); assert.equal(first.status,200);
+  const second=await invoke({db,payload}); assert.equal(second.status,200);
+  const otherToken=await token({email:"other@example.test"});
+  const third=await invoke({db,payload:{...payload,studentEmail:"other@example.test"},jwt:otherToken});
+  assert.equal(third.status,409);
+});
+test("requires the D1 binding and refuses cross-origin writes", async () => {
+  const noDb=await invoke({payload:{type:"writing",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Prompt",essayText:"Response text"}});
+  assert.equal(noDb.status,503);
+  const cross=await invoke({db:fakeDb(),origin:"https://attacker.example",payload:{type:"writing",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Prompt",essayText:"Response text"}});
+  assert.equal(cross.status,403);
+});
+test("migration defines durable submission content and learner-scoped indexes", () => {
+  const sql=readFileSync("migrations/0002_fex_student_submissions.sql","utf8");
+  assert.match(sql,/CREATE TABLE IF NOT EXISTS student_submissions/);
+  assert.match(sql,/response_text TEXT NOT NULL/);
+  assert.match(sql,/REFERENCES learners\(learner_id\)/);
+  assert.match(sql,/idx_student_submissions_learner/);
+});
