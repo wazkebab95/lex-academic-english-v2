@@ -48,14 +48,22 @@ const LexIelts = {
   },
 
   async submitAssessment(payload) {
-    const response = await fetch('/api/submit-ielts', {
+    const response = await fetch('/students/api/submissions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        ...payload,
+        type: 'ielts',
+        submissionId: payload.submissionId || crypto.randomUUID(),
+        prompt: payload.prompt || payload.category || 'IELTS assessment',
+        essay: payload.essay || payload.detailsPlain || payload.response || ''
+      })
     });
-    if (!response.ok) {
-      throw new Error('Submission endpoint returned an error.');
+    const result = await response.json();
+    if (!response.ok || !result.ok) {
+      throw new Error(result.error || 'Your submission could not be saved.');
     }
-    return await response.json();
+    return result;
   }
 };

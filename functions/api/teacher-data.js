@@ -203,55 +203,78 @@ async function fetchTeacherSheetData(webhookUrl) {
 export async function onRequestGet({ request, env }) {
   try {
     const identity = await verifyTeacherIdentity(request, env);
+    let ieltsResults = [];
+    let writingSubmissions = [];
+    let generatedAt = new Date().toISOString();
 
-    if (!env.GOOGLE_SHEET_WEBHOOK_URL) {
-      throw new AuthError(503, "Teacher data service is not configured.");
-    }
-
-    let webhookUrl;
-    try {
-      webhookUrl = new URL(env.GOOGLE_SHEET_WEBHOOK_URL);
-    } catch {
-      throw new AuthError(503, "Teacher data service is not configured.");
-    }
-    webhookUrl.searchParams.set("action", "teacher_dashboard");
-
-    const data = await fetchTeacherSheetData(webhookUrl.toString());
-
-    let learnerProgress = [];
-    let vocabularyReviews = [];
-    let assessmentAttempts = [];
-    let teacherFeedback = [];
     if (env.FEX_DB) {
-      const [progressRows, reviewRows, attemptRows, feedbackRows] = await Promise.all([
+      const [submissionRows, progressRows, reviewRows, attemptRows, feedbackRows] = await Promise.all([
+        env.FEX_DB.prepare("SELECT s.submission_id,s.learner_id,l.email,s.course_id,s.submission_type,s.title,s.prompt,s.response_text,s.score,s.result_label,s.word_count,s.time_spent,s.metadata_json,s.backup_status,s.backup_synced_at,s.backup_error,s.submitted_at FROM student_submissions s JOIN learners l ON l.learner_id=s.learner_id ORDER BY s.submitted_at DESC LIMIT 1000").all(),
         env.FEX_DB.prepare("SELECT l.learner_id,l.email,mp.module_id,mp.status,mp.correct_answers,mp.total_questions,mp.attempts,mp.completed_at,mp.updated_at FROM learners l JOIN course_enrolments e ON e.learner_id=l.learner_id AND e.course_id=? AND e.status='active' LEFT JOIN module_progress mp ON mp.learner_id=l.learner_id AND mp.course_id=e.course_id ORDER BY l.email,mp.module_id").bind("retail-business-english").all(),
         env.FEX_DB.prepare("SELECT learner_id,item_id,repetitions,interval_days,due_at,last_reviewed_at,last_rating FROM vocabulary_reviews WHERE course_id=?").bind("retail-business-english").all(),
         env.FEX_DB.prepare("SELECT attempt_id,learner_id,assessment_id,score,total,submitted_at FROM assessment_attempts WHERE course_id=? ORDER BY submitted_at DESC LIMIT 500").bind("retail-business-english").all(),
         env.FEX_DB.prepare("SELECT feedback_id,learner_id,module_id,teacher_email,feedback,created_at FROM teacher_feedback WHERE course_id=? ORDER BY created_at DESC LIMIT 500").bind("retail-business-english").all()
       ]);
-      learnerProgress = progressRows.results || [];
-      vocabularyReviews = reviewRows.results || [];
-      assessmentAttempts = attemptRows.results || [];
-      teacherFeedback = feedbackRows.results || [];
+      const submissions = submissionRows.results || [];
+      writingSubmissions = submissions.filter(item => item.submission_type === "writing").map(item => ({
+        "Timestamp": item.submitted_at, "Submission ID": item.submission_id,
+        "Student Name": item.metadata_json ? (() => { try { return JSON.parse(item.metadata_json).submittedName || item.email; } catch { return item.email; } })() : item.email,
+        "Student Email": item.email, "Task Type": item.title, "Prompt Title": item.prompt,
+        "Word Count": item.word_count, "Time Spent": item.time_spent, "Essay Text": item.response_text, "Backup Status": item.backup_status, "Backup Synced At": item.backup_synced_at, "Backup Error": item.backup_error
+      }));
+      ieltsResults = submissions.filter(item => item.submission_type === "ielts" || item.submission_type === "assessment").map(item => ({
+        "Timestamp": item.submitted_at, "Submission ID": item.submission_id,
+        "Student Name": item.metadata_json ? (() => { try { return JSON.parse(item.metadata_json).submittedName || item.email; } catch { return item.email; } })() : item.email,
+        "Student Email": item.email, "Category": item.title, "Raw Score": item.score,
+        "Band Estimate": item.result_label, "Time Taken": item.time_spent, "Backup Status": item.backup_status, "Backup Synced At": item.backup_synced_at, "Backup Error": item.backup_error,
+        "Diagnostic Focus": (() => { try { const answers = JSON.parse(item.metadata_json || "{}").diagnosticAnswers || []; return answers.map(answer => [answer.topic, "Selected: " + (answer.selectedAnswer || "Not answered"), "Correct: " + answer.correctAnswer, answer.isCorrect ? "Correct" : "Incorrect"].join(" · ")).join("\n"); } catch { return ""; } })(),
+        "Detailed Responses": "Prompt:\n" + item.prompt + "\n\nStudent response:\n" + item.response_text
+      }));
+      // Best-effort legacy archive read keeps historic records visible during migration.
+      // Reuse the resilient Sheets reader, but never let an archive outage block D1.
+      let legacyData = null;
+      if (env.GOOGLE_SHEET_WEBHOOK_URL) {
+        try {
+          const legacyUrl = new URL(env.GOOGLE_SHEET_WEBHOOK_URL);
+          legacyUrl.searchParams.set("action", "teacher_dashboard");
+          legacyData = await fetchTeacherSheetData(legacyUrl.toString());
+        } catch {
+          // D1 remains authoritative if the legacy archive is unavailable.
+        }
+      }
+      if (legacyData) {
+        const writingIds = new Set(writingSubmissions.map(item => item["Submission ID"]).filter(Boolean));
+        const ieltsIds = new Set(ieltsResults.map(item => item["Submission ID"]).filter(Boolean));
+        writingSubmissions.push(...legacyData.writingSubmissions.filter(item => !item["Submission ID"] || !writingIds.has(item["Submission ID"])));
+        ieltsResults.push(...legacyData.ieltsResults.filter(item => !item["Submission ID"] || !ieltsIds.has(item["Submission ID"])));
+      }
+      return json(200, {
+        ok: true, instructor: identity.email, generatedAt, dataSource: legacyData ? "fex_d1_legacy" : "fex_d1",
+        ieltsResults, writingSubmissions,
+        learnerProgress: progressRows.results || [],
+        vocabularyReviews: reviewRows.results || [],
+        assessmentAttempts: attemptRows.results || [],
+        teacherFeedback: feedbackRows.results || []
+      });
     }
 
+    // Temporary legacy read path: retained only until the D1 binding and migration are enabled.
+    if (!env.GOOGLE_SHEET_WEBHOOK_URL) throw new AuthError(503, "Fex database storage is not configured yet.");
+    let webhookUrl;
+    try { webhookUrl = new URL(env.GOOGLE_SHEET_WEBHOOK_URL); }
+    catch { throw new AuthError(503, "Legacy learner records are not configured."); }
+    webhookUrl.searchParams.set("action", "teacher_dashboard");
+    const data = await fetchTeacherSheetData(webhookUrl.toString());
     return json(200, {
-      ok: true,
-      instructor: identity.email,
-      generatedAt: data.generatedAt || new Date().toISOString(),
-      ieltsResults: Array.isArray(data.ieltsResults) ? data.ieltsResults : [],
-      writingSubmissions: Array.isArray(data.writingSubmissions) ? data.writingSubmissions : [],
-      learnerProgress,
-      vocabularyReviews,
-      assessmentAttempts,
-      teacherFeedback
+      ok: true, instructor: identity.email, generatedAt: data.generatedAt || generatedAt, dataSource: "legacy_sheets",
+      ieltsResults: data.ieltsResults, writingSubmissions: data.writingSubmissions,
+      learnerProgress: [], vocabularyReviews: [], assessmentAttempts: [], teacherFeedback: []
     });
   } catch (error) {
     if (error instanceof AuthError) return json(error.status, { ok: false, error: error.message });
     return json(500, { ok: false, error: "Teacher data could not be loaded." });
   }
 }
-
 
 export async function onRequestPost({ request, env }) {
   try {
