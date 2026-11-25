@@ -110,6 +110,7 @@ export async function onRequestPost({ request, env }) {
     if (encoder.encode(raw).byteLength > 40000) throw new SubmissionError(413, "This submission is too large.");
     let body;
     try { body = JSON.parse(raw); } catch { throw new SubmissionError(400, "The submission is not valid JSON."); }
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw new SubmissionError(400, "The submission payload is invalid.");
     const identity = await verifyStudent(request, env);
     if (!env.FEX_DB) throw new SubmissionError(503, "Submission storage is not configured yet. Please contact your tutor.");
     const type = String(body.type || "");
@@ -137,7 +138,7 @@ export async function onRequestPost({ request, env }) {
       .bind(identity.learnerId, courseId).run();
     const insert = await env.FEX_DB.prepare("INSERT OR IGNORE INTO student_submissions (submission_id,learner_id,course_id,submission_type,title,prompt,response_text,score,result_label,word_count,time_spent,metadata_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)")
       .bind(submissionId, identity.learnerId, courseId, type, title, prompt, responseText, score, resultLabel, wordCount, timeSpent,
-        JSON.stringify({ targetBand: body.targetBand || null, category: body.category || null, submittedName: name })).run();
+        JSON.stringify({ targetBand: body.targetBand || null, category: body.category || null, submittedName: name, diagnosticAnswers: Array.isArray(body.diagnosticAnswers) ? body.diagnosticAnswers.slice(0, 30) : [] })).run();
     const stored = await env.FEX_DB.prepare("SELECT learner_id,submission_type FROM student_submissions WHERE submission_id=?").bind(submissionId).first();
     if (!stored || stored.learner_id !== identity.learnerId || stored.submission_type !== type)
       throw new SubmissionError(409, "This submission reference is already in use.");
