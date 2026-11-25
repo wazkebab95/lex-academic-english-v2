@@ -209,6 +209,7 @@
       }
     ];
 
+    let pendingSubmissionId = null;
     const container = document.getElementById('diagnostic-questions');
     questions.forEach((item, idx) => {
       const card = document.createElement('div');
@@ -289,7 +290,7 @@
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
             type: 'ielts',
-            submissionId: crypto.randomUUID(),
+            submissionId: pendingSubmissionId || (pendingSubmissionId = crypto.randomUUID()),
             studentName,
             studentEmail,
             category: `IELTS Studio (${targetBand})`,
@@ -312,6 +313,7 @@
               Thank you, <strong>${studentName}</strong>. Your diagnostic score (${scoreText}) and writing response (${wordCount} words) have been recorded. Your instructor can now review your response directly in the Teacher Dashboard. Reference: <strong>${result.submissionId}</strong>.
             </p>
           `;
+          pendingSubmissionId = null;
         } else {
           throw new Error(result.error || 'Your submission could not be saved.');
         }
