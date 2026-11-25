@@ -1,0 +1,11 @@
+import test from "node:test";import assert from "node:assert/strict";import {readFileSync} from "node:fs";
+const api=readFileSync("functions/api/retry-google-sheets-backups.js","utf8");
+const mirror=readFileSync("lexacademicenglish_multipage/functions/api/retry-google-sheets-backups.js","utf8");
+const sql=readFileSync("migrations/0004_fex_backup_retry_state.sql","utf8");
+const gs=readFileSync("apps-script/Code.gs","utf8");
+const workflow=readFileSync(".github/workflows/fex-google-sheets-backup-retry.yml","utf8");
+test("retry endpoint mirror matches and is bearer protected",()=>{assert.equal(api,mirror);assert.match(api,/Authorization/);assert.match(api,/FEX_BACKUP_RETRY_SECRET/);});
+test("retry claims records, limits batch and clears claim after processing",()=>{assert.match(api,/LIMIT 10/);assert.match(api,/backup_claim_token/);assert.match(api,/backup_claim_until/);assert.match(api,/backup_attempt_count/);assert.match(api,/backup_next_attempt_at/);});
+test("migration adds retry state and index",()=>{assert.match(sql,/backup_attempt_count/);assert.match(sql,/backup_next_attempt_at/);assert.match(sql,/backup_claim_token/);assert.match(sql,/backup_claim_until/);assert.match(sql,/idx_submission_backup_retry/);});
+test("Apps Script deduplicates Writing and IELTS using stable submission IDs",()=>{assert.match(gs,/findSubmissionId/);assert.match(gs,/log_writing/);assert.match(gs,/Submission ID/);assert.match(gs,/duplicate:true/);});
+test("workflow schedules every ten minutes and uses secrets",()=>{assert.match(workflow,/\*\/10 \* \* \* \*/);assert.match(workflow,/FEX_BACKUP_RETRY_URL/);assert.match(workflow,/FEX_BACKUP_RETRY_SECRET/);});
