@@ -92,7 +92,7 @@ async function notifyInstructor(env, record) {
       method: "POST", signal: controller.signal,
       headers: { Authorization: "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json" },
       body: JSON.stringify({ from: "Fex Studio <noreply@lexacademicenglish.co.uk>",
-        to: [String(env.INSTRUCTOR_EMAIL).trim()], reply_to: record.email,
+        to: [String(env.INSTRUCTOR_EMAIL).trim(), record.email], reply_to: String(env.INSTRUCTOR_EMAIL).trim(),
         subject: "[Fex Studio] " + heading + " — " + record.name,
         html })
     });
