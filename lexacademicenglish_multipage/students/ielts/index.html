@@ -255,9 +255,12 @@
 
       let score = 0;
       const missedTopics = [];
+      const diagnosticAnswers = [];
       questions.forEach((q) => {
         const chosen = document.querySelector(`input[name="${q.id}"]:checked`);
-        if (chosen && Number(chosen.value) === q.correct) {
+        const selectedIndex = chosen ? Number(chosen.value) : null;
+        diagnosticAnswers.push({ questionId: q.id, topic: q.topic, prompt: q.prompt, selectedAnswer: selectedIndex === null ? null : q.options[selectedIndex], correctAnswer: q.options[q.correct], isCorrect: selectedIndex !== null && selectedIndex === q.correct });
+        if (selectedIndex !== null && selectedIndex === q.correct) {
           score++;
         } else {
           missedTopics.push(q.topic);
@@ -293,6 +296,7 @@
             score: scoreText,
             bandEstimate: 'Diagnostic score',
             timeTaken: 'Untimed',
+            diagnosticAnswers,
             prompt: 'Some policymakers argue that public funding should prioritise scientific research over the arts and humanities. To what extent do you agree or disagree with this view?',
             essay: essayText
           })
