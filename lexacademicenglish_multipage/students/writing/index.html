@@ -386,7 +386,7 @@
         ></textarea>
 
         <div class="editor-footer">
-          <span id="autosaveStatus" class="autosave-note">Draft saved locally in browser.</span>
+          <span id="autosaveStatus" class="autosave-note">Your work is sent securely when you submit.</span>
           <button type="submit" id="submitBtn" class="submit-btn">Submit Script for Review</button>
         </div>
 
@@ -464,16 +464,7 @@
       wordBadge.classList.toggle('target-met', words >= targetWords);
       paraCount.textContent = `${paras} paragraph${paras === 1 ? '' : 's'}`;
 
-      localStorage.setItem(
-        'fex_writing_draft_v1',
-        JSON.stringify({
-          task: currentTask,
-          promptIdx: promptSelect.value,
-          studentName: document.getElementById('studentName').value,
-          studentEmail: document.getElementById('studentEmail').value,
-          essayText: essayText.value
-        })
-      );
+
     }
 
     function formatTimer(sec) {
@@ -526,33 +517,11 @@
     promptSelect.addEventListener('change', renderSelectedPrompt);
     essayText.addEventListener('input', updateWordMetrics);
 
-    // Restore autosaved draft if present
-    (function restoreDraft() {
-      try {
-        const saved = JSON.parse(localStorage.getItem('fex_writing_draft_v1') || 'null');
-        if (saved) {
-          if (saved.task && PROMPTS[saved.task]) {
-            currentTask = saved.task;
-            targetWords = currentTask === 'Task 1' ? 150 : 250;
-            document.querySelectorAll('.task-btn').forEach(b => {
-              b.classList.toggle('active', b.dataset.task === currentTask);
-            });
-          }
-          populatePrompts(currentTask);
-          if (saved.promptIdx) promptSelect.value = saved.promptIdx;
-          renderSelectedPrompt();
-          if (saved.studentName) document.getElementById('studentName').value = saved.studentName;
-          if (saved.studentEmail) document.getElementById('studentEmail').value = saved.studentEmail;
-          if (saved.essayText) essayText.value = saved.essayText;
-        } else {
-          populatePrompts(currentTask);
-        }
-      } catch {
-        populatePrompts(currentTask);
-      }
-      resetTimer();
-      updateWordMetrics();
-    })();
+    // Remove any draft left by the previous local-autosave implementation.
+    try { localStorage.removeItem('fex_writing_draft_v1'); } catch { /* Storage may be unavailable. */ }
+    populatePrompts(currentTask);
+    resetTimer();
+    updateWordMetrics();
 
     document.getElementById('writingForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -570,7 +539,8 @@
       try {
         const res = await fetch('/api/submit-writing', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
             studentName: document.getElementById('studentName').value.trim(),
             studentEmail: document.getElementById('studentEmail').value.trim(),
@@ -582,11 +552,12 @@
         });
 
         const data = await res.json();
-        if (!data.ok) throw new Error(data.error || 'Submission error');
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Submission error');
 
         statusBanner.className = 'status-banner success';
-        statusBanner.textContent = `Submitted successfully (Reference: ${data.submissionId} · ${data.wordCount} words). A copy has been dispatched to your email and logged in the Fex Studio ledger.`;
-        localStorage.removeItem('fex_writing_draft_v1');
+        statusBanner.textContent = `Submitted to your instructor successfully (Reference: ${data.submissionId} · ${data.wordCount} words). The script has been recorded in the instructor ledger and emailed to your instructor. A receipt has also been sent to you.`;
+        essayText.value = '';
+        updateWordMetrics();
       } catch (err) {
         statusBanner.className = 'status-banner error';
         statusBanner.textContent = `Submission failed: ${err.message}`;
