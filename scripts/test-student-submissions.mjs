@@ -59,6 +59,7 @@ async function invoke({ jwt, db, payload, settings = {}, origin = "https://lexac
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async (url, options = {}) => {
     if (String(url) === issuer + "/cdn-cgi/access/certs") return new Response(JSON.stringify({keys:[jwk]}),{status:200});
+    if (String(url) === "https://script.google.test/exec") { sheetCalls.push(JSON.parse(options.body)); return new Response("OK",{status:sheetStatus}); }
     throw new Error("Unexpected outbound request");
   };
   try {
