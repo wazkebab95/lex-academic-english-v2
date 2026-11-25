@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { webcrypto } from "node:crypto";
 import { readFileSync } from "node:fs";
+import vm from "node:vm";
 
 globalThis.crypto ||= webcrypto;
 const source = readFileSync("functions/students/api/submissions.js", "utf8");
@@ -39,7 +40,7 @@ function fakeDb() {
           calls.push(sql);
           if (sql.includes("INSERT OR IGNORE INTO student_submissions")) {
             const id = statement.values[0]; const exists = submissions.has(id);
-            if (!exists) submissions.set(id,{submission_id:id,learner_id:statement.values[1],submission_type:statement.values[3]});
+            if (!exists) submissions.set(id,{submission_id:id,learner_id:statement.values[1],submission_type:statement.values[3],prompt:statement.values[5],response_text:statement.values[6],metadata_json:statement.values[11]});
             return { meta:{changes:exists?0:1} };
           }
           return { meta:{changes:1} };
@@ -86,7 +87,7 @@ test("stores the complete writing response in the learner-scoped D1 record", asy
   const r=await invoke({db,payload:{type:"writing",submissionId:"submission-1234",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"A writing prompt",essayText:"This is the full student response.",timeSpent:"12m 4s"}});
   assert.equal(r.status,200); assert.equal(r.body.recorded,true); assert.equal(r.body.submissionId,"submission-1234");
   const saved=db.submissions.get("submission-1234");
-  assert.ok(saved); assert.equal(saved.submission_type,"writing");
+  assert.ok(saved); assert.equal(saved.submission_type,"writing"); assert.equal(saved.response_text,"This is the full student response.");
   assert.ok(db.calls.some(sql=>sql.includes("INSERT OR IGNORE INTO student_submissions")));
 });
 test("uses submission references idempotently and rejects cross-learner reference reuse", async () => {
@@ -110,4 +111,21 @@ test("migration defines durable submission content and learner-scoped indexes", 
   assert.match(sql,/response_text TEXT NOT NULL/);
   assert.match(sql,/REFERENCES learners\(learner_id\)/);
   assert.match(sql,/idx_student_submissions_learner/);
+});
+
+test("Writing and IELTS pages call the protected D1 submission endpoint and their scripts parse", () => {
+  const pages = [
+    "lexacademicenglish_multipage/students/writing/index.html",
+    "lexacademicenglish_multipage/students/ielts/index.html",
+    "lexacademicenglish_multipage/students/ielts/writing/index.html"
+  ];
+  for (const path of pages) {
+    const page = readFileSync(path, "utf8");
+    assert.match(page, /\/students\/api\/submissions/);
+    const scripts = [...page.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)].map(match => match[1]).filter(code => code.trim());
+    for (const code of scripts) new vm.Script(code, { filename: path });
+  }
+  const ielts = readFileSync(pages[1], "utf8");
+  assert.match(ielts, /diagnosticAnswers/);
+  assert.match(source, /diagnosticAnswers/);
 });
