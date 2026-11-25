@@ -216,7 +216,7 @@ export async function onRequestGet({ request, env }) {
         if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 250 * (2 ** attempt)));
       } finally { clearTimeout(timeout); }
     }
-    if (!data) throw new AuthError(502, "Legacy learner records are temporarily unavailable.");
+    if (!data) throw new AuthError(502, "Teacher data is temporarily unavailable.");
     return json(200, {
       ok: true, instructor: identity.email, generatedAt: data.generatedAt || generatedAt, dataSource: "legacy_sheets",
       ieltsResults: data.ieltsResults, writingSubmissions: data.writingSubmissions,
