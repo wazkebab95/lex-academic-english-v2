@@ -14,6 +14,8 @@ on:
       - "functions/api/teacher-data.js"
       - "lexacademicenglish_multipage/functions/api/teacher-data.js"
       - "scripts/test-teacher-data-auth.mjs"
+      - "lexacademicenglish_multipage/teacher/index.html"
+      - "scripts/test-teacher-dashboard.mjs"
       - ".github/workflows/retail-learning-path-qa.yml"
   pull_request:
     paths:
