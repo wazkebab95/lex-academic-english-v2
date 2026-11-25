@@ -56,7 +56,7 @@ async function getProgress(db,identity){
     db.prepare("SELECT item_id,term,definition,example FROM vocabulary_items WHERE course_id=? ORDER BY term").bind(COURSE_ID).all(),
     db.prepare("SELECT item_id,repetitions,interval_days,due_at,last_reviewed_at,last_rating FROM vocabulary_reviews WHERE learner_id=? AND course_id=?").bind(identity.learnerId,COURSE_ID).all(),
     db.prepare("SELECT attempt_id,assessment_id,score,total,submitted_at FROM assessment_attempts WHERE learner_id=? AND course_id=? ORDER BY submitted_at DESC LIMIT 20").bind(identity.learnerId,COURSE_ID).all(),
-    db.prepare("SELECT module_id,feedback,teacher_email,created_at FROM teacher_feedback WHERE learner_id=? AND course_id=? ORDER BY created_at DESC LIMIT 30").bind(identity.learnerId,COURSE_ID).all()
+    db.prepare("SELECT module_id,feedback,created_at FROM teacher_feedback WHERE learner_id=? AND course_id=? ORDER BY created_at DESC LIMIT 30").bind(identity.learnerId,COURSE_ID).all()
   ]);
   return {ok:true,courseId:COURSE_ID,modules:modules.results||[],vocabulary:vocabulary.results||[],reviews:reviews.results||[],assessmentAttempts:attempts.results||[],teacherFeedback:feedback.results||[]};
 }
@@ -108,5 +108,5 @@ export async function onRequestPost({request,env}){
     else if(payload.action==="vocabulary_review")await saveVocabularyReview(db,identity,payload);
     else throw new HttpError(400,"The progress action is not supported.");
     return json(200,await getProgress(db,identity));
-  }catch(error){if(error instanceof HttpError)return json(error.status,{ok:false,error:error.message});return json(500,{ok:false,error:"Your progress could not be saved.",...(env.DEBUG_PROGRESS_API==="true"?{debug:String(error?.message||error)}:{})});}
+  }catch(error){if(error instanceof HttpError)return json(error.status,{ok:false,error:error.message});return json(500,{ok:false,error:"Your progress could not be saved."});}
 }
