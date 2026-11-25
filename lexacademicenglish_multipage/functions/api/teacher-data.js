@@ -218,7 +218,7 @@ export async function onRequestGet({ request, env }) {
 
 export async function onRequestPost({ request, env }) {
   try {
-    if (!/^application\\/json(?:\\s*;|$)/i.test(request.headers.get("Content-Type") || "")) {
+    if (!/^application\/json(?:\s*;|$)/i.test(request.headers.get("Content-Type") || "")) {
       throw new AuthError(415, "Send teacher feedback as JSON.");
     }
     const origin = request.headers.get("Origin");
@@ -233,7 +233,7 @@ export async function onRequestPost({ request, env }) {
     const learnerEmail = typeof payload.learnerEmail === "string" ? payload.learnerEmail.trim().toLowerCase() : "";
     const moduleId = typeof payload.moduleId === "string" ? payload.moduleId : "";
     const feedback = typeof payload.feedback === "string" ? payload.feedback.trim() : "";
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(learnerEmail) || !["vocabulary","grammar","communication","case-study","assessment"].includes(moduleId) || !feedback || feedback.length > 2000) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(learnerEmail) || !["vocabulary","grammar","communication","case-study","assessment"].includes(moduleId) || !feedback || feedback.length > 2000) {
       throw new AuthError(400, "Check the learner, module and feedback fields.");
     }
     const learner = await env.FEX_DB.prepare("SELECT l.learner_id FROM learners l JOIN course_enrolments e ON e.learner_id=l.learner_id WHERE lower(l.email)=? AND e.course_id=? AND e.status='active'").bind(learnerEmail,"retail-business-english").first();
