@@ -45,5 +45,5 @@ test("server calculates module scores from its own answer key",()=>{
  assert.deepEqual(result,{status:"completed",correct:6,total:6});
  const partial=validateChoices("vocabulary",[0,1,null,null,null,null]);
  assert.deepEqual(partial,{status:"in_progress",correct:2,total:6});
- assert.throws(()=>validateChoices("vocabulary",[0,99]),/selected answers are invalid/);
+ assert.throws(()=>validateChoices("vocabulary",[0,99,1,0,0,0]),/selected answers are invalid/);
 });
