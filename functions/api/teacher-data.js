@@ -147,6 +147,59 @@ async function verifyTeacherIdentity(request, env) {
   return { email };
 }
 
+async function fetchTeacherSheetData(webhookUrl) {
+  const maxAttempts = 3;
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    try {
+      const response = await fetch(webhookUrl, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+        signal: controller.signal
+      });
+
+      if (!response.ok) {
+        if (response.status !== 429 && response.status < 500) {
+          throw new AuthError(502, "Teacher data is temporarily unavailable.");
+        }
+        lastError = new Error("Temporary Google Sheets response: " + response.status);
+      } else {
+        let data;
+        try {
+          data = await response.json();
+        } catch {
+          lastError = new Error("Google Sheets returned unreadable data.");
+        }
+        if (data !== undefined) {
+          if (
+            !data || typeof data !== "object" || Array.isArray(data) ||
+            !Array.isArray(data.ieltsResults) ||
+            !Array.isArray(data.writingSubmissions)
+          ) {
+            lastError = new Error("Google Sheets returned an invalid dashboard payload.");
+          } else {
+            return data;
+          }
+        }
+      }
+    } catch (error) {
+      if (error instanceof AuthError) throw error;
+      lastError = error;
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    if (attempt < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 200 * (2 ** (attempt - 1))));
+    }
+  }
+
+  throw new AuthError(502, "Teacher data is temporarily unavailable.");
+}
+
 export async function onRequestGet({ request, env }) {
   try {
     const identity = await verifyTeacherIdentity(request, env);
@@ -178,28 +231,16 @@ export async function onRequestGet({ request, env }) {
         "Detailed Responses": "Prompt:\n" + item.prompt + "\n\nStudent response:\n" + item.response_text
       }));
       // Best-effort legacy archive read keeps historic records visible during migration.
+      // Reuse the resilient Sheets reader, but never let an archive outage block D1.
       let legacyData = null;
       if (env.GOOGLE_SHEET_WEBHOOK_URL) {
         try {
           const legacyUrl = new URL(env.GOOGLE_SHEET_WEBHOOK_URL);
           legacyUrl.searchParams.set("action", "teacher_dashboard");
-          for (let attempt = 0; attempt < 2 && !legacyData; attempt++) {
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 2500);
-            try {
-              const legacyResponse = await fetch(legacyUrl.toString(), {
-                method: "GET", headers: { Accept: "application/json" }, signal: controller.signal
-              });
-              if (legacyResponse.ok) {
-                const candidate = await legacyResponse.json();
-                if (candidate && Array.isArray(candidate.ieltsResults) && Array.isArray(candidate.writingSubmissions))
-                  legacyData = candidate;
-              }
-            } catch { /* D1 remains authoritative if the legacy archive is unavailable. */ }
-            finally { clearTimeout(timeout); }
-            if (!legacyData && attempt < 1) await new Promise(resolve => setTimeout(resolve, 150));
-          }
-        } catch { /* An invalid legacy URL must not interrupt D1 dashboard reads. */ }
+          legacyData = await fetchTeacherSheetData(legacyUrl.toString());
+        } catch {
+          // D1 remains authoritative if the legacy archive is unavailable.
+        }
       }
       if (legacyData) {
         const writingIds = new Set(writingSubmissions.map(item => item["Submission ID"]).filter(Boolean));
@@ -223,30 +264,7 @@ export async function onRequestGet({ request, env }) {
     try { webhookUrl = new URL(env.GOOGLE_SHEET_WEBHOOK_URL); }
     catch { throw new AuthError(503, "Legacy learner records are not configured."); }
     webhookUrl.searchParams.set("action", "teacher_dashboard");
-    let data;
-    let lastFailure;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 8000);
-      try {
-        const response = await fetch(webhookUrl.toString(), {
-          method: "GET", headers: { Accept: "application/json" }, signal: controller.signal
-        });
-        if (!response.ok) {
-          if (response.status < 500 && response.status !== 429) throw new AuthError(502, "Legacy learner records are temporarily unavailable.");
-          throw new Error("Temporary upstream failure");
-        }
-        data = await response.json();
-        if (!data || !Array.isArray(data.ieltsResults) || !Array.isArray(data.writingSubmissions))
-          throw new Error("Invalid upstream response");
-        break;
-      } catch (error) {
-        if (error instanceof AuthError) throw error;
-        lastFailure = error;
-        if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 250 * (2 ** attempt)));
-      } finally { clearTimeout(timeout); }
-    }
-    if (!data) throw new AuthError(502, "Teacher data is temporarily unavailable.");
+    const data = await fetchTeacherSheetData(webhookUrl.toString());
     return json(200, {
       ok: true, instructor: identity.email, generatedAt: data.generatedAt || generatedAt, dataSource: "legacy_sheets",
       ieltsResults: data.ieltsResults, writingSubmissions: data.writingSubmissions,
