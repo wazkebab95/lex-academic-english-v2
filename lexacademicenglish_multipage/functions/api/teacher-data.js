@@ -156,7 +156,7 @@ export async function onRequestGet({ request, env }) {
 
     if (env.FEX_DB) {
       const [submissionRows, progressRows, reviewRows, attemptRows, feedbackRows] = await Promise.all([
-        env.FEX_DB.prepare("SELECT s.submission_id,s.learner_id,l.email,s.course_id,s.submission_type,s.title,s.prompt,s.response_text,s.score,s.result_label,s.word_count,s.time_spent,s.metadata_json,s.submitted_at FROM student_submissions s JOIN learners l ON l.learner_id=s.learner_id ORDER BY s.submitted_at DESC LIMIT 1000").all(),
+        env.FEX_DB.prepare("SELECT s.submission_id,s.learner_id,l.email,s.course_id,s.submission_type,s.title,s.prompt,s.response_text,s.score,s.result_label,s.word_count,s.time_spent,s.metadata_json,s.backup_status,s.backup_synced_at,s.backup_error,s.submitted_at FROM student_submissions s JOIN learners l ON l.learner_id=s.learner_id ORDER BY s.submitted_at DESC LIMIT 1000").all(),
         env.FEX_DB.prepare("SELECT l.learner_id,l.email,mp.module_id,mp.status,mp.correct_answers,mp.total_questions,mp.attempts,mp.completed_at,mp.updated_at FROM learners l JOIN course_enrolments e ON e.learner_id=l.learner_id AND e.course_id=? AND e.status='active' LEFT JOIN module_progress mp ON mp.learner_id=l.learner_id AND mp.course_id=e.course_id ORDER BY l.email,mp.module_id").bind("retail-business-english").all(),
         env.FEX_DB.prepare("SELECT learner_id,item_id,repetitions,interval_days,due_at,last_reviewed_at,last_rating FROM vocabulary_reviews WHERE course_id=?").bind("retail-business-english").all(),
         env.FEX_DB.prepare("SELECT attempt_id,learner_id,assessment_id,score,total,submitted_at FROM assessment_attempts WHERE course_id=? ORDER BY submitted_at DESC LIMIT 500").bind("retail-business-english").all(),
@@ -167,13 +167,13 @@ export async function onRequestGet({ request, env }) {
         "Timestamp": item.submitted_at, "Submission ID": item.submission_id,
         "Student Name": item.metadata_json ? (() => { try { return JSON.parse(item.metadata_json).submittedName || item.email; } catch { return item.email; } })() : item.email,
         "Student Email": item.email, "Task Type": item.title, "Prompt Title": item.prompt,
-        "Word Count": item.word_count, "Time Spent": item.time_spent, "Essay Text": item.response_text
+        "Word Count": item.word_count, "Time Spent": item.time_spent, "Essay Text": item.response_text, "Backup Status": item.backup_status, "Backup Synced At": item.backup_synced_at, "Backup Error": item.backup_error
       }));
       ieltsResults = submissions.filter(item => item.submission_type === "ielts" || item.submission_type === "assessment").map(item => ({
         "Timestamp": item.submitted_at, "Submission ID": item.submission_id,
         "Student Name": item.metadata_json ? (() => { try { return JSON.parse(item.metadata_json).submittedName || item.email; } catch { return item.email; } })() : item.email,
         "Student Email": item.email, "Category": item.title, "Raw Score": item.score,
-        "Band Estimate": item.result_label, "Time Taken": item.time_spent,
+        "Band Estimate": item.result_label, "Time Taken": item.time_spent, "Backup Status": item.backup_status, "Backup Synced At": item.backup_synced_at, "Backup Error": item.backup_error,
         "Diagnostic Focus": (() => { try { const answers = JSON.parse(item.metadata_json || "{}").diagnosticAnswers || []; return answers.map(answer => [answer.topic, "Selected: " + (answer.selectedAnswer || "Not answered"), "Correct: " + answer.correctAnswer, answer.isCorrect ? "Correct" : "Incorrect"].join(" · ")).join("\n"); } catch { return ""; } })(),
         "Detailed Responses": "Prompt:\n" + item.prompt + "\n\nStudent response:\n" + item.response_text
       }));
