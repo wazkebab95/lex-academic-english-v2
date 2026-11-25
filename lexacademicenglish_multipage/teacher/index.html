@@ -70,7 +70,7 @@
       const writing=(Array.isArray(data.writingSubmissions)?data.writingSubmissions:[]).map(item=>({
         stream:'writing',timestamp:item['Timestamp']||'',id:item['Submission ID']||'',name:text(item['Student Name'],'Learner'),email:item['Student Email']||'',
         title:text(item['Task Type'],'Writing')+': '+text(item['Prompt Title'],'Untitled task'),task:text(item['Task Type'],'Writing'),
-        metric:text(item['Word Count'],'0')+' words · '+text(item['Time Spent'],'Untimed'),content:text(item['Essay Text'],'No written response was recorded.'),
+        metric:text(item['Word Count'],'0')+' words · '+text(item['Time Spent'],'Untimed')+' · Sheets backup: '+(item['Backup Status']||'pending'),content:text(item['Essay Text'],'No written response was recorded.'),
         prompt:text(item['Prompt Title'],'No prompt title recorded.')
       }));
       const assessments=(Array.isArray(data.ieltsResults)?data.ieltsResults:[]).map(item=>{
@@ -105,7 +105,7 @@
       el('feedbackComposer').hidden=true;
       el('drawerEyebrow').textContent=learner?'Learner activity':'Submission record';
       el('drawerTitle').textContent=learner?learner.name:record.name;
-      el('drawerMeta').textContent=learner?[learner.email,learner.records.length+' recorded activities','Last active '+dateLabel(learner.lastActive)].filter(Boolean).join(' · '):[record.email,dateLabel(record.timestamp),record.metric].filter(Boolean).join(' · ');
+      el('drawerMeta').textContent=learner?[learner.email,learner.records.length+' recorded activities','Last active '+dateLabel(learner.lastActive)].filter(Boolean).join(' · '):[record.email,dateLabel(record.timestamp),record.metric,record.backupError].filter(Boolean).join(' · ');
       el('drawerPrompt').textContent=learner?'Activity summary: '+learner.writing+' writing submissions and '+learner.assessments+' portal assessments.':record.title+'\n'+record.metric;
       el('drawerContent').textContent=learner?learner.records.map(r=>dateLabel(r.timestamp)+' · '+(r.stream==='writing'?'Writing':'Assessment')+' · '+r.title+'\n'+r.metric).join('\n\n'):record.content;
       el('feedbackComposer').hidden=true;
