@@ -34,6 +34,11 @@ on:
       - "scripts/test-teacher-data-auth.mjs"
       - "lexacademicenglish_multipage/teacher/index.html"
       - "scripts/test-teacher-dashboard.mjs"
+      - "functions/students/api/progress.js"
+      - "migrations/0001_fex_learner_progress.sql"
+      - "lexacademicenglish_multipage/students/progress/index.html"
+      - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
+      - "scripts/test-student-progress.mjs"
       - ".github/workflows/retail-learning-path-qa.yml"
   workflow_dispatch:
 
