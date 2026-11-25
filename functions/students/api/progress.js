@@ -108,5 +108,5 @@ export async function onRequestPost({request,env}){
     else if(payload.action==="vocabulary_review")await saveVocabularyReview(db,identity,payload);
     else throw new HttpError(400,"The progress action is not supported.");
     return json(200,await getProgress(db,identity));
-  }catch(error){if(error instanceof HttpError)return json(error.status,{ok:false,error:error.message});return json(500,{ok:false,error:"Your progress could not be saved."});}
+  }catch(error){if(error instanceof HttpError)return json(error.status,{ok:false,error:error.message});return json(500,{ok:false,error:"Your progress could not be saved.",...(env.DEBUG_PROGRESS_API==="true"?{debug:String(error?.message||error)}:{})});}
 }
