@@ -26,6 +26,7 @@ on:
       - "scripts/test-student-progress.mjs"
       - ".github/workflows/retail-learning-path-qa.yml"
   pull_request:
+    types: [opened, synchronize, reopened, edited]
     paths:
       - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
       - "lexacademicenglish_multipage/students/retail/index.html"
