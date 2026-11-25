@@ -44,9 +44,11 @@
       <div class="controls"><div class="tabs" role="tablist" aria-label="Dashboard views">
         <button class="tab active" data-view="learners" type="button" role="tab" aria-selected="true">Learners</button>
         <button class="tab" data-view="submissions" type="button" role="tab" aria-selected="false">Submissions</button>
+        <button class="tab" data-view="progress" type="button" role="tab" aria-selected="false">Learning progress</button>
       </div><input class="search" id="searchInput" type="search" placeholder="Search learners, email or task…" aria-label="Search dashboard" /></div>
       <div class="table-wrap" id="learnerView"><table><thead><tr><th>Learner</th><th>Recorded activity</th><th>Writing</th><th>Assessments</th><th>Last active</th><th></th></tr></thead><tbody id="learnerBody"><tr><td colspan="6" class="empty">Loading learner activity…</td></tr></tbody></table></div>
       <div class="table-wrap" id="submissionView" hidden><table><thead><tr><th>Date</th><th>Learner</th><th>Type</th><th>Task / category</th><th>Result / metric</th><th></th></tr></thead><tbody id="submissionBody"><tr><td colspan="6" class="empty">Loading submissions…</td></tr></tbody></table></div>
+      <div class="table-wrap" id="progressView" hidden><table><thead><tr><th>Learner</th><th>Modules complete</th><th>Quiz accuracy</th><th>Vocabulary reviews</th><th>Latest assessment</th><th></th></tr></thead><tbody id="progressBody"><tr><td colspan="6" class="empty">Loading learner progress…</td></tr></tbody></table></div>
     </section>
   </main>
   <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"><aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
@@ -54,10 +56,11 @@
     <section class="drawer-section"><h3>Task / category</h3><div class="detail-box" id="drawerPrompt"></div></section>
     <section class="drawer-section"><h3>Submitted work and recorded feedback</h3><div class="detail-box" id="drawerContent"></div></section>
     <section class="drawer-section"><button class="btn" id="copyContentBtn" type="button">Copy content</button></section>
+    <section class="drawer-section" id="feedbackComposer" hidden><h3>Send learner feedback</h3><select id="feedbackModule" class="search" aria-label="Feedback module"><option value="vocabulary">Retail vocabulary</option><option value="grammar">Business grammar</option><option value="communication">Professional communication</option><option value="case-study">Retail case study</option><option value="assessment">Comprehensive assessment</option></select><textarea id="feedbackText" class="search" rows="5" placeholder="Write specific, constructive feedback…" style="width:100%;margin-top:9px"></textarea><button class="btn" id="saveFeedbackBtn" type="button" style="margin-top:9px">Save feedback</button><p id="feedbackStatus" class="drawer-meta" role="status" aria-live="polite"></p></section>
   </aside></div>
   <script>
     'use strict';
-    const state={records:[],learners:[],view:'learners',selectedRecord:null};
+    const state={records:[],learners:[],progressLearners:[],vocabularyReviews:[],assessmentAttempts:[],teacherFeedback:[],view:'learners',selectedRecord:null,selectedProgressLearner:null};
     const el=id=>document.getElementById(id);
     const text=(value,fallback='—')=>value===null||value===undefined||String(value).trim()===''?fallback:String(value);
     function dateLabel(value){if(!value)return '—';const date=new Date(value);return Number.isNaN(date.getTime())?String(value):date.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
@@ -98,34 +101,64 @@
     function emptyRow(body,columns,message){const row=document.createElement('tr');const td=document.createElement('td');td.colSpan=columns;td.className='empty';td.textContent=message;row.appendChild(td);body.replaceChildren(row);}
     function openDrawer(record,learner){
       state.selectedRecord=record||null;
+      el('feedbackComposer').hidden=true;
       el('drawerEyebrow').textContent=learner?'Learner activity':'Submission record';
       el('drawerTitle').textContent=learner?learner.name:record.name;
       el('drawerMeta').textContent=learner?[learner.email,learner.records.length+' recorded activities','Last active '+dateLabel(learner.lastActive)].filter(Boolean).join(' · '):[record.email,dateLabel(record.timestamp),record.metric].filter(Boolean).join(' · ');
       el('drawerPrompt').textContent=learner?'Activity summary: '+learner.writing+' writing submissions and '+learner.assessments+' portal assessments.':record.title+'\n'+record.metric;
       el('drawerContent').textContent=learner?learner.records.map(r=>dateLabel(r.timestamp)+' · '+(r.stream==='writing'?'Writing':'Assessment')+' · '+r.title+'\n'+r.metric).join('\n\n'):record.content;
+      el('feedbackComposer').hidden=true;
+      el('drawerBackdrop').classList.add('open');el('drawerBackdrop').setAttribute('aria-hidden','false');el('closeDrawerBtn').focus();
+    }
+    function openProgressDrawer(learner){
+      state.selectedProgressLearner=learner;
+      const modules=learner.modules;
+      const moduleNames={vocabulary:'Retail vocabulary',grammar:'Business grammar',communication:'Professional communication','case-study':'Retail case study',assessment:'Comprehensive assessment'};
+      const details=modules.map(m=>(moduleNames[m.module_id]||m.module_id)+': '+m.status+' · '+(m.total_questions?m.correct_answers+'/'+m.total_questions+' correct':'self-reviewed')).join('\\n');
+      const reviews=state.vocabularyReviews.filter(r=>r.learner_id===learner.learner_id);
+      const attempts=state.assessmentAttempts.filter(a=>a.learner_id===learner.learner_id);
+      const feedback=state.teacherFeedback.filter(f=>f.learner_id===learner.learner_id);
+      el('drawerEyebrow').textContent='Individual learner progress';el('drawerTitle').textContent=learner.email;el('drawerMeta').textContent=modules.filter(m=>m.status==='completed').length+' of 5 modules complete · '+reviews.length+' vocabulary review records';
+      el('drawerPrompt').textContent='Module progress\\n'+(details||'No module activity recorded.')+'\\n\\nAssessment attempts\\n'+(attempts.map(a=>a.score+'/'+a.total+' · '+dateLabel(a.submitted_at)).join('\\n')||'No assessment attempts yet.');
+      el('drawerContent').textContent='Teacher feedback already shared\\n'+(feedback.map(f=>dateLabel(f.created_at)+' · '+f.module_id+'\\n'+f.feedback).join('\\n\\n')||'No feedback has been added yet.');
+      el('feedbackComposer').hidden=false;el('copyContentBtn').textContent='Copy progress summary';
       el('drawerBackdrop').classList.add('open');el('drawerBackdrop').setAttribute('aria-hidden','false');el('closeDrawerBtn').focus();
     }
     function render(){
       const query=el('searchInput').value.trim().toLowerCase();
       const learners=state.learners.filter(l=>[l.name,l.email].join(' ').toLowerCase().includes(query));
       const records=state.records.filter(r=>[r.name,r.email,r.title,r.metric].join(' ').toLowerCase().includes(query));
-      el('recordCount').textContent=(state.view==='learners'?learners.length:records.length)+' shown';
+      const progress=state.progressLearners.filter(l=>[l.email].join(' ').toLowerCase().includes(query));
+      el('recordCount').textContent=(state.view==='learners'?learners.length:state.view==='submissions'?records.length:progress.length)+' shown';
+      el('learnerView').hidden=state.view!=='learners';
+      el('submissionView').hidden=state.view!=='submissions';
+      el('progressView').hidden=state.view!=='progress';
       if(state.view==='learners'){
-        el('learnerView').hidden=false;el('submissionView').hidden=true;
         el('panelTitle').textContent='Learner directory';el('panelDescription').textContent='A summary derived from recorded learner activity.';
         const body=el('learnerBody');body.replaceChildren();
         if(!learners.length){emptyRow(body,6,state.records.length?'No learners match this search.':'No learner activity has been recorded yet.');return;}
         learners.forEach(learner=>{const row=document.createElement('tr');const td=cell(row,learner.name,'primary');const sub=document.createElement('span');sub.className='secondary-text';sub.textContent=learner.email||'Email not provided';td.appendChild(sub);
           cell(row,String(learner.records.length));cell(row,String(learner.writing));cell(row,String(learner.assessments));cell(row,dateLabel(learner.lastActive));
           const action=document.createElement('td');action.appendChild(button('View activity',()=>openDrawer(null,learner)));row.appendChild(action);body.appendChild(row);});
-      }else{
-        el('learnerView').hidden=true;el('submissionView').hidden=false;
+      }else if(state.view==='submissions'){
         el('panelTitle').textContent='Submission activity';el('panelDescription').textContent='Inspect writing scripts and portal assessment records.';
         const body=el('submissionBody');body.replaceChildren();
         if(!records.length){emptyRow(body,6,state.records.length?'No submissions match this search.':'No submissions have been recorded yet.');return;}
         records.forEach(record=>{const row=document.createElement('tr');cell(row,dateLabel(record.timestamp));const td=cell(row,record.name,'primary');const sub=document.createElement('span');sub.className='secondary-text';sub.textContent=record.email||'Email not provided';td.appendChild(sub);
           const type=cell(row,record.stream==='writing'?'Writing Lab':'Portal assessment');const pill=document.createElement('span');pill.className='pill '+(record.stream==='writing'?'':'green');pill.textContent=record.stream==='writing'?'Writing':'Assessment';type.appendChild(document.createElement('br'));type.appendChild(pill);
           cell(row,record.title);cell(row,record.metric);const action=document.createElement('td');action.appendChild(button('Inspect',()=>openDrawer(record,null)));row.appendChild(action);body.appendChild(row);});
+      }else{
+        el('panelTitle').textContent='Individual learning progress';el('panelDescription').textContent='Progress is grouped by verified student account; no learner can view another learner’s record.';
+        const body=el('progressBody');body.replaceChildren();
+        if(!progress.length){emptyRow(body,6,state.progressLearners.length?'No learners match this search.':'No saved Fex Practice progress is available yet. The learner database must be connected first.');return;}
+        progress.forEach(learner=>{
+          const row=document.createElement('tr');const td=cell(row,learner.email,'primary');td.appendChild(Object.assign(document.createElement('span'),{className:'secondary-text',textContent:learner.modules.length+' module records'}));
+          const completed=learner.modules.filter(m=>m.status==='completed').length;cell(row,completed+' / 5');
+          const total=learner.modules.reduce((n,m)=>n+(Number(m.total_questions)||0),0);const correct=learner.modules.reduce((n,m)=>n+(Number(m.correct_answers)||0),0);cell(row,total?correct+' / '+total+' ('+Math.round(correct/total*100)+'%)':'—');
+          const reviewed=state.vocabularyReviews.filter(r=>r.learner_id===learner.learner_id&&r.last_reviewed_at).length;cell(row,String(reviewed));
+          const latest=state.assessmentAttempts.find(a=>a.learner_id===learner.learner_id);cell(row,latest?latest.score+'/'+latest.total+' · '+dateLabel(latest.submitted_at):'Not attempted');
+          const action=document.createElement('td');action.appendChild(button('View progress',()=>openProgressDrawer(learner)));row.appendChild(action);body.appendChild(row);
+        });
       }
     }
     function setView(view){
@@ -143,6 +176,12 @@
         if(response.status===403)throw new Error('This account is not authorised for the teacher dashboard.');
         if(!response.ok||!data.ok)throw new Error(data.error||'The teacher data service could not load your records.');
         state.records=normalise(data);state.learners=groupLearners(state.records);
+        state.vocabularyReviews=Array.isArray(data.vocabularyReviews)?data.vocabularyReviews:[];
+        state.assessmentAttempts=Array.isArray(data.assessmentAttempts)?data.assessmentAttempts:[];
+        state.teacherFeedback=Array.isArray(data.teacherFeedback)?data.teacherFeedback:[];
+        const progressMap=new Map();
+        (Array.isArray(data.learnerProgress)?data.learnerProgress:[]).forEach(item=>{if(!progressMap.has(item.learner_id))progressMap.set(item.learner_id,{learner_id:item.learner_id,email:item.email,modules:[]});if(item.module_id)progressMap.get(item.learner_id).modules.push(item);});
+        state.progressLearners=[...progressMap.values()];
         el('kpiStudents').textContent=state.learners.length;el('kpiTotal').textContent=state.records.length;
         el('kpiWriting').textContent=state.records.filter(r=>r.stream==='writing').length;el('kpiAssessments').textContent=state.records.filter(r=>r.stream==='assessment').length;
         const synced=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
@@ -157,6 +196,17 @@
     el('closeDrawerBtn').addEventListener('click',()=>{el('drawerBackdrop').classList.remove('open');el('drawerBackdrop').setAttribute('aria-hidden','true');});
     el('drawerBackdrop').addEventListener('click',event=>{if(event.target===el('drawerBackdrop'))el('closeDrawerBtn').click();});
     document.addEventListener('keydown',event=>{if(event.key==='Escape'&&el('drawerBackdrop').classList.contains('open'))el('closeDrawerBtn').click();});
+    el('saveFeedbackBtn').addEventListener('click',async()=>{
+      const learner=state.selectedProgressLearner;const feedback=el('feedbackText').value.trim();
+      if(!learner||!feedback){el('feedbackStatus').textContent='Select a learner and enter feedback first.';return;}
+      const save=el('saveFeedbackBtn');save.disabled=true;save.textContent='Saving…';
+      try{
+        const response=await fetch('/api/teacher-data',{method:'POST',credentials:'same-origin',headers:{Accept:'application/json','Content-Type':'application/json'},body:JSON.stringify({action:'teacher_feedback',learnerEmail:learner.email,moduleId:el('feedbackModule').value,feedback})});
+        const result=await response.json();if(!response.ok||!result.ok)throw new Error(result.error||'Feedback could not be saved.');
+        el('feedbackStatus').textContent='Feedback saved to this learner’s private record.';el('feedbackText').value='';await loadDashboard();
+      }catch(error){el('feedbackStatus').textContent=error.message||'Feedback could not be saved.';}
+      finally{save.disabled=false;save.textContent='Save feedback';}
+    });
     el('copyContentBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(el('drawerContent').textContent);el('copyContentBtn').textContent='Copied';setTimeout(()=>el('copyContentBtn').textContent='Copy content',1500);}catch{el('copyContentBtn').textContent='Clipboard unavailable';}});
     loadDashboard();
   </script>
