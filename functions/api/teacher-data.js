@@ -177,7 +177,7 @@ export async function onRequestGet({ request, env }) {
         "Detailed Responses": "Prompt:\n" + item.prompt + "\n\nStudent response:\n" + item.response_text
       }));
       return json(200, {
-        ok: true, instructor: identity.email, generatedAt,
+        ok: true, instructor: identity.email, generatedAt, dataSource: "fex_d1",
         ieltsResults, writingSubmissions,
         learnerProgress: progressRows.results || [],
         vocabularyReviews: reviewRows.results || [],
@@ -217,7 +217,7 @@ export async function onRequestGet({ request, env }) {
     }
     if (!data) throw new AuthError(502, "Legacy learner records are temporarily unavailable.");
     return json(200, {
-      ok: true, instructor: identity.email, generatedAt: data.generatedAt || generatedAt,
+      ok: true, instructor: identity.email, generatedAt: data.generatedAt || generatedAt, dataSource: "legacy_sheets",
       ieltsResults: data.ieltsResults, writingSubmissions: data.writingSubmissions,
       learnerProgress: [], vocabularyReviews: [], assessmentAttempts: [], teacherFeedback: []
     });
