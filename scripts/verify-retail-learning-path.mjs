@@ -61,9 +61,14 @@ check("no external script or stylesheet dependencies", () => {
   assert.doesNotMatch(html, /<script\b[^>]*\bsrc\s*=/i);
   assert.doesNotMatch(html, /<link\b[^>]*rel=["']stylesheet["'][^>]*href=["']https?:/i);
 });
-check("no browser storage, network submission or unsafe HTML sinks", () => {
+check("only the authenticated personal-progress API is contacted", () => {
   assert.doesNotMatch(html, /\b(?:localStorage|sessionStorage|indexedDB)\b/i);
-  assert.doesNotMatch(html, /\b(?:fetch|XMLHttpRequest|WebSocket)\b/i);
+  assert.doesNotMatch(html, /\b(?:XMLHttpRequest|WebSocket)\b/i);
+  const fetchCalls = [...html.matchAll(/fetch\(\s*["']([^"']+)["']/g)].map(match => match[1]);
+  assert.ok(fetchCalls.length > 0, "personal progress API calls must be present");
+  assert.ok(fetchCalls.every(url => url === "/students/api/progress"), "only the same-origin personal progress endpoint may be called");
+  assert.match(html, /credentials:\s*["']same-origin["']/);
+  assert.match(html, /cache:\s*["']no-store["']/);
   assert.doesNotMatch(html, /\b(?:innerHTML|outerHTML|insertAdjacentHTML)\b/i);
   assert.doesNotMatch(html, /\son[a-z]+\s*=/i);
 });
