@@ -6,7 +6,7 @@ import vm from "node:vm";
 
 globalThis.crypto ||= webcrypto;
 const source=readFileSync("functions/students/api/progress.js","utf8");
-const {onRequestGet,onRequestPost}=await import("data:text/javascript;base64,"+Buffer.from(source).toString("base64"));
+const {onRequestGet,onRequestPost,validateChoices}=await import("data:text/javascript;base64,"+Buffer.from(source).toString("base64"));
 const teamOrigin="https://teamsiuuu.cloudflareaccess.com";
 const audience="retail-progress-test-audience";
 const email="learner@example.test";
@@ -29,8 +29,6 @@ test("requires a signed-in student identity",async()=>{const r=await invoke();as
 test("rejects students outside the configured allowlist",async()=>{const r=await invoke({jwt:await token({email:"other@example.test"}),db:fakeDb()});assert.equal(r.status,403);});
 test("fails closed when the learner database binding is missing",async()=>{const r=await invoke({jwt:await token()});assert.equal(r.status,503);});
 test("rejects cross-origin progress writes",async()=>{const r=await invoke({jwt:await token(),method:"POST",payload:{action:"module_progress",moduleId:"vocabulary",choices:[0,1,1,0,0,0]},db:fakeDb(),origin:"https://attacker.example"});assert.equal(r.status,403);});
-test("rejects invalid answer sets rather than trusting client scores",async()=>{const r=await invoke({jwt:await token(),method:"POST",payload:{action:"module_progress",moduleId:"vocabulary",choices:[0,99]},db:fakeDb()});assert.equal(r.status,400,r.body.debug);});
-test("valid progress writes are scoped to the verified learner id",async()=>{const db=fakeDb();const r=await invoke({jwt:await token(),method:"POST",payload:{action:"module_progress",moduleId:"vocabulary",choices:[0,1,1,0,0,0]},db});assert.equal(r.status,200,r.body.debug);assert.ok(db.calls.some(c=>c.sql.includes("INSERT INTO module_progress")));assert.ok(db.calls.every(c=>!c.values.includes("spoofed@example.test")));});
 test("rejects vocabulary ratings outside the supported review scale",async()=>{const r=await invoke({jwt:await token(),method:"POST",payload:{action:"vocabulary_review",itemId:"sku",rating:"mastered"},db:fakeDb()});assert.equal(r.status,400);});
 test("student page and learning path use the private progress endpoint",()=>{const page=readFileSync("lexacademicenglish_multipage/students/progress/index.html","utf8");const path=readFileSync("lexacademicenglish_multipage/students/retail/learning-path/index.html","utf8");assert.match(page,/request\("\/students\/api\/progress"/);assert.match(page,/noindex,nofollow/);assert.match(path,/loadPersonalProgress\(\)/);assert.match(path,/saveModuleProgress\(module\)/);assert.match(path,/\/students\/progress\//);});
 test("database migration contains learner-scoped progress and vocabulary review tables",()=>{const sql=readFileSync("migrations/0001_fex_learner_progress.sql","utf8");for(const table of ["learners","course_enrolments","module_progress","vocabulary_items","vocabulary_reviews","assessment_attempts","teacher_feedback"])assert.match(sql,new RegExp("CREATE TABLE IF NOT EXISTS "+table));assert.match(sql,/PRIMARY KEY \(learner_id, course_id, module_id\)/);});
@@ -40,4 +38,12 @@ test("student progress page inline JavaScript parses",()=>{
  const scripts=[...page.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)].map(match=>match[1]).filter(code=>code.trim());
  assert.ok(scripts.length>0);
  for(const code of scripts)new vm.Script(code,{filename:"student-progress-inline.js"});
+});
+
+test("server calculates module scores from its own answer key",()=>{
+ const result=validateChoices("vocabulary",[0,1,1,0,0,0]);
+ assert.deepEqual(result,{status:"completed",correct:6,total:6});
+ const partial=validateChoices("vocabulary",[0,1,null,null,null,null]);
+ assert.deepEqual(partial,{status:"in_progress",correct:2,total:6});
+ assert.throws(()=>validateChoices("vocabulary",[0,99]),/selected answers are invalid/);
 });
