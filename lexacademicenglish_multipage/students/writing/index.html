@@ -542,7 +542,9 @@
           credentials: 'same-origin',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
-            type: 'writing',\n            submissionId: crypto.randomUUID(),\n            studentName: document.getElementById('studentName').value.trim(),
+            type: 'writing',
+            submissionId: crypto.randomUUID(),
+            studentName: document.getElementById('studentName').value.trim(),
             studentEmail: document.getElementById('studentEmail').value.trim(),
             taskType: currentTask,
             promptTitle: selectedPrompt.title,
