@@ -1,7 +1,11 @@
+name: Retail learning-path and progress-management QA
+
+on:
   push:
     branches:
       - feature/lex-practice-learning-path-integration
       - integration/retail-secure-submissions
+      - feat/fex-d1-submission-records
     paths:
       - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
       - "lexacademicenglish_multipage/students/retail/index.html"
