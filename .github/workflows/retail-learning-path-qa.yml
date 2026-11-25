@@ -1,6 +1,3 @@
-name: Retail learning-path and progress-management QA
-
-on:
   push:
     branches:
       - feature/lex-practice-learning-path-integration
