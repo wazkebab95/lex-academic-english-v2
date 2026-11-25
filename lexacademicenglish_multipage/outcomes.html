@@ -351,8 +351,43 @@
     .fex-cta-btn { background: var(--navy); color: #fff; border-radius: 999px; font-family: var(--font-sans); font-size: 10px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; padding: .9rem 1.5rem; }
     .fex-cta-btn:hover { background: var(--navy-deep); opacity: 1; }
     .fex-pin { background: var(--navy); border: 2.5px solid #fff; box-shadow: 0 2px 8px rgba(19,41,75,.28); }
+    .fex-menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+      padding: .55rem .8rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--ink-primary);
+      font: inherit;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .fex-menu-toggle:focus-visible,
+    .fex-nav-links a:focus-visible {
+      outline: 2px solid var(--navy, #1b365d);
+      outline-offset: 3px;
+    }
+    @media (max-width: 820px) {
+      .fex-nav-inner { gap: .75rem; }
+      .fex-menu-toggle { display: inline-flex; margin-left: auto; }
+      .fex-nav-links {
+        display: none;
+        flex: 0 0 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding-top: .5rem;
+        font-size: .82rem;
+      }
+      .fex-nav-links.is-open { display: flex; }
+      .fex-nav-links a { padding: .8rem .15rem; border-top: 1px solid var(--border-subtle); }
+    }
     @media (max-width: 700px) {
-      .fex-nav-links { gap: .8rem; font-size: 9px; }
       .fex-container { padding: 2.5rem 1.1rem 3.5rem; }
       .fex-cta-box { padding: 1.5rem; }
     }
@@ -362,19 +397,56 @@
 <body class="halcyon-body">
 
   <!-- Top Navigation -->
-  <nav class="fex-nav">
+  <nav class="fex-nav" aria-label="Main navigation">
     <div class="fex-nav-inner">
       <a href="/" class="fex-brand">Fex Academic English</a>
-      <div class="fex-nav-links">
+      <button class="fex-menu-toggle" type="button" aria-expanded="false" aria-controls="fex-primary-links">
+        <span class="fex-menu-label">Menu</span>
+      </button>
+      <div class="fex-nav-links" id="fex-primary-links">
         <a href="/">Home</a>
         <a href="/services">Service</a>
         <a href="/ielts-preparation">IELTS Suite</a>
-        <a href="/outcomes" class="active">Outcome</a>
+        <a href="/outcomes" class="active" aria-current="page">Outcome</a>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
       </div>
     </div>
   </nav>
+
+  <script>
+    (() => {
+      const toggle = document.querySelector('.fex-menu-toggle');
+      const links = document.getElementById('fex-primary-links');
+      const label = toggle?.querySelector('.fex-menu-label');
+      if (!toggle || !links || !label) return;
+
+      const closeMenu = () => {
+        toggle.setAttribute('aria-expanded', 'false');
+        links.classList.remove('is-open');
+        label.textContent = 'Menu';
+      };
+
+      toggle.addEventListener('click', () => {
+        const isOpen = toggle.getAttribute('aria-expanded') !== 'true';
+        toggle.setAttribute('aria-expanded', String(isOpen));
+        links.classList.toggle('is-open', isOpen);
+        label.textContent = isOpen ? 'Close' : 'Menu';
+      });
+
+      links.addEventListener('click', event => {
+        if (event.target.closest('a')) closeMenu();
+      });
+
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeMenu();
+      });
+
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 820) closeMenu();
+      });
+    })();
+  </script>
 
   <main class="fex-container">
     <span class="fex-eyebrow">VERIFIED TRACK RECORD & GLOBAL MOBILITY</span>
