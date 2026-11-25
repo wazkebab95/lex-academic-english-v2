@@ -174,6 +174,7 @@ export async function onRequestGet({ request, env }) {
         "Student Name": item.metadata_json ? (() => { try { return JSON.parse(item.metadata_json).submittedName || item.email; } catch { return item.email; } })() : item.email,
         "Student Email": item.email, "Category": item.title, "Raw Score": item.score,
         "Band Estimate": item.result_label, "Time Taken": item.time_spent,
+        "Diagnostic Focus": (() => { try { const answers = JSON.parse(item.metadata_json || "{}").diagnosticAnswers || []; return answers.map(answer => [answer.topic, "Selected: " + (answer.selectedAnswer || "Not answered"), "Correct: " + answer.correctAnswer, answer.isCorrect ? "Correct" : "Incorrect"].join(" · ")).join("\n"); } catch { return ""; } })(),
         "Detailed Responses": "Prompt:\n" + item.prompt + "\n\nStudent response:\n" + item.response_text
       }));
       return json(200, {
