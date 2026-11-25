@@ -7,13 +7,13 @@ const MODULE_KEYS = {
   assessment: [1,0,1,1,1,0,0,1,1,0]
 };
 const MODULE_IDS = new Set([...Object.keys(MODULE_KEYS), "case-study"]);
-const EMAIL_PATTERN = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 class HttpError extends Error { constructor(status,message){super(message);this.status=status;} }
 function json(status,payload){return new Response(JSON.stringify(payload),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}});}
 function decodeBase64Url(value){const normalised=value.replace(/-/g,"+").replace(/_/g,"/");const padded=normalised+"=".repeat((4-normalised.length%4)%4);const binary=atob(padded);return Uint8Array.from(binary,c=>c.charCodeAt(0));}
 function decodeJsonSegment(value){return JSON.parse(new TextDecoder().decode(decodeBase64Url(value)));}
-function teamOrigin(value){const input=String(value||"").trim();if(!input)throw new HttpError(503,"Student sign-in is not configured.");let url;try{url=new URL(/^https:\\/\\//i.test(input)?input:"https://"+input);}catch{throw new HttpError(503,"Student sign-in is not configured.");}if(url.protocol!=="https:"||url.pathname!=="/"||url.search||url.hash||url.username||url.password)throw new HttpError(503,"Student sign-in is not configured.");return url.origin;}
+function teamOrigin(value){const input=String(value||"").trim();if(!input)throw new HttpError(503,"Student sign-in is not configured.");let url;try{url=new URL(/^https:\/\//i.test(input)?input:"https://"+input);}catch{throw new HttpError(503,"Student sign-in is not configured.");}if(url.protocol!=="https:"||url.pathname!=="/"||url.search||url.hash||url.username||url.password)throw new HttpError(503,"Student sign-in is not configured.");return url.origin;}
 async function verifyStudent(request,env){
   const issuer=teamOrigin(env.CF_ACCESS_TEAM_DOMAIN);
   const audience=String(env.RETAIL_ACCESS_AUD||"").trim();
@@ -73,8 +73,11 @@ async function saveModule(db,identity,payload){
     await db.prepare("INSERT INTO module_progress (learner_id,course_id,module_id,status,choices_json,correct_answers,total_questions,attempts,completed_at,updated_at) VALUES (?,?,?,'completed','[]',0,0,1,strftime('%Y-%m-%dT%H:%M:%fZ','now'),strftime('%Y-%m-%dT%H:%M:%fZ','now')) ON CONFLICT(learner_id,course_id,module_id) DO UPDATE SET status='completed',attempts=module_progress.attempts+1,completed_at=strftime('%Y-%m-%dT%H:%M:%fZ','now'),updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now')").bind(identity.learnerId,COURSE_ID,moduleId).run();
     return;
   }
-  const result=validateChoices(moduleId,payload.choices);
-  await db.prepare("INSERT INTO module_progress (learner_id,course_id,module_id,status,choices_json,correct_answers,total_questions,attempts,completed_at,updated_at) VALUES (?,?,?,?,?,?,?,1,CASE WHEN ?='completed' THEN strftime('%Y-%m-%dT%H:%M:%fZ','now') ELSE NULL END,strftime('%Y-%m-%dT%H:%M:%fZ','now')) ON CONFLICT(learner_id,course_id,module_id) DO UPDATE SET status=excluded.status,choices_json=excluded.choices_json,correct_answers=excluded.correct_answers,total_questions=excluded.total_questions,attempts=module_progress.attempts+1,completed_at=CASE WHEN excluded.status='completed' THEN COALESCE(module_progress.completed_at,excluded.completed_at) ELSE NULL END,updated_at=excluded.updated_at").bind(identity.learnerId,COURSE_ID,moduleId,result.status,JSON.stringify(payload.choices),result.correct,result.total,result.status).run();
+  const previous=await db.prepare("SELECT status FROM module_progress WHERE learner_id=? AND course_id=? AND module_id=?").bind(identity.learnerId,COURSE_ID,moduleId).first();
+  await db.prepare("INSERT INTO module_progress (learner_id,course_id,module_id,status,choices_json,correct_answers,total_questions,attempts,completed_at,updated_at) VALUES (?,?,?,?,?,?,?,1,CASE WHEN ?='completed' THEN strftime('%Y-%m-%dT%H:%M:%fZ','now') ELSE NULL END,strftime('%Y-%m-%dT%H:%M:%fZ','now')) ON CONFLICT(learner_id,course_id,module_id) DO UPDATE SET status=excluded.status,choices_json=excluded.choices_json,correct_answers=excluded.correct_answers,total_questions=excluded.total_questions,attempts=module_progress.attempts+CASE WHEN module_progress.status='completed' AND excluded.status='in_progress' THEN 1 ELSE 0 END,completed_at=CASE WHEN excluded.status='completed' THEN COALESCE(module_progress.completed_at,excluded.completed_at) ELSE NULL END,updated_at=excluded.updated_at").bind(identity.learnerId,COURSE_ID,moduleId,result.status,JSON.stringify(payload.choices),result.correct,result.total,result.status).run();
+  if(moduleId==="assessment"&&result.status==="completed"&&previous?.status!=="completed"){
+    await db.prepare("INSERT INTO assessment_attempts (attempt_id,learner_id,course_id,assessment_id,score,total) VALUES (?,?,?,?,?,?)").bind(crypto.randomUUID(),identity.learnerId,COURSE_ID,"comprehensive-assessment",result.correct,result.total).run();
+  }
 }
 async function saveVocabularyReview(db,identity,payload){
   const itemId=String(payload.itemId||"");const rating=String(payload.rating||"");
@@ -95,7 +98,7 @@ export async function onRequestGet({request,env}){
 }
 export async function onRequestPost({request,env}){
   try{
-    if(!/^application\\/json(?:\\s*;|$)/i.test(request.headers.get("Content-Type")||""))throw new HttpError(415,"Send your progress update as JSON.");
+    if(!/^application\/json(?:\s*;|$)/i.test(request.headers.get("Content-Type")||""))throw new HttpError(415,"Send your progress update as JSON.");
     if(request.headers.get("Origin")&&request.headers.get("Origin")!==new URL(request.url).origin)throw new HttpError(403,"This request origin is not allowed.");
     const raw=await request.text();if(encoder.encode(raw).byteLength>12000)throw new HttpError(413,"This progress update is too large.");
     let payload;try{payload=JSON.parse(raw);}catch{throw new HttpError(400,"The progress update is not valid JSON.");}
