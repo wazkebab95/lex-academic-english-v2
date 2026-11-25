@@ -61,7 +61,8 @@ async function invoke({ jwt, db, payload, settings = {}, origin = "https://lexac
     throw new Error("Unexpected outbound request");
   };
   try {
-    const headers = {};\n    if (jwt !== null) headers["Cf-Access-Jwt-Assertion"] = jwt || await token();
+    const headers = {};
+    if (jwt !== null) headers["Cf-Access-Jwt-Assertion"] = jwt || await token();
     if (payload !== undefined) headers["Content-Type"]="application/json";
     if (origin) headers.Origin=origin;
     const request = new Request("https://lexacademicenglish.co.uk/students/api/submissions",{
