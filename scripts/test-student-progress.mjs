@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { webcrypto } from "node:crypto";
 import { readFileSync } from "node:fs";
+import vm from "node:vm";
 
 globalThis.crypto ||= webcrypto;
 const source=readFileSync("functions/students/api/progress.js","utf8");
@@ -33,3 +34,10 @@ test("valid progress writes are scoped to the verified learner id",async()=>{con
 test("rejects vocabulary ratings outside the supported review scale",async()=>{const r=await invoke({jwt:await token(),method:"POST",payload:{action:"vocabulary_review",itemId:"sku",rating:"mastered"},db:fakeDb()});assert.equal(r.status,400);});
 test("student page and learning path use the private progress endpoint",()=>{const page=readFileSync("lexacademicenglish_multipage/students/progress/index.html","utf8");const path=readFileSync("lexacademicenglish_multipage/students/retail/learning-path/index.html","utf8");assert.match(page,/request\("\/students\/api\/progress"/);assert.match(page,/noindex,nofollow/);assert.match(path,/loadPersonalProgress\(\)/);assert.match(path,/saveModuleProgress\(module\)/);assert.match(path,/\/students\/progress\//);});
 test("database migration contains learner-scoped progress and vocabulary review tables",()=>{const sql=readFileSync("migrations/0001_fex_learner_progress.sql","utf8");for(const table of ["learners","course_enrolments","module_progress","vocabulary_items","vocabulary_reviews","assessment_attempts","teacher_feedback"])assert.match(sql,new RegExp("CREATE TABLE IF NOT EXISTS "+table));assert.match(sql,/PRIMARY KEY \(learner_id, course_id, module_id\)/);});
+
+test("student progress page inline JavaScript parses",()=>{
+ const page=readFileSync("lexacademicenglish_multipage/students/progress/index.html","utf8");
+ const scripts=[...page.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)].map(match=>match[1]).filter(code=>code.trim());
+ assert.ok(scripts.length>0);
+ for(const code of scripts)new vm.Script(code,{filename:"student-progress-inline.js"});
+});
