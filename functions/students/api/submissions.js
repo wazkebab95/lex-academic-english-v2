@@ -137,7 +137,7 @@ export async function onRequestPost({ request, env }) {
       .bind(identity.learnerId, courseId).run();
     const insert = await env.FEX_DB.prepare("INSERT OR IGNORE INTO student_submissions (submission_id,learner_id,course_id,submission_type,title,prompt,response_text,score,result_label,word_count,time_spent,metadata_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)")
       .bind(submissionId, identity.learnerId, courseId, type, title, prompt, responseText, score, resultLabel, wordCount, timeSpent,
-        JSON.stringify({ targetBand: body.targetBand || null, category: body.category || null, submittedName: name })).run();
+        JSON.stringify({ targetBand: body.targetBand || null, category: body.category || null, submittedName: name, diagnosticAnswers: Array.isArray(body.diagnosticAnswers) ? body.diagnosticAnswers.slice(0, 30) : [] })).run();
     const stored = await env.FEX_DB.prepare("SELECT learner_id,submission_type FROM student_submissions WHERE submission_id=?").bind(submissionId).first();
     if (!stored || stored.learner_id !== identity.learnerId || stored.submission_type !== type)
       throw new SubmissionError(409, "This submission reference is already in use.");
