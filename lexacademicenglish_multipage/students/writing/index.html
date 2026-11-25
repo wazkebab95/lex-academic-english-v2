@@ -326,7 +326,7 @@
     <aside class="panel">
       <h1 class="panel-title">IELTS Writing Task</h1>
       <p style="font-size:0.84rem; color:var(--ink-secondary); margin-bottom:1.1rem;">
-        Select an examination task below. Your script is logged directly to your instructor ledger and emailed upon submission.
+        Select an examination task below. Your script is stored securely in your private learner record and sent to your instructor.
       </p>
 
       <div class="task-switch">
@@ -537,12 +537,12 @@
           : 'Untimed';
 
       try {
-        const res = await fetch('/api/submit-writing', {
+        const res = await fetch('/students/api/submissions', {
           method: 'POST',
           credentials: 'same-origin',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
-            studentName: document.getElementById('studentName').value.trim(),
+            type: 'writing',\n            submissionId: crypto.randomUUID(),\n            studentName: document.getElementById('studentName').value.trim(),
             studentEmail: document.getElementById('studentEmail').value.trim(),
             taskType: currentTask,
             promptTitle: selectedPrompt.title,
@@ -555,7 +555,7 @@
         if (!res.ok || !data.ok) throw new Error(data.error || 'Submission error');
 
         statusBanner.className = 'status-banner success';
-        statusBanner.textContent = `Submitted to your instructor successfully (Reference: ${data.submissionId} · ${data.wordCount} words). The script has been recorded in the instructor ledger and emailed to your instructor. A receipt has also been sent to you.`;
+        statusBanner.textContent = `Your script has been saved to your private Fex record (Reference: ${data.submissionId} · ${data.wordCount} words). ${data.instructorNotified ? 'Your instructor has also been notified by email.' : 'Your instructor can review it directly in the Teacher Dashboard.'}`;
         essayText.value = '';
         updateWordMetrics();
       } catch (err) {
