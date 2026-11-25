@@ -1,4 +1,4 @@
-name: Retail learning-path QA
+name: Retail learning-path and progress-management QA
 
 on:
   push:
