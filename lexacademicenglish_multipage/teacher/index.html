@@ -24,8 +24,9 @@
     .drawer-backdrop{display:none;position:fixed;inset:0;background:rgba(20,22,25,.38);z-index:30;justify-content:flex-end}.drawer-backdrop.open{display:flex}.drawer{height:100%;width:min(620px,100%);overflow:auto;background:var(--canvas);padding:25px;box-shadow:-10px 0 35px #00000012}.drawer-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;border-bottom:1px solid var(--line);padding-bottom:16px}.drawer h2{font:600 30px/1.1 var(--serif);margin:5px 0}.drawer-section{margin-top:20px}.drawer-section h3{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:0 0 9px}.detail-box{background:white;border:1px solid var(--line);padding:15px;border-radius:3px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.8}.drawer-meta{font-size:11px;color:var(--muted)}
     @media(max-width:800px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.page-head{align-items:flex-start;flex-direction:column}.sync{max-width:100%}}@media(max-width:520px){.topbar-inner,main{padding-left:15px;padding-right:15px}.topbar-inner{min-height:62px}.brand strong{font-size:23px}.brand span{display:none}.top-actions a{display:none}.page-head h1{font-size:36px}.kpis{gap:8px}.kpi{padding:13px}.kpi-value{font-size:29px}.panel-head,.controls{padding-left:13px;padding-right:13px}.controls{align-items:stretch}.tabs{overflow-x:auto}.search{width:100%}.drawer{padding:18px}}
   </style>
+  <link rel="stylesheet" href="/assets/fex-student-ui.css" />
 </head>
-<body>
+<body class="fex-halcyon">
   <header class="topbar"><div class="topbar-inner">
     <a class="brand" href="/"><strong>Fex Practice</strong><span>Teacher workspace</span></a>
     <nav class="top-actions" aria-label="Teacher navigation"><a href="/students/writing/">Writing Lab</a><a href="/outcomes.html">Learner outcomes</a><button class="btn secondary" id="refreshBtn" type="button">Refresh data</button></nav>

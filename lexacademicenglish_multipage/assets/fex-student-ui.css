@@ -1,0 +1,37 @@
+/* Fex Studio interface standards — scoped to the four approved workspaces. */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+body.fex-halcyon{--fex-canvas:#FAF9F6;--fex-surface:#fff;--fex-subtle:#F3F1EC;--fex-ink:#1A1A1A;--fex-muted:#57534E;--fex-line:#E5E2DC;--fex-navy:#1B365D;--fex-ochre:#8B5E34;background:var(--fex-canvas)!important;color:var(--fex-ink)!important;font:16px/1.65 'Plus Jakarta Sans',Inter,sans-serif!important}
+body.fex-halcyon .topbar{background:rgba(250,249,246,.97)!important;border-color:var(--fex-line)!important}
+body.fex-halcyon .topbar-inner,body.fex-halcyon main{max-width:1120px!important}
+body.fex-halcyon .brand strong,body.fex-halcyon h1,body.fex-halcyon h2,body.fex-halcyon .drawer h2{font-family:'Playfair Display',Georgia,serif!important;font-weight:500!important;letter-spacing:-.02em!important;line-height:1.2!important}
+body.fex-halcyon .page-head h1{font-size:clamp(34px,4vw,44px)!important}
+body.fex-halcyon .eyebrow{color:var(--fex-navy)!important;letter-spacing:.1em!important;font-size:.75rem!important}
+body.fex-halcyon .kpi,body.fex-halcyon .panel,body.fex-halcyon .detail-box,body.fex-halcyon .sync{background:#fff!important;border:1px solid var(--fex-line)!important;border-radius:0!important;box-shadow:none!important}
+body.fex-halcyon .kpi-value{font:600 29px/1.2 'JetBrains Mono',monospace!important;color:var(--fex-navy)!important}
+body.fex-halcyon .panel-head,body.fex-halcyon .controls,body.fex-halcyon th,body.fex-halcyon td{border-color:var(--fex-line)!important}
+body.fex-halcyon th{background:var(--fex-subtle)!important;color:var(--fex-muted)!important}
+body.fex-halcyon .btn{border-radius:2px!important;background:var(--fex-navy)!important;border-color:var(--fex-navy)!important}
+body.fex-halcyon .btn.secondary,body.fex-halcyon .table-action{background:#fff!important;color:var(--fex-ink)!important;border:1px solid var(--fex-line)!important}
+body.fex-halcyon .tab.active{background:var(--fex-subtle)!important;border-color:var(--fex-line)!important;color:var(--fex-navy)!important}
+body.fex-halcyon input,body.fex-halcyon select,body.fex-halcyon textarea{font:14px 'Plus Jakarta Sans',Inter,sans-serif!important;border-radius:2px!important}
+body.fex-halcyon .drawer{background:var(--fex-canvas)!important;box-shadow:none!important}
+body.fex-halcyon .notice{border-radius:0!important}
+body.fex-overture{--fex-canvas:#fff;--fex-tint:#F8FAFC;--fex-ink:#0F172A;--fex-muted:#475569;--fex-line:#E2E8F0;--fex-navy:#1E3A8A;--fex-action:#2563EB;background:var(--fex-tint)!important;color:var(--fex-ink)!important;font:16px/1.65 'Plus Jakarta Sans',Inter,system-ui,sans-serif!important}
+body.fex-overture h1,body.fex-overture h2,body.fex-overture h3,body.fex-overture .font-editorial,body.fex-overture .brand-title{font-family:'Plus Jakarta Sans',Inter,sans-serif!important;font-weight:700!important;letter-spacing:-.02em!important;line-height:1.2!important}
+body.fex-overture .hero{background:var(--fex-tint)!important;border-bottom:1px solid var(--fex-line)!important}
+body.fex-overture h1,body.fex-overture h2,body.fex-overture h3{font-family:'Plus Jakarta Sans',Inter,sans-serif!important;font-weight:700!important;letter-spacing:-.02em!important}
+body.fex-overture .card,body.fex-overture .module,body.fex-overture .word,body.fex-overture .feedback-item,body.fex-overture .empty,body.fex-overture .panel{border-radius:4px!important;box-shadow:none!important;border-color:var(--fex-line)!important;background:#fff!important}
+body.fex-overture .bar span{background:var(--fex-action)!important}
+body.fex-overture .overture-header,body.fex-overture header{background:#fff!important;border-color:var(--fex-line)!important;box-shadow:none!important}
+body.fex-overture .workspace-card,body.fex-overture .panel,body.fex-overture .studio-card,body.fex-overture .writing-panel,body.fex-overture .task-card,body.fex-overture .prompt-card{background:#fff!important;border:1px solid var(--fex-line)!important;border-radius:4px!important;box-shadow:none!important}
+body.fex-overture .btn-espresso,body.fex-overture .btn-primary,body.fex-overture button.primary,body.fex-overture input[type=submit]{background:var(--fex-navy)!important;border-color:var(--fex-navy)!important;color:#fff!important;border-radius:3px!important}
+body.fex-overture .btn-outline-studio,body.fex-overture .btn-secondary{border-radius:3px!important;border-color:var(--fex-line)!important}
+body.fex-overture input,body.fex-overture select,body.fex-overture textarea{font-family:'Plus Jakarta Sans',Inter,sans-serif!important;border-color:var(--fex-line)!important;border-radius:3px!important}
+body.fex-overture button:focus-visible,body.fex-overture a:focus-visible,body.fex-overture input:focus-visible,body.fex-overture select:focus-visible,body.fex-overture textarea:focus-visible{outline:2px solid var(--fex-action)!important;outline-offset:2px!important}
+body.fex-overture .metric,body.fex-overture .score,body.fex-overture .timer,body.fex-overture code,body.fex-overture .technical-value{font-family:'JetBrains Mono',monospace!important}
+body.fex-overture .dove-band,body.fex-overture .hero-band{background:var(--fex-tint)!important;border-color:var(--fex-line)!important}
+body.fex-overture .studio-grid,body.fex-overture .nav-inner{max-width:1040px!important}
+body.fex-overture .brand-tag{background:#EFF6FF!important;color:var(--fex-navy)!important;border-radius:2px!important}
+body.fex-overture .muted,body.fex-overture .text-muted{color:var(--fex-muted)!important}
+body.fex-overture .progress-bar>span,body.fex-overture .progress-fill{background:var(--fex-action)!important}
+@media(max-width:700px){body.fex-halcyon .topbar-inner,body.fex-halcyon main{padding-left:16px!important;padding-right:16px!important}body.fex-halcyon .kpis{gap:9px!important}}
