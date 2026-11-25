@@ -61,7 +61,7 @@ async function invoke({ jwt, db, payload, settings = {}, origin = "https://lexac
     throw new Error("Unexpected outbound request");
   };
   try {
-    const headers = {"Cf-Access-Jwt-Assertion":jwt || await token()};
+    const headers = {};\n    if (jwt !== null) headers["Cf-Access-Jwt-Assertion"] = jwt || await token();
     if (payload !== undefined) headers["Content-Type"]="application/json";
     if (origin) headers.Origin=origin;
     const request = new Request("https://lexacademicenglish.co.uk/students/api/submissions",{
@@ -73,7 +73,7 @@ async function invoke({ jwt, db, payload, settings = {}, origin = "https://lexac
 }
 
 test("requires a valid Cloudflare Access student identity", async () => {
-  const r=await invoke({db:fakeDb(),payload:{type:"writing"}});
+  const r=await invoke({jwt:null,db:fakeDb(),payload:{type:"writing"}});
   assert.equal(r.status,401);
 });
 test("rejects a supplied email that differs from the verified Access identity", async () => {
