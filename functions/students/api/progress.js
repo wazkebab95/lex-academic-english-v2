@@ -60,7 +60,7 @@ async function getProgress(db,identity){
   ]);
   return {ok:true,courseId:COURSE_ID,modules:modules.results||[],vocabulary:vocabulary.results||[],reviews:reviews.results||[],assessmentAttempts:attempts.results||[],teacherFeedback:feedback.results||[]};
 }
-function validateChoices(moduleId,choices){
+export function validateChoices(moduleId,choices){
   const keys=MODULE_KEYS[moduleId];if(!keys||!Array.isArray(choices)||choices.length!==keys.length)throw new HttpError(400,"The module response is invalid.");
   if(choices.some(choice=>choice!==null&&(!Number.isInteger(choice)||choice<0||choice>3)))throw new HttpError(400,"One or more selected answers are invalid.");
   const answered=choices.filter(choice=>choice!==null);
