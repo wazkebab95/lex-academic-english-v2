@@ -76,6 +76,50 @@ function escapeHtml(value) {
   return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
+
+async function backupToGoogleSheets(env, record) {
+  if (!env.GOOGLE_SHEET_WEBHOOK_URL) return { ok: false, error: "Google Sheets backup is not configured." };
+  let url;
+  try { url = new URL(env.GOOGLE_SHEET_WEBHOOK_URL); }
+  catch { return { ok: false, error: "Google Sheets backup URL is invalid." }; }
+  const timestamp = new Date().toLocaleString("en-GB", {
+    timeZone: "Europe/Istanbul", dateStyle: "medium", timeStyle: "short"
+  });
+  const payload = record.type === "writing" ? {
+    action: "log_writing", submissionId: record.id, studentName: record.name,
+    studentEmail: record.email, taskType: record.title, promptTitle: record.prompt,
+    wordCount: record.wordCount, timeSpent: record.timeSpent, essayText: record.response
+  } : {
+    submissionId: record.id, timestamp, studentName: record.name, studentEmail: record.email,
+    category: record.title, score: record.score, bandEstimate: record.resultLabel,
+    timeTaken: record.timeSpent,
+    details: "Submission reference: " + record.id + "\nPrompt: " + record.prompt +
+      "\nDiagnostic answers: " + JSON.stringify(record.diagnosticAnswers || []) +
+      "\nStudent response: " + record.response
+  };
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+  try {
+    const response = await fetch(url.toString(), {
+      method: "POST", signal: controller.signal,
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) return { ok: false, error: "Google Sheets returned HTTP " + response.status + "." };
+    const text = await response.text();
+    if (text) {
+      try {
+        const result = JSON.parse(text);
+        if (result.ok === false || result.success === false || result.error)
+          return { ok: false, error: String(result.error || "Google Sheets rejected the backup.").slice(0, 300) };
+      } catch { /* Existing Apps Script deployments may return a plain-text success response. */ }
+    }
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, error: error && error.name === "AbortError" ? "Google Sheets backup timed out." : "Google Sheets backup could not be reached." };
+  } finally { clearTimeout(timeout); }
+}
+
 async function notifyInstructor(env, record) {
   if (!env.RESEND_API_KEY || !env.INSTRUCTOR_EMAIL) return false;
   const heading = record.type === "writing" ? "Writing submission" : "IELTS submission";
@@ -139,12 +183,22 @@ export async function onRequestPost({ request, env }) {
     const insert = await env.FEX_DB.prepare("INSERT OR IGNORE INTO student_submissions (submission_id,learner_id,course_id,submission_type,title,prompt,response_text,score,result_label,word_count,time_spent,metadata_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)")
       .bind(submissionId, identity.learnerId, courseId, type, title, prompt, responseText, score, resultLabel, wordCount, timeSpent,
         JSON.stringify({ targetBand: body.targetBand || null, category: body.category || null, submittedName: name, diagnosticAnswers: Array.isArray(body.diagnosticAnswers) ? body.diagnosticAnswers.slice(0, 30) : [] })).run();
-    const stored = await env.FEX_DB.prepare("SELECT learner_id,submission_type FROM student_submissions WHERE submission_id=?").bind(submissionId).first();
+    const stored = await env.FEX_DB.prepare("SELECT learner_id,submission_type,backup_status FROM student_submissions WHERE submission_id=?").bind(submissionId).first();
     if (!stored || stored.learner_id !== identity.learnerId || stored.submission_type !== type)
       throw new SubmissionError(409, "This submission reference is already in use.");
     const record = { id: submissionId, type, name, email: identity.email, title, prompt, response: responseText, wordCount };
     const notified = insert.meta && Number(insert.meta.changes) > 0 ? await notifyInstructor(env, record) : null;
-    return json(200, { ok: true, submissionId, wordCount, recorded: true, instructorNotified: notified });
+    let backupStatus = stored.backup_status || "pending";
+    if (backupStatus !== "synced") {
+      const backup = await backupToGoogleSheets(env, {
+        ...record, score, resultLabel, timeSpent,
+        diagnosticAnswers: Array.isArray(body.diagnosticAnswers) ? body.diagnosticAnswers.slice(0, 30) : []
+      });
+      backupStatus = backup.ok ? "synced" : "failed";
+      await env.FEX_DB.prepare("UPDATE student_submissions SET backup_status=?,backup_synced_at=?,backup_error=? WHERE submission_id=? AND learner_id=?")
+        .bind(backupStatus, backup.ok ? new Date().toISOString() : null, backup.ok ? null : backup.error, submissionId, identity.learnerId).run();
+    }
+    return json(200, { ok: true, submissionId, wordCount, recorded: true, instructorNotified: notified, backupStatus });
   } catch (error) {
     if (error instanceof SubmissionError) return json(error.status, { ok: false, error: error.message });
     return json(500, { ok: false, error: "Your submission could not be recorded. Please try again." });
