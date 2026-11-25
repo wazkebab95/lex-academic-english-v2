@@ -14,7 +14,10 @@ on:
       - "functions/api/teacher-data.js"
       - "lexacademicenglish_multipage/functions/api/teacher-data.js"
       - "scripts/test-teacher-data-auth.mjs"
+      - "functions/api/teacher-data.js"
+      - "lexacademicenglish_multipage/functions/api/teacher-data.js"
       - "lexacademicenglish_multipage/teacher/index.html"
+      - "scripts/test-teacher-progress.mjs"
       - "scripts/test-teacher-dashboard.mjs"
       - "functions/students/api/progress.js"
       - "migrations/0001_fex_learner_progress.sql"
@@ -32,7 +35,10 @@ on:
       - "functions/api/teacher-data.js"
       - "lexacademicenglish_multipage/functions/api/teacher-data.js"
       - "scripts/test-teacher-data-auth.mjs"
+      - "functions/api/teacher-data.js"
+      - "lexacademicenglish_multipage/functions/api/teacher-data.js"
       - "lexacademicenglish_multipage/teacher/index.html"
+      - "scripts/test-teacher-progress.mjs"
       - "scripts/test-teacher-dashboard.mjs"
       - "functions/students/api/progress.js"
       - "migrations/0001_fex_learner_progress.sql"
@@ -63,3 +69,5 @@ jobs:
         run: node --test scripts/test-teacher-dashboard.mjs
       - name: Test private student progress and review records
         run: node --test scripts/test-student-progress.mjs
+      - name: Test teacher progress and feedback management
+        run: node --test scripts/test-teacher-progress.mjs
