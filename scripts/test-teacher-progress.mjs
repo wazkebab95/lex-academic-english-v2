@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import vm from "node:vm";
 
 const api=readFileSync("functions/api/teacher-data.js","utf8");
 const dashboard=readFileSync("lexacademicenglish_multipage/teacher/index.html","utf8");
@@ -27,4 +28,10 @@ test("teacher dashboard exposes a separate individual progress view and feedback
   assert.match(dashboard,/function openProgressDrawer/);
   assert.match(dashboard,/action:'teacher_feedback'/);
   assert.match(dashboard,/credentials:'same-origin'/);
+});
+
+test("teacher dashboard inline JavaScript parses",()=>{
+  const scripts=[...dashboard.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)].map(match=>match[1]).filter(code=>code.trim());
+  assert.ok(scripts.length>0);
+  for(const code of scripts)new vm.Script(code,{filename:"teacher-dashboard-inline.js"});
 });
