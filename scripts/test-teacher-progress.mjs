@@ -12,6 +12,9 @@ test("teacher API returns individual learner progress from the private database"
   assert.match(api,/vocabularyReviews/);
   assert.match(api,/assessmentAttempts/);
   assert.match(api,/teacherFeedback/);
+  assert.match(api,/FROM student_submissions s JOIN learners l/);
+  assert.match(api,/dataSource: "fex_d1"/);
+  assert.match(api,/Diagnostic Focus/);
 });
 
 test("teacher feedback writes require verified teacher identity and an active learner lookup",()=>{
@@ -28,6 +31,7 @@ test("teacher dashboard exposes a separate individual progress view and feedback
   assert.match(dashboard,/function openProgressDrawer/);
   assert.match(dashboard,/action:'teacher_feedback'/);
   assert.match(dashboard,/credentials:'same-origin'/);
+  assert.match(dashboard,/Fex database/);
 });
 
 test("teacher dashboard inline JavaScript parses",()=>{
