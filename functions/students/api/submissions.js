@@ -110,6 +110,7 @@ export async function onRequestPost({ request, env }) {
     if (encoder.encode(raw).byteLength > 40000) throw new SubmissionError(413, "This submission is too large.");
     let body;
     try { body = JSON.parse(raw); } catch { throw new SubmissionError(400, "The submission is not valid JSON."); }
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw new SubmissionError(400, "The submission payload is invalid.");
     const identity = await verifyStudent(request, env);
     if (!env.FEX_DB) throw new SubmissionError(503, "Submission storage is not configured yet. Please contact your tutor.");
     const type = String(body.type || "");
