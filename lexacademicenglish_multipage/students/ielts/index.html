@@ -235,7 +235,52 @@
     // Word Counter
     const essayBox = document.getElementById('essay-response');
     const wordCounter = document.getElementById('word-counter');
+    const draftKey = 'fex_ielts_submission_draft_v1';
+    const submissionKey = 'fex_ielts_pending_submission_id';
+    function saveIeltsDraft() {
+      try {
+        const answers = {};
+        questions.forEach(q => {
+          const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+          if (selected) answers[q.id] = selected.value;
+        });
+        sessionStorage.setItem(draftKey, JSON.stringify({
+          studentName: nameInput.value,
+          studentEmail: emailInput.value,
+          targetBand: document.getElementById('target-band').value,
+          essay: essayBox.value,
+          answers
+        }));
+      } catch (error) {
+        console.warn('IELTS draft could not be saved in this browser session.', error);
+      }
+    }
+    try {
+      const savedDraft = JSON.parse(sessionStorage.getItem(draftKey) || 'null');
+      if (savedDraft) {
+        if (savedDraft.studentName) nameInput.value = savedDraft.studentName;
+        if (savedDraft.studentEmail) emailInput.value = savedDraft.studentEmail;
+        if (savedDraft.targetBand) document.getElementById('target-band').value = savedDraft.targetBand;
+        if (typeof savedDraft.essay === 'string') essayBox.value = savedDraft.essay;
+        questions.forEach(q => {
+          const value = savedDraft.answers && savedDraft.answers[q.id];
+          if (value !== undefined) {
+            const option = document.querySelector(`input[name="${q.id}"][value="${value}"]`);
+            if (option) option.checked = true;
+          }
+        });
+      }
+      pendingSubmissionId = sessionStorage.getItem(submissionKey) || null;
+    } catch (error) {
+      console.warn('IELTS draft could not be restored in this browser session.', error);
+    }
+    [nameInput, emailInput, document.getElementById('target-band')].forEach(field => {
+      field.addEventListener('input', saveIeltsDraft);
+      field.addEventListener('change', saveIeltsDraft);
+    });
+    document.querySelectorAll('#diagnostic-questions input').forEach(input => input.addEventListener('change', saveIeltsDraft));
     essayBox.addEventListener('input', () => {
+      saveIeltsDraft();
       const words = essayBox.value.trim() ? essayBox.value.trim().split(/\s+/).length : 0;
       wordCounter.textContent = `${words} words (Target: 250+)`;
     });
@@ -288,6 +333,11 @@
       const btn = document.getElementById('submit-workspace-btn');
       btn.disabled = true;
       btn.textContent = 'Logging Submission...';
+      try {
+        sessionStorage.setItem(submissionKey, pendingSubmissionId || crypto.randomUUID());
+        pendingSubmissionId = sessionStorage.getItem(submissionKey);
+        saveIeltsDraft();
+      } catch { /* Submission still proceeds if session storage is unavailable. */ }
 
       try {
         const response = await fetch('/students/api/submissions', {
@@ -326,6 +376,10 @@
             </p>
           `;
           pendingSubmissionId = null;
+          try {
+            sessionStorage.removeItem(submissionKey);
+            sessionStorage.removeItem(draftKey);
+          } catch { /* Session storage may be unavailable. */ }
         } else {
           throw new Error(result.error || 'Your submission could not be saved.');
         }
