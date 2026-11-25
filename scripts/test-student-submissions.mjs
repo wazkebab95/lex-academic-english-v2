@@ -136,11 +136,11 @@ test("Writing and IELTS pages use the protected D1 endpoint and their scripts pa
 
 test("keeps the D1 record when the Google Sheets backup is unavailable", async () => {
   const db=fakeDb();
-  const r=await invoke({db,settings:{GOOGLE_SHEET_WEBHOOK_URL:"https://script.google.test/exec"},sheetStatus:503,
+  const sheetCalls=[];\n  const r=await invoke({db,sheetCalls,settings:{GOOGLE_SHEET_WEBHOOK_URL:"https://script.google.test/exec"},sheetStatus:503,
     payload:{type:"ielts",submissionId:"ielts-12345678",studentName:"Learner",studentEmail:email,category:"IELTS diagnostic",prompt:"Question set",essay:"A complete IELTS response."}});
   assert.equal(r.status,200);
   assert.equal(r.body.recorded,true);
-  assert.equal(r.body.backupStatus,"failed");
+  assert.equal(r.body.backupStatus,"failed");\n  assert.equal(sheetCalls[0].submissionId,"ielts-12345678");\n  assert.match(sheetCalls[0].details,/A complete IELTS response/);
   assert.equal(db.submissions.get("ielts-12345678").response_text,"A complete IELTS response.");
   assert.equal(db.submissions.get("ielts-12345678").backup_status,"failed");
 });
