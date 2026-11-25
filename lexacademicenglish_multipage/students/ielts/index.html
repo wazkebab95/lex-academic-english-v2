@@ -253,6 +253,12 @@
         statusBox.innerHTML = '<p class="text-sm font-semibold text-red-700">Please enter your name and registered email address before submitting.</p>';
         return;
       }
+      if (!essayText) {
+        statusBox.classList.remove('hidden');
+        statusBox.innerHTML = '<p class="text-sm font-semibold text-red-700">Please write your IELTS response before submitting. Your diagnostic answers have not been sent yet.</p>';
+        essayBox.focus();
+        return;
+      }
 
       let score = 0;
       const missedTopics = [];
@@ -304,7 +310,13 @@
         });
 
         statusBox.classList.remove('hidden');
-        const result = await response.json();
+        let result;
+        const responseText = await response.text();
+        try {
+          result = JSON.parse(responseText);
+        } catch {
+          throw new Error(`The submission service returned an unexpected response (HTTP ${response.status}). Your answers remain in this page; please try again shortly.`);
+        }
         if (response.ok && result.ok) {
           statusBox.innerHTML = `
             <p class="text-xs uppercase tracking-widest text-emerald-700 font-bold mb-1">Submission Recorded · Score ${scoreText}</p>
@@ -319,11 +331,11 @@
         }
       } catch (err) {
         statusBox.classList.remove('hidden');
+        const safeMessage = String(err && err.message ? err.message : 'An unexpected submission error occurred.');
         statusBox.innerHTML = `
           <p class="text-xs uppercase tracking-widest font-bold mb-1">Submission Not Confirmed · Score ${scoreText}</p>
-          <p class="text-sm text-[#5E5D5A]">
-            Your response has not been confirmed as saved. Please retry after checking your connection.
-          </p>
+          <p class="text-sm text-[#5E5D5A]">${safeMessage.replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}</p>
+          <p class="text-sm text-[#5E5D5A] mt-2">Your answers and essay remain on this page. Do not close or refresh it until the submission is confirmed.</p>
         `;
       } finally {
         btn.disabled = false;
