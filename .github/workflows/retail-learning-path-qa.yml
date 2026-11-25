@@ -24,6 +24,13 @@ on:
       - "lexacademicenglish_multipage/students/progress/index.html"
       - "lexacademicenglish_multipage/students/retail/learning-path/index.html"
       - "scripts/test-student-progress.mjs"
+      - "functions/students/api/submissions.js"
+      - "lexacademicenglish_multipage/functions/students/api/submissions.js"
+      - "migrations/0002_fex_student_submissions.sql"
+      - "scripts/test-student-submissions.mjs"
+      - "lexacademicenglish_multipage/students/writing/index.html"
+      - "lexacademicenglish_multipage/students/ielts/index.html"
+      - "lexacademicenglish_multipage/students/ielts/assets/ielts-engine.js"
       - ".github/workflows/retail-learning-path-qa.yml"
   pull_request:
     types: [opened, synchronize, reopened, edited]
@@ -72,3 +79,5 @@ jobs:
         run: node --test scripts/test-student-progress.mjs
       - name: Test teacher progress and feedback management
         run: node --test scripts/test-teacher-progress.mjs
+      - name: Test direct student submission storage
+        run: node --test scripts/test-student-submissions.mjs
