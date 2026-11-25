@@ -57,7 +57,7 @@ function fakeDb() {
 }
 async function invoke({ jwt, db, payload, settings = {}, origin = "https://lexacademicenglish.co.uk", sheetStatus = 200, sheetCalls = [] } = {}) {
   const originalFetch = globalThis.fetch;
-  globalThis.fetch = async url => {
+  globalThis.fetch = async (url, options = {}) => {
     if (String(url) === issuer + "/cdn-cgi/access/certs") return new Response(JSON.stringify({keys:[jwk]}),{status:200});
     throw new Error("Unexpected outbound request");
   };
