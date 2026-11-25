@@ -181,15 +181,67 @@ export async function onRequestGet({ request, env }) {
       throw new AuthError(502, "Teacher data is temporarily unavailable.");
     }
 
+    let learnerProgress = [];
+    let vocabularyReviews = [];
+    let assessmentAttempts = [];
+    let teacherFeedback = [];
+    if (env.FEX_DB) {
+      const [progressRows, reviewRows, attemptRows, feedbackRows] = await Promise.all([
+        env.FEX_DB.prepare("SELECT l.learner_id,l.email,mp.module_id,mp.status,mp.correct_answers,mp.total_questions,mp.attempts,mp.completed_at,mp.updated_at FROM learners l JOIN course_enrolments e ON e.learner_id=l.learner_id AND e.course_id=? AND e.status='active' LEFT JOIN module_progress mp ON mp.learner_id=l.learner_id AND mp.course_id=e.course_id ORDER BY l.email,mp.module_id").bind("retail-business-english").all(),
+        env.FEX_DB.prepare("SELECT learner_id,item_id,repetitions,interval_days,due_at,last_reviewed_at,last_rating FROM vocabulary_reviews WHERE course_id=?").bind("retail-business-english").all(),
+        env.FEX_DB.prepare("SELECT attempt_id,learner_id,assessment_id,score,total,submitted_at FROM assessment_attempts WHERE course_id=? ORDER BY submitted_at DESC LIMIT 500").bind("retail-business-english").all(),
+        env.FEX_DB.prepare("SELECT feedback_id,learner_id,module_id,teacher_email,feedback,created_at FROM teacher_feedback WHERE course_id=? ORDER BY created_at DESC LIMIT 500").bind("retail-business-english").all()
+      ]);
+      learnerProgress = progressRows.results || [];
+      vocabularyReviews = reviewRows.results || [];
+      assessmentAttempts = attemptRows.results || [];
+      teacherFeedback = feedbackRows.results || [];
+    }
+
     return json(200, {
       ok: true,
       instructor: identity.email,
       generatedAt: data.generatedAt || new Date().toISOString(),
       ieltsResults: Array.isArray(data.ieltsResults) ? data.ieltsResults : [],
-      writingSubmissions: Array.isArray(data.writingSubmissions) ? data.writingSubmissions : []
+      writingSubmissions: Array.isArray(data.writingSubmissions) ? data.writingSubmissions : [],
+      learnerProgress,
+      vocabularyReviews,
+      assessmentAttempts,
+      teacherFeedback
     });
   } catch (error) {
     if (error instanceof AuthError) return json(error.status, { ok: false, error: error.message });
     return json(500, { ok: false, error: "Teacher data could not be loaded." });
+  }
+}
+
+
+export async function onRequestPost({ request, env }) {
+  try {
+    if (!/^application\/json(?:\s*;|$)/i.test(request.headers.get("Content-Type") || "")) {
+      throw new AuthError(415, "Send teacher feedback as JSON.");
+    }
+    const origin = request.headers.get("Origin");
+    if (origin && origin !== new URL(request.url).origin) throw new AuthError(403, "This request origin is not allowed.");
+    const raw = await request.text();
+    if (new TextEncoder().encode(raw).byteLength > 6000) throw new AuthError(413, "The feedback is too long.");
+    let payload;
+    try { payload = JSON.parse(raw); } catch { throw new AuthError(400, "The feedback request is invalid."); }
+    const identity = await verifyTeacherIdentity(request, env);
+    if (!env.FEX_DB) throw new AuthError(503, "Learner progress storage is not configured.");
+    if (!payload || payload.action !== "teacher_feedback") throw new AuthError(400, "The requested teacher action is not supported.");
+    const learnerEmail = typeof payload.learnerEmail === "string" ? payload.learnerEmail.trim().toLowerCase() : "";
+    const moduleId = typeof payload.moduleId === "string" ? payload.moduleId : "";
+    const feedback = typeof payload.feedback === "string" ? payload.feedback.trim() : "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(learnerEmail) || !["vocabulary","grammar","communication","case-study","assessment"].includes(moduleId) || !feedback || feedback.length > 2000) {
+      throw new AuthError(400, "Check the learner, module and feedback fields.");
+    }
+    const learner = await env.FEX_DB.prepare("SELECT l.learner_id FROM learners l JOIN course_enrolments e ON e.learner_id=l.learner_id WHERE lower(l.email)=? AND e.course_id=? AND e.status='active'").bind(learnerEmail,"retail-business-english").first();
+    if (!learner) throw new AuthError(404, "The active learner record was not found.");
+    await env.FEX_DB.prepare("INSERT INTO teacher_feedback (feedback_id,learner_id,course_id,module_id,teacher_email,feedback) VALUES (?,?,?,?,?,?)").bind(crypto.randomUUID(),learner.learner_id,"retail-business-english",moduleId,identity.email,feedback).run();
+    return json(200,{ok:true,message:"Feedback saved to the learner's private progress record."});
+  } catch (error) {
+    if (error instanceof AuthError) return json(error.status,{ok:false,error:error.message});
+    return json(500,{ok:false,error:"Teacher feedback could not be saved."});
   }
 }
