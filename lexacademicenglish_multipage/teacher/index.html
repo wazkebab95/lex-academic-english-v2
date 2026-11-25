@@ -631,11 +631,26 @@
     searchInput.addEventListener('input', renderTable);
 
     async function loadLedger() {
-      syncStatus.textContent = 'Syncing with Google Sheets…';
+      syncStatus.textContent = 'Checking teacher access and syncing…';
       try {
-        const res = await fetch('/api/teacher-data');
+        const res = await fetch('/api/teacher-data', {
+          credentials: 'same-origin',
+          headers: { Accept: 'application/json' }
+        });
+        const contentType = res.headers.get('content-type') || '';
+
+        // Cloudflare Access may redirect an expired session to its HTML login page.
+        if (res.redirected || !contentType.toLowerCase().includes('application/json')) {
+          throw new Error('Your teacher sign-in may have expired. Please sign in again and refresh this page.');
+        }
+
         const data = await res.json();
-        if (!data.ok) throw new Error(data.error || 'Error loading ledger');
+        if (res.status === 401 || res.status === 403) {
+          throw new Error('Teacher sign-in is required. Please sign in with your approved teacher account.');
+        }
+        if (!res.ok || !data.ok) {
+          throw new Error(data.error || `Teacher data request failed (HTTP ${res.status}).`);
+        }
 
         allRecords = normaliseRecords(data);
         updateKPIs(allRecords);
@@ -644,8 +659,20 @@
         const timeLabel = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
         syncStatus.textContent = `Synced at ${timeLabel} · ${data.instructor}`;
       } catch (err) {
-        syncStatus.textContent = `Sync error: ${err.message}`;
-        ledgerBody.innerHTML = `<tr><td colspan="6" class="empty-state">Could not connect to Google Sheets: ${err.message}</td></tr>`;
+        const message = err instanceof TypeError
+          ? 'Unable to reach the teacher service. Check your connection and try again.'
+          : err.message;
+        syncStatus.textContent = `Dashboard error: ${message}`;
+
+        // Render the error as text, not HTML, so response messages cannot inject markup.
+        ledgerBody.replaceChildren();
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 6;
+        cell.className = 'empty-state';
+        cell.textContent = `Could not load the teacher dashboard: ${message}`;
+        row.appendChild(cell);
+        ledgerBody.appendChild(row);
       }
     }
 
