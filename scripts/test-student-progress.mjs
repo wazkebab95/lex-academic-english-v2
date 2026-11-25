@@ -35,7 +35,7 @@ test("database migration contains learner-scoped progress and vocabulary review 
 
 test("student progress page inline JavaScript parses",()=>{
  const page=readFileSync("lexacademicenglish_multipage/students/progress/index.html","utf8");
- const scripts=[...page.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)].map(match=>match[1]).filter(code=>code.trim());
+ const scripts=[...page.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map(match=>match[1]).filter(code=>code.trim());
  assert.ok(scripts.length>0);
  for(const code of scripts)new vm.Script(code,{filename:"student-progress-inline.js"});
 });
