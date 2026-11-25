@@ -13,7 +13,7 @@ test("teacher API returns individual learner progress from the private database"
   assert.match(api,/assessmentAttempts/);
   assert.match(api,/teacherFeedback/);
   assert.match(api,/FROM student_submissions s JOIN learners l/);
-  assert.match(api,/dataSource: "fex_d1"/);
+  assert.match(api,/dataSource: legacyData \? "fex_d1_legacy" : "fex_d1"/);
   assert.match(api,/Diagnostic Focus/);
 });
 
