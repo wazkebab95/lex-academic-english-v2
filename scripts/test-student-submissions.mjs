@@ -40,7 +40,7 @@ function fakeDb() {
           calls.push(sql);
           if (sql.includes("INSERT OR IGNORE INTO student_submissions")) {
             const id = statement.values[0]; const exists = submissions.has(id);
-            if (!exists) submissions.set(id,{submission_id:id,learner_id:statement.values[1],submission_type:statement.values[3],prompt:statement.values[5],response_text:statement.values[6],metadata_json:statement.values[11],backup_status:"pending"});
+            if (!exists) submissions.set(id,{submission_id:id,learner_id:statement.values[1],submission_type:statement.values[3],title:statement.values[4],prompt:statement.values[5],response_text:statement.values[6],score:statement.values[7],result_label:statement.values[8],word_count:statement.values[9],time_spent:statement.values[10],metadata_json:statement.values[11],backup_status:"pending"});
             return { meta:{changes:exists?0:1} };
           }
           if (sql.includes("UPDATE student_submissions SET backup_status")) { const row=submissions.get(statement.values[3]); if(row){row.backup_status=statement.values[0];row.backup_synced_at=statement.values[1];row.backup_error=statement.values[2];} }
@@ -153,4 +153,18 @@ test("keeps the D1 record when the Google Sheets backup is unavailable", async (
   assert.match(sheetCalls[0].details,/A complete IELTS response/);
   assert.equal(db.submissions.get("ielts-12345678").response_text,"A complete IELTS response.");
   assert.equal(db.submissions.get("ielts-12345678").backup_status,"failed");
+});
+
+test("replayed submission references back up the original D1 content, not altered request content", async () => {
+  const db=fakeDb(); const sheetCalls=[];
+  const original={type:"writing",submissionId:"stable-ref-123",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Original prompt",essayText:"Original saved essay",timeSpent:"8m"};
+  const first=await invoke({db,sheetCalls,sheetStatus:503,settings:{GOOGLE_SHEET_WEBHOOK_URL:"https://script.google.test/exec"},payload:original});
+  assert.equal(first.status,200); assert.equal(first.body.backupStatus,"failed");
+  const replay={...original,taskType:"Changed task",promptTitle:"Changed prompt",essayText:"Altered essay must not replace the original"};
+  const second=await invoke({db,sheetCalls,settings:{GOOGLE_SHEET_WEBHOOK_URL:"https://script.google.test/exec"},payload:replay});
+  assert.equal(second.status,200); assert.equal(second.body.backupStatus,"synced");
+  assert.equal(sheetCalls.length,2);
+  assert.equal(sheetCalls[1].taskType,"Task 2");
+  assert.equal(sheetCalls[1].promptTitle,"Original prompt");
+  assert.equal(sheetCalls[1].essayText,"Original saved essay");
 });
