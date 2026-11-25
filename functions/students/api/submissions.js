@@ -93,6 +93,7 @@ async function backupToGoogleSheets(env, record) {
     submissionId: record.id, timestamp, studentName: record.name, studentEmail: record.email,
     category: record.title, score: record.score, bandEstimate: record.resultLabel,
     timeTaken: record.timeSpent,
+    diagnosticFocus: (record.diagnosticAnswers || []).map(answer => [answer.topic, "Selected: " + (answer.selectedAnswer || "Not answered"), "Correct: " + answer.correctAnswer, answer.isCorrect ? "Correct" : "Incorrect"].join(" · ")).join("\n"),
     details: "Submission reference: " + record.id + "\nPrompt: " + record.prompt +
       "\nDiagnostic answers: " + JSON.stringify(record.diagnosticAnswers || []) +
       "\nStudent response: " + record.response
