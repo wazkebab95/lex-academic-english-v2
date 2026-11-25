@@ -177,8 +177,38 @@ export async function onRequestGet({ request, env }) {
         "Diagnostic Focus": (() => { try { const answers = JSON.parse(item.metadata_json || "{}").diagnosticAnswers || []; return answers.map(answer => [answer.topic, "Selected: " + (answer.selectedAnswer || "Not answered"), "Correct: " + answer.correctAnswer, answer.isCorrect ? "Correct" : "Incorrect"].join(" · ")).join("\n"); } catch { return ""; } })(),
         "Detailed Responses": "Prompt:\n" + item.prompt + "\n\nStudent response:\n" + item.response_text
       }));
+      // Best-effort legacy archive read keeps historic records visible during migration.
+      let legacyData = null;
+      if (env.GOOGLE_SHEET_WEBHOOK_URL) {
+        try {
+          const legacyUrl = new URL(env.GOOGLE_SHEET_WEBHOOK_URL);
+          legacyUrl.searchParams.set("action", "teacher_dashboard");
+          for (let attempt = 0; attempt < 3 && !legacyData; attempt++) {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 6000);
+            try {
+              const legacyResponse = await fetch(legacyUrl.toString(), {
+                method: "GET", headers: { Accept: "application/json" }, signal: controller.signal
+              });
+              if (legacyResponse.ok) {
+                const candidate = await legacyResponse.json();
+                if (candidate && Array.isArray(candidate.ieltsResults) && Array.isArray(candidate.writingSubmissions))
+                  legacyData = candidate;
+              }
+            } catch { /* D1 remains authoritative if the legacy archive is unavailable. */ }
+            finally { clearTimeout(timeout); }
+            if (!legacyData && attempt < 2) await new Promise(resolve => setTimeout(resolve, 200 * (2 ** attempt)));
+          }
+        } catch { /* An invalid legacy URL must not interrupt D1 dashboard reads. */ }
+      }
+      if (legacyData) {
+        const writingIds = new Set(writingSubmissions.map(item => item["Submission ID"]).filter(Boolean));
+        const ieltsIds = new Set(ieltsResults.map(item => item["Submission ID"]).filter(Boolean));
+        writingSubmissions.push(...legacyData.writingSubmissions.filter(item => !item["Submission ID"] || !writingIds.has(item["Submission ID"])));
+        ieltsResults.push(...legacyData.ieltsResults.filter(item => !item["Submission ID"] || !ieltsIds.has(item["Submission ID"])));
+      }
       return json(200, {
-        ok: true, instructor: identity.email, generatedAt, dataSource: "fex_d1",
+        ok: true, instructor: identity.email, generatedAt, dataSource: legacyData ? "fex_d1_legacy" : "fex_d1",
         ieltsResults, writingSubmissions,
         learnerProgress: progressRows.results || [],
         vocabularyReviews: reviewRows.results || [],
