@@ -171,6 +171,12 @@ export async function onRequestPost({ request, env }) {
     if (title.length > 200 || prompt.length > 2000 || responseText.length > 30000)
       throw new SubmissionError(400, "One or more submission fields exceed the permitted length.");
     const wordCount = responseText.split(/\s+/).filter(Boolean).length;
+    if (type === "writing") {
+      const minimumWords = title === "Task 1" ? 150 : title === "Task 2" ? 250 : 0;
+      if (minimumWords && wordCount < minimumWords) {
+        throw new SubmissionError(400, "Your " + title + " response must contain at least " + minimumWords + " words. Current count: " + wordCount + ".");
+      }
+    }
     const courseId = type === "writing" ? "fex-writing" : "ielts-academic";
     const submissionId = String(body.submissionId || "").trim() || crypto.randomUUID();
     if (!/^[A-Za-z0-9_-]{8,100}$/.test(submissionId)) throw new SubmissionError(400, "The submission reference is invalid.");
