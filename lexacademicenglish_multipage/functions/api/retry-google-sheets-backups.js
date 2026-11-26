@@ -11,7 +11,10 @@ async function send(url,payload){
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
  try{const res=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload),signal:controller.signal});
  if(!res.ok)return {ok:false,error:"Sheets HTTP "+res.status};
- const t=await res.text();if(t){try{const j=JSON.parse(t);if(j.ok===false||j.success===false||j.error)return {ok:false,error:String(j.error||"Sheets rejected payload").slice(0,300)};}catch{}}
+ const t=await res.text();
+ if(!t.trim())return {ok:false,error:"Sheets returned an empty response."};
+ let j;try{j=JSON.parse(t);}catch{return {ok:false,error:"Sheets returned an invalid response."};}
+ if(!j||typeof j!=="object"||Array.isArray(j)||j.ok!==true||j.error)return {ok:false,error:String(j&&j.error||"Sheets did not confirm the backup.").slice(0,300)};
  return {ok:true};
  }catch(e){return {ok:false,error:e.name==="AbortError"?"Sheets timeout":"Sheets unreachable"};}finally{clearTimeout(timer);}
 }
