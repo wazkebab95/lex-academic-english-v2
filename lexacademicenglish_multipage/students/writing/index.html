@@ -526,6 +526,13 @@
 
     document.getElementById('writingForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const currentWords = essayText.value.trim().split(/\s+/).filter(Boolean).length;
+      if (currentWords < targetWords) {
+        statusBanner.className = 'status-banner error';
+        statusBanner.textContent = 'Your response needs at least ' + targetWords + ' words for ' + currentTask + '. You currently have ' + currentWords + '.';
+        essayText.focus();
+        return;
+      }
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Submitting Script…';
