@@ -10,6 +10,7 @@ const { onRequestPost } = await import("data:text/javascript;base64," + Buffer.f
 const issuer = "https://teamsiuuu.cloudflareaccess.com";
 const audience = "student-access-test-audience";
 const email = "learner@example.test";
+const words = count => Array.from({length:count},(_,index)=>"word"+(index+1)).join(" ");
 const encoder = new TextEncoder();
 const pair = await webcrypto.subtle.generateKey(
   { name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([1,0,1]), hash: "SHA-256" },
@@ -87,15 +88,15 @@ test("rejects a supplied email that differs from the verified Access identity", 
 test("stores the complete writing response in the learner-scoped D1 record", async () => {
   const db=fakeDb();
   const sheetCalls=[];
-  const r=await invoke({db,sheetCalls,settings:{GOOGLE_SHEET_WEBHOOK_URL:"https://script.google.test/exec"},payload:{type:"writing",submissionId:"submission-1234",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"A writing prompt",essayText:"This is the full student response.",timeSpent:"12m 4s"}});
+  const r=await invoke({db,sheetCalls,settings:{GOOGLE_SHEET_WEBHOOK_URL:"https://script.google.test/exec"},payload:{type:"writing",submissionId:"submission-1234",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"A writing prompt",essayText:words(250),timeSpent:"12m 4s"}});
   assert.equal(r.status,200); assert.equal(r.body.recorded,true); assert.equal(r.body.submissionId,"submission-1234"); assert.equal(r.body.backupStatus,"synced"); assert.equal(sheetCalls.length,1); assert.equal(sheetCalls[0].action,"log_writing"); assert.equal(sheetCalls[0].submissionId,"submission-1234");
   const saved=db.submissions.get("submission-1234");
-  assert.ok(saved); assert.equal(saved.submission_type,"writing"); assert.equal(saved.response_text,"This is the full student response."); assert.equal(saved.backup_status,"synced");
+  assert.ok(saved); assert.equal(saved.submission_type,"writing"); assert.equal(saved.response_text,words(250)); assert.equal(saved.backup_status,"synced");
   assert.ok(db.calls.some(sql=>sql.includes("INSERT OR IGNORE INTO student_submissions")));
 });
 test("uses submission references idempotently and rejects cross-learner reference reuse", async () => {
   const db=fakeDb();
-  const payload={type:"writing",submissionId:"submission-1234",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Prompt",essayText:"Response text"};
+  const payload={type:"writing",submissionId:"submission-1234",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Prompt",essayText:words(250)};
   const first=await invoke({db,payload}); assert.equal(first.status,200);
   const second=await invoke({db,payload}); assert.equal(second.status,200);
   const otherToken=await token({email:"other@example.test"});
@@ -103,9 +104,9 @@ test("uses submission references idempotently and rejects cross-learner referenc
   assert.equal(third.status,409);
 });
 test("requires the D1 binding and refuses cross-origin writes", async () => {
-  const noDb=await invoke({payload:{type:"writing",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Prompt",essayText:"Response text"}});
+  const noDb=await invoke({payload:{type:"writing",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Prompt",essayText:words(250)}});
   assert.equal(noDb.status,503);
-  const cross=await invoke({db:fakeDb(),origin:"https://attacker.example",payload:{type:"writing",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Prompt",essayText:"Response text"}});
+  const cross=await invoke({db:fakeDb(),origin:"https://attacker.example",payload:{type:"writing",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Prompt",essayText:words(250)}});
   assert.equal(cross.status,403);
 });
 test("migration defines durable submission content and learner-scoped indexes", () => {
@@ -157,14 +158,45 @@ test("keeps the D1 record when the Google Sheets backup is unavailable", async (
 
 test("replayed submission references back up the original D1 content, not altered request content", async () => {
   const db=fakeDb(); const sheetCalls=[];
-  const original={type:"writing",submissionId:"stable-ref-123",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Original prompt",essayText:"Original saved essay",timeSpent:"8m"};
+  const original={type:"writing",submissionId:"stable-ref-123",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Original prompt",essayText:words(250),timeSpent:"8m"};
   const first=await invoke({db,sheetCalls,sheetStatus:503,settings:{GOOGLE_SHEET_WEBHOOK_URL:"https://script.google.test/exec"},payload:original});
   assert.equal(first.status,200); assert.equal(first.body.backupStatus,"failed");
-  const replay={...original,taskType:"Changed task",promptTitle:"Changed prompt",essayText:"Altered essay must not replace the original"};
+  const replay={...original,taskType:"Changed task",promptTitle:"Changed prompt",essayText:words(251)};
   const second=await invoke({db,sheetCalls,settings:{GOOGLE_SHEET_WEBHOOK_URL:"https://script.google.test/exec"},payload:replay});
   assert.equal(second.status,200); assert.equal(second.body.backupStatus,"synced");
   assert.equal(sheetCalls.length,2);
   assert.equal(sheetCalls[1].taskType,"Task 2");
   assert.equal(sheetCalls[1].promptTitle,"Original prompt");
-  assert.equal(sheetCalls[1].essayText,"Original saved essay");
+  assert.equal(sheetCalls[1].essayText,words(250));
+});
+
+ 
+test("enforces IELTS Writing Task 1 and Task 2 minimum word counts at the server boundary", async () => {
+  const tooShortTask1 = await invoke({db:fakeDb(),payload:{type:"writing",submissionId:"task1-short-001",studentName:"Learner",studentEmail:email,taskType:"Task 1",promptTitle:"Task 1 prompt",essayText:words(149)}});
+  assert.equal(tooShortTask1.status,400);
+  assert.match(tooShortTask1.body.error,/at least 150 words/);
+
+  const exactTask1 = await invoke({db:fakeDb(),payload:{type:"writing",submissionId:"task1-valid-001",studentName:"Learner",studentEmail:email,taskType:"Task 1",promptTitle:"Task 1 prompt",essayText:words(150)}});
+  assert.equal(exactTask1.status,200);
+  assert.equal(exactTask1.body.wordCount,150);
+
+  const tooShortTask2 = await invoke({db:fakeDb(),payload:{type:"writing",submissionId:"task2-short-001",studentName:"Learner",studentEmail:email,taskType:"Task 2",promptTitle:"Task 2 prompt",essayText:words(249)}});
+  assert.equal(tooShortTask2.status,400);
+  assert.match(tooShortTask2.body.error,/at least 250 words/);
+
+  const aliasTask1 = await invoke({db:fakeDb(),payload:{type:"writing",submissionId:"task1-alias-001",studentName:"Learner",studentEmail:email,taskType:"task-1",promptTitle:"Task 1 prompt",essayText:words(149)}});
+  assert.equal(aliasTask1.status,400);
+  assert.match(aliasTask1.body.error,/at least 150 words/);
+
+  const exactTask2 = await invoke({db:fakeDb(),payload:{type:"writing",submissionId:"task2-valid-001",studentName:"Learner",studentEmail:email,taskType:"TASK_2",promptTitle:"Task 2 prompt",essayText:words(250)}});
+  assert.equal(exactTask2.status,200);
+  assert.equal(exactTask2.body.wordCount,250);
+
+  const aliasTask2 = await invoke({db:fakeDb(),payload:{type:"writing",submissionId:"task2-alias-001",studentName:"Learner",studentEmail:email,taskType:"task-2",promptTitle:"Task 2 prompt",essayText:words(249)}});
+  assert.equal(aliasTask2.status,400);
+  assert.match(aliasTask2.body.error,/at least 250 words/);
+
+  const page = readFileSync("lexacademicenglish_multipage/students/writing/index.html","utf8");
+  assert.match(page,/currentWords < targetWords/);
+  assert.match(page,/Your response needs at least/);
 });
