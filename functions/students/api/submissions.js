@@ -172,7 +172,10 @@ export async function onRequestPost({ request, env }) {
       throw new SubmissionError(400, "One or more submission fields exceed the permitted length.");
     const wordCount = responseText.split(/\s+/).filter(Boolean).length;
     if (type === "writing") {
-      const minimumWords = title === "Task 1" ? 150 : title === "Task 2" ? 250 : 0;
+      // Normalise the task label before enforcing the server-side minimum.
+      // This prevents simple case/spacing/separator variations from bypassing the limit.
+      const taskKey = title.toLowerCase().replace(/[\s_-]+/g, "");
+      const minimumWords = taskKey === "task1" ? 150 : taskKey === "task2" ? 250 : 0;
       if (minimumWords && wordCount < minimumWords) {
         throw new SubmissionError(400, "Your " + title + " response must contain at least " + minimumWords + " words. Current count: " + wordCount + ".");
       }
