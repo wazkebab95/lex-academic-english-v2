@@ -184,6 +184,18 @@ test("enforces IELTS Writing Task 1 and Task 2 minimum word counts at the server
   assert.equal(tooShortTask2.status,400);
   assert.match(tooShortTask2.body.error,/at least 250 words/);
 
+  const aliasTask1 = await invoke({db:fakeDb(),payload:{type:"writing",submissionId:"task1-alias-001",studentName:"Learner",studentEmail:email,taskType:"task-1",promptTitle:"Task 1 prompt",essayText:words(149)}});
+  assert.equal(aliasTask1.status,400);
+  assert.match(aliasTask1.body.error,/at least 150 words/);
+
+  const exactTask2 = await invoke({db:fakeDb(),payload:{type:"writing",submissionId:"task2-valid-001",studentName:"Learner",studentEmail:email,taskType:"TASK_2",promptTitle:"Task 2 prompt",essayText:words(250)}});
+  assert.equal(exactTask2.status,200);
+  assert.equal(exactTask2.body.wordCount,250);
+
+  const aliasTask2 = await invoke({db:fakeDb(),payload:{type:"writing",submissionId:"task2-alias-001",studentName:"Learner",studentEmail:email,taskType:"task-2",promptTitle:"Task 2 prompt",essayText:words(249)}});
+  assert.equal(aliasTask2.status,400);
+  assert.match(aliasTask2.body.error,/at least 250 words/);
+
   const page = readFileSync("lexacademicenglish_multipage/students/writing/index.html","utf8");
   assert.match(page,/currentWords < targetWords/);
   assert.match(page,/Your response needs at least/);
