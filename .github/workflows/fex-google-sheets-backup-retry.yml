@@ -1,0 +1,22 @@
+name: Fex Google Sheets backup retry
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  retry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Retry pending D1 to Google Sheets backups
+        env:
+          RETRY_URL: ${{ secrets.FEX_BACKUP_RETRY_URL }}
+          RETRY_SECRET: ${{ secrets.FEX_BACKUP_RETRY_SECRET }}
+        run: |
+          test -n "$RETRY_URL" && test -n "$RETRY_SECRET"
+          curl --fail --silent --show-error --max-time 60 \
+            -X POST "$RETRY_URL" \
+            -H "Authorization: Bearer $RETRY_SECRET" \
+            -H "Content-Type: application/json" \
+            -d '{}' 
