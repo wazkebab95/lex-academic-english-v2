@@ -41,3 +41,23 @@ test("failed refresh preserves the last successful sync state and records", () =
   assert.ok(page.includes("last successfully loaded records remain visible"));
   assert.ok(page.includes("Refresh failed · showing last successful data"));
 });
+
+
+test("teacher dashboard schedules a 15-minute refresh and defers hidden tabs", () => {
+  assert.ok(page.includes("const DASHBOARD_REFRESH_INTERVAL=15*60*1000;"));
+  assert.ok(page.includes("function scheduleDashboardRefresh(delay=DASHBOARD_REFRESH_INTERVAL)"));
+  assert.ok(page.includes("if(document.visibilityState==='visible')loadDashboard();"));
+  assert.ok(page.includes("else scheduleDashboardRefresh(60*1000);"));
+});
+
+test("teacher dashboard refreshes on visibility and focus after the interval", () => {
+  assert.ok(page.includes("document.addEventListener('visibilitychange'"));
+  assert.ok(page.includes("window.addEventListener('focus'"));
+  assert.ok(page.includes("Date.now()-lastDashboardAttempt>=DASHBOARD_REFRESH_INTERVAL"));
+});
+
+test("teacher dashboard prevents overlapping refreshes and backs off after failures", () => {
+  assert.ok(page.includes("if(dashboardLoading)return;"));
+  assert.ok(page.includes("dashboardRetryDelay=Math.min(dashboardRetryDelay*2,5*60*1000);"));
+  assert.ok(page.includes("scheduleDashboardRefresh(loadedSuccessfully?DASHBOARD_REFRESH_INTERVAL:dashboardRetryDelay);"));
+});
